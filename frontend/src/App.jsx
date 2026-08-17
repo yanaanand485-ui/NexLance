@@ -1,122 +1,119 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react';
+import { AppProvider, useApp } from './context/AppContext';
+import { Navbar } from './components/common/Navbar';
+import { Footer } from './components/common/Footer';
+import { Sidebar } from './components/common/Sidebar';
+import { NotificationDrawer } from './components/common/NotificationDrawer';
+import { AuthModal } from './components/common/AuthModal';
+import { Toast } from './components/common/Toast';
 
-function App() {
-  const [count, setCount] = useState(0)
+// Pages & Views
+import { LandingPage } from './pages/LandingPage';
+import { TalentDiscovery } from './components/marketplace/TalentDiscovery';
+import { ProjectDiscovery } from './components/marketplace/ProjectDiscovery';
+import { ServicesMarketplace } from './components/marketplace/ServicesMarketplace';
+import { FreelancerProfile } from './components/marketplace/FreelancerProfile';
+import { ProjectDetail } from './components/marketplace/ProjectDetail';
+import { ServiceDetail } from './components/marketplace/ServiceDetail';
+
+// Freelancer Platform
+import { FreelancerDashboard } from './components/freelancer/FreelancerDashboard';
+import { SkillVerification } from './components/freelancer/SkillVerification';
+import { CareerScoreDetail } from './components/freelancer/CareerScoreDetail';
+import { ProofOfWork } from './components/freelancer/ProofOfWork';
+import { OpportunitiesFeed } from './components/freelancer/OpportunitiesFeed';
+import { NewFreelancerExperience } from './components/freelancer/NewFreelancerExperience';
+
+// Client Platform
+import { ClientDashboard } from './components/client/ClientDashboard';
+import { SmartMatchView } from './components/client/SmartMatchView';
+import { CandidateComparison } from './components/client/CandidateComparison';
+import { PostProjectWizard } from './components/client/PostProjectWizard';
+import { ApplicationsView } from './components/client/ApplicationsView';
+
+import './styles/components.css';
+
+const MainRouter = () => {
+  const { currentView, role } = useApp();
+
+  // Dashboard Layout Wrapper
+  const renderDashboardView = (Component) => (
+    <div className="dashboard-layout">
+      <Sidebar />
+      <Component />
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'landing':
+        return <LandingPage />;
+      case 'talent-discovery':
+        return <TalentDiscovery />;
+      case 'project-discovery':
+        return <ProjectDiscovery />;
+      case 'services-marketplace':
+        return <ServicesMarketplace />;
+      case 'freelancer-profile':
+        return <FreelancerProfile />;
+      case 'project-detail':
+        return <ProjectDetail />;
+      case 'service-detail':
+        return <ServiceDetail />;
+
+      // Freelancer Views
+      case 'freelancer-dashboard':
+        return renderDashboardView(FreelancerDashboard);
+      case 'skill-verification':
+        return renderDashboardView(SkillVerification);
+      case 'career-score':
+        return renderDashboardView(CareerScoreDetail);
+      case 'proof-of-work':
+        return renderDashboardView(ProofOfWork);
+      case 'opportunities':
+        return renderDashboardView(OpportunitiesFeed);
+      case 'new-freelancer':
+        return renderDashboardView(NewFreelancerExperience);
+
+      // Client Views
+      case 'client-dashboard':
+        return renderDashboardView(ClientDashboard);
+      case 'smart-match':
+        return renderDashboardView(SmartMatchView);
+      case 'comparison':
+        return renderDashboardView(CandidateComparison);
+      case 'post-project':
+        return renderDashboardView(PostProjectWizard);
+      case 'applications':
+        return renderDashboardView(ApplicationsView);
+
+      default:
+        return <LandingPage />;
+    }
+  };
+
+  const showFooter = ['landing', 'talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="app-container">
+      <Navbar />
+      <div style={{ flex: 1 }}>
+        {renderContent()}
+      </div>
+      {showFooter && <Footer />}
+      <NotificationDrawer />
+      <AuthModal />
+      <Toast />
+    </div>
+  );
+};
 
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function App() {
+  return (
+    <AppProvider>
+      <MainRouter />
+    </AppProvider>
+  );
 }
 
-export default App
+export default App;
