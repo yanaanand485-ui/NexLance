@@ -16,7 +16,17 @@ import { useApp } from '../../context/AppContext';
 import { PROJECTS } from '../../data/mockData';
 
 export const ProjectDetail = () => {
-  const { selectedProject, appliedProjectIds, submitProposal, showToast, navigateTo } = useApp();
+  const {
+    role,
+    setIsAuthModalOpen,
+    setAuthMode,
+    setAuthRoleChoice,
+    selectedProject,
+    appliedProjectIds,
+    submitProposal,
+    showToast,
+    navigateTo
+  } = useApp();
 
   const project = selectedProject || PROJECTS[0];
   const hasApplied = appliedProjectIds.includes(project.id);
@@ -29,6 +39,13 @@ export const ProjectDetail = () => {
 
   const handleSubmitProposal = (e) => {
     e.preventDefault();
+    if (role === 'public') {
+      setAuthMode('login');
+      setAuthRoleChoice('freelancer');
+      setIsAuthModalOpen(true);
+      showToast('Please sign in or create an account to submit proposals.', 'info');
+      return;
+    }
     submitProposal(project.id, { proposedBudget, deliveryTime, coverLetter });
   };
 

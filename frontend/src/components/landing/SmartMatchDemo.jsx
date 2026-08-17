@@ -6,7 +6,15 @@ import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const SmartMatchDemo = () => {
-  const { navigateTo, setSelectedFreelancer, showToast } = useApp();
+  const {
+    role,
+    setIsAuthModalOpen,
+    setAuthMode,
+    setAuthRoleChoice,
+    navigateTo,
+    setSelectedFreelancer,
+    showToast
+  } = useApp();
   const [activeTab, setActiveTab] = useState('match-1');
 
   const matchCandidates = [
@@ -219,6 +227,13 @@ export const SmartMatchDemo = () => {
             <div style={{ display: 'flex', gap: '1rem', paddingTop: '1rem', borderTop: '1px solid #F1F5F9' }}>
               <button
                 onClick={() => {
+                  if (role === 'public') {
+                    setAuthMode('login');
+                    setAuthRoleChoice('client');
+                    setIsAuthModalOpen(true);
+                    showToast('Pehle login karein — Client account se verified profiles dekhein.', 'info');
+                    return;
+                  }
                   setSelectedFreelancer(candidate);
                   navigateTo('freelancer-profile');
                 }}
@@ -228,7 +243,16 @@ export const SmartMatchDemo = () => {
                 View Full Profile & Work <ArrowRight size={16} />
               </button>
               <button
-                onClick={() => showToast(`Direct interview invite sent to ${candidate.name}!`, 'success')}
+                onClick={() => {
+                  if (role === 'public') {
+                    setAuthMode('login');
+                    setAuthRoleChoice('client');
+                    setIsAuthModalOpen(true);
+                    showToast('Pehle login karein — Client account se interview invite bhejein.', 'info');
+                    return;
+                  }
+                  showToast(`Direct interview invite sent to ${candidate.name}!`, 'success');
+                }}
                 className="btn btn-secondary"
                 style={{ flex: 1 }}
               >

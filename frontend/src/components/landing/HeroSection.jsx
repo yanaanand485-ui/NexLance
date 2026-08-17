@@ -1,9 +1,10 @@
 import React from 'react';
-import { Sparkles, ArrowRight, CheckCircle2, TrendingUp, Send, Eye } from 'lucide-react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { HeroPhotoShowcase } from './HeroPhotoShowcase';
 
 export const HeroSection = () => {
-  const { navigateTo, handleFindTalent, handleFindWork, showToast } = useApp();
+  const { role, handleFindTalent, handleFindWork } = useApp();
 
   return (
     <section className="hero-section">
@@ -64,92 +65,11 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Right Column: Live Smart Match Card Preview */}
-        <div className="smart-match-preview-card">
-          <div className="smart-match-header">
-            <span style={{ fontSize: '1rem', fontWeight: 800, color: '#0F172A', fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
-              Smart Match Analysis
-            </span>
-            <div className="live-pill">
-              <div className="live-dot"></div>
-              <span>Live View</span>
-            </div>
-          </div>
-
-          {/* Candidate Bio Row */}
-          <div className="match-candidate-row">
-            <div className="match-candidate-info">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80"
-                alt="Alex Morgan"
-                className="candidate-avatar"
-              />
-              <div>
-                <h4 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#0F172A' }}>Alex Morgan</h4>
-                <p style={{ fontSize: '0.8rem', color: '#64748B' }}>Senior Full-Stack Developer</p>
-              </div>
-            </div>
-
-            <div className="match-score-badge">
-              <div className="match-score-number">98%</div>
-              <div className="match-score-label">Match Score</div>
-            </div>
-          </div>
-
-          {/* Verified Skills Strip */}
-          <div className="match-verified-strip">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem' }}>
-              <CheckCircle2 size={16} color="#1E40AF" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#1E40AF' }}>
-                React & Next.js
-              </span>
-            </div>
-            <span
-              style={{
-                backgroundColor: '#DBEAFE',
-                color: '#1E3A8A',
-                padding: '0.2rem 0.6rem',
-                borderRadius: '9999px',
-                fontSize: '0.725rem',
-                fontWeight: 700
-              }}
-            >
-              Verified Expert
-            </span>
-          </div>
-
-          {/* Career Score Metric Strip */}
-          <div className="match-score-strip">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <TrendingUp size={16} color="#059669" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#334155' }}>
-                Career Score
-              </span>
-            </div>
-            <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#0F172A' }}>
-              91 <span style={{ color: '#94A3B8', fontWeight: 500, fontSize: '0.8rem' }}>/ 100</span>
-            </span>
-          </div>
-
-          {/* Action CTAs */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '0.75rem' }}>
-            <button
-              onClick={() => showToast('Direct offer modal initiated with Alex Morgan', 'success')}
-              className="btn btn-primary"
-              style={{ fontSize: '0.85rem', padding: '0.6rem' }}
-            >
-              <Send size={14} /> Send Offer
-            </button>
-            <button
-              onClick={() => navigateTo('freelancer-profile')}
-              className="btn btn-secondary"
-              style={{ fontSize: '0.85rem', padding: '0.6rem' }}
-            >
-              <Eye size={14} /> View Work
-            </button>
-          </div>
-        </div>
+        {/* Right Column: Clean Photo & Visual Showcase for visitors without login */}
+        <HeroPhotoShowcase />
       </div>
     </section>
   );
 };
+
+

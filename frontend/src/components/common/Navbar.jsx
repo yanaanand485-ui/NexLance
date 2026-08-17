@@ -68,24 +68,30 @@ export const Navbar = () => {
             <nav className="nav-links">
               <span
                 onClick={handleFindTalent}
-                className={`nav-item ${currentView === 'talent-discovery' || currentView === 'client-dashboard' ? 'active' : ''}`}
+                className={`nav-item ${currentView === 'talent-discovery' ? 'active' : ''}`}
               >
                 Find Talent
               </span>
               <span
                 onClick={handleFindWork}
-                className={`nav-item ${currentView === 'project-discovery' || currentView === 'freelancer-dashboard' ? 'active' : ''}`}
+                className={`nav-item ${currentView === 'project-discovery' ? 'active' : ''}`}
               >
                 Find Work
               </span>
               <span
-                onClick={() => navigateTo('services-marketplace')}
-                className={`nav-item ${currentView === 'services-marketplace' ? 'active' : ''}`}
+                onClick={() => {
+                  setAuthMode('login');
+                  setIsAuthModalOpen(true);
+                }}
+                className="nav-item"
               >
                 Services
               </span>
               <span
-                onClick={() => navigateTo('landing')}
+                onClick={() => {
+                  navigateTo('landing');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 className={`nav-item ${currentView === 'landing' ? 'active' : ''}`}
               >
                 How It Works

@@ -14,7 +14,18 @@ import { useApp } from '../../context/AppContext';
 import { SmartMatchBadge } from '../common/SmartMatchBadge';
 
 export const ProjectDiscovery = () => {
-  const { activeProjectsList, navigateTo, setSelectedProject, appliedProjectIds, submitProposal } = useApp();
+  const {
+    role,
+    setIsAuthModalOpen,
+    setAuthMode,
+    setAuthRoleChoice,
+    showToast,
+    activeProjectsList,
+    navigateTo,
+    setSelectedProject,
+    appliedProjectIds,
+    submitProposal
+  } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -208,6 +219,13 @@ export const ProjectDiscovery = () => {
                   </button>
                   <button
                     onClick={() => {
+                      if (role === 'public') {
+                        setAuthMode('login');
+                        setAuthRoleChoice('freelancer');
+                        setIsAuthModalOpen(true);
+                        showToast('Please log in or create an account to submit proposals.', 'info');
+                        return;
+                      }
                       if (!hasApplied) {
                         submitProposal(proj.id, {});
                       }

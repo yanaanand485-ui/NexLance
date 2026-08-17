@@ -19,6 +19,10 @@ import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const FreelancerProfile = () => {
   const {
+    role,
+    setIsAuthModalOpen,
+    setAuthMode,
+    setAuthRoleChoice,
     selectedFreelancer,
     freelancerProfile,
     toggleShortlist,
@@ -31,6 +35,17 @@ export const FreelancerProfile = () => {
   const freelancer = selectedFreelancer || freelancerProfile;
   const isShortlisted = shortlistedFreelancers.includes(freelancer.id);
   const isCompared = comparisonList.some(item => item.id === freelancer.id);
+
+  const handleHireClick = () => {
+    if (role === 'public') {
+      setAuthMode('login');
+      setAuthRoleChoice('client');
+      setIsAuthModalOpen(true);
+      showToast(`Please sign in or create a Client account to hire ${freelancer.name.split(' ')[0]}.`, 'info');
+      return;
+    }
+    showToast(`Direct interview proposal initiated with ${freelancer.name}!`, 'success');
+  };
 
   return (
     <main style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 1.5rem', width: '100%' }}>
@@ -88,7 +103,7 @@ export const FreelancerProfile = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.65rem', width: '100%', maxWidth: '280px' }}>
               <button
-                onClick={() => showToast(`Direct interview proposal initiated with ${freelancer.name}!`, 'success')}
+                onClick={handleHireClick}
                 className="btn btn-primary"
                 style={{ width: '100%' }}
               >

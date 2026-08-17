@@ -45,6 +45,11 @@ const MainRouter = () => {
   );
 
   const renderContent = () => {
+    // If not logged in, only show public landing page until user logs in
+    if (role === 'public' && currentView !== 'landing') {
+      return <LandingPage />;
+    }
+
     switch (currentView) {
       case 'landing':
         return <LandingPage />;

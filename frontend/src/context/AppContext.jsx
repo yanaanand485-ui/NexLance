@@ -68,47 +68,67 @@ export const AppProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Find Talent action (Client intent) -> opens Client Dashboard & Marketplace
+  // Find Talent action:
+  // Requires Client login before entering portal/marketplace
   const handleFindTalent = () => {
-    setRole('client');
-    setCurrentView('client-dashboard');
-    showToast('Entered Client Portal — discover proven talent and post projects', 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (role === 'client') {
+      setCurrentView('client-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (role === 'freelancer') {
+      setCurrentView('freelancer-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Unauthenticated visitor -> Open Login Modal first
+      setAuthMode('login');
+      setAuthRoleChoice('client');
+      setIsAuthModalOpen(true);
+      showToast('Pehle login karein — Client account se talent hire karein aur project post karein.', 'info');
+    }
   };
 
-  // Find Work action (Freelancer intent) -> opens Freelancer Dashboard & Opportunities
+  // Find Work action:
+  // Requires Freelancer login before entering portal/projects
   const handleFindWork = () => {
-    setRole('freelancer');
-    setCurrentView('freelancer-dashboard');
-    showToast('Entered Freelancer Portal — prove your skills and track Career Score', 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (role === 'freelancer') {
+      setCurrentView('freelancer-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (role === 'client') {
+      setCurrentView('client-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      // Unauthenticated visitor -> Open Login Modal first
+      setAuthMode('login');
+      setAuthRoleChoice('freelancer');
+      setIsAuthModalOpen(true);
+      showToast('Pehle login karein — Freelancer account se skills verify karein aur projects paayein.', 'info');
+    }
   };
 
   // Login with custom User Name & details
   const loginWithUser = ({ name, email, role: chosenRole, companyName }) => {
     const userRole = chosenRole || 'freelancer';
-    const trimmedName = name?.trim() || (email ? email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Alex Rivera');
+    const trimmedName = name?.trim() || (email ? email.split('@')[0].replace(/[._]/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'New User');
 
     if (userRole === 'freelancer') {
       setFreelancerProfile(prev => ({
         ...prev,
         name: trimmedName,
-        email: email || 'user@nexlance.dev'
+        email: email || `${trimmedName.toLowerCase().replace(/\s+/g, '')}@nexlance.dev`
       }));
       setRole('freelancer');
       setCurrentView('freelancer-dashboard');
-      showToast(`Welcome back, ${trimmedName}!`, 'success');
+      showToast(`Welcome, ${trimmedName}! Logged in as Freelancer.`, 'success');
     } else {
-      const company = companyName?.trim() || `${trimmedName} Retail Global`;
+      const company = companyName?.trim() || `${trimmedName} Enterprises`;
       setClientProfile(prev => ({
         ...prev,
         contactPerson: trimmedName,
         name: company,
-        email: email || 'client@company.com'
+        email: email || `${trimmedName.toLowerCase().replace(/\s+/g, '')}@company.com`
       }));
       setRole('client');
       setCurrentView('client-dashboard');
-      showToast(`Welcome back, ${trimmedName}! (${company})`, 'success');
+      showToast(`Welcome, ${trimmedName}! Logged in as Client (${company}).`, 'success');
     }
   };
 
