@@ -73,13 +73,15 @@ export const CareerScoreDetail = () => {
       {/* Top Banner with Score Gauge and Key Highlights */}
       <div style={{ display: 'grid', gridTemplateColumns: '0.85fr 1.15fr', gap: '2rem', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '16px', padding: '2rem', marginBottom: '2rem', boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.04)' }}>
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', borderRight: '1px solid #F1F5F9', paddingRight: '1.5rem' }}>
-          <CareerScoreBadge score={freelancerProfile.careerScore} size="lg" showLabel={false} />
+          <CareerScoreBadge score={freelancerProfile.careerScore || 0} size="lg" showLabel={false} />
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <span style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A' }}>
-              Tier 1: Elite Freelancer
+              {(freelancerProfile.careerScore || 0) > 0 ? 'Tier 1: Elite Freelancer' : 'New Freelancer (Unranked)'}
             </span>
             <p style={{ fontSize: '0.8rem', color: '#64748B', marginTop: '0.2rem' }}>
-              Top 2% reliability index across the entire NexLance network.
+              {(freelancerProfile.careerScore || 0) > 0
+                ? 'Top 2% reliability index across the entire NexLance network.'
+                : 'Complete verified skill tests or project milestones to calculate your score.'}
             </p>
           </div>
         </div>
@@ -87,8 +89,8 @@ export const CareerScoreDetail = () => {
         <div>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
             <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#0F172A' }}>6-Month Score Trajectory</h3>
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#059669', backgroundColor: '#ECFDF5', padding: '0.2rem 0.6rem', borderRadius: '9999px' }}>
-              +10 pts increase
+            <span style={{ fontSize: '0.75rem', fontWeight: 700, color: (freelancerProfile.careerScore || 0) > 0 ? '#059669' : '#64748B', backgroundColor: (freelancerProfile.careerScore || 0) > 0 ? '#ECFDF5' : '#F1F5F9', padding: '0.2rem 0.6rem', borderRadius: '9999px' }}>
+              {(freelancerProfile.careerScore || 0) > 0 ? '+11 pts increase' : '0 pts · Baseline'}
             </span>
           </div>
 
@@ -100,27 +102,60 @@ export const CareerScoreDetail = () => {
               <line x1="0" y1="60" x2="400" y2="60" stroke="#F1F5F9" strokeWidth="1" />
               <line x1="0" y1="100" x2="400" y2="100" stroke="#F1F5F9" strokeWidth="1" />
 
-              {/* Curve */}
-              <path
-                d="M 20 100 Q 100 80, 180 50 T 380 15"
-                fill="none"
-                stroke="#1E40AF"
-                strokeWidth="3.5"
-                strokeLinecap="round"
-              />
+              {(freelancerProfile.careerScore || 0) > 0 ? (
+                <>
+                  {/* Curve for experienced user */}
+                  <path
+                    d="M 20 100 Q 100 80, 180 50 T 380 15"
+                    fill="none"
+                    stroke="#1E40AF"
+                    strokeWidth="3.5"
+                    strokeLinecap="round"
+                  />
 
-              {/* Month Dots */}
-              {freelancerProfile.scoreHistory.map((item, idx) => {
-                const x = 30 + idx * 70;
-                const y = 100 - (item.score - 80) * 8;
-                return (
-                  <g key={idx}>
-                    <circle cx={x} cy={y} r="4.5" fill="#1E40AF" stroke="#FFFFFF" strokeWidth="2" />
-                    <text x={x} y="118" textAnchor="middle" fontSize="10" fill="#64748B" fontWeight="600">{item.month}</text>
-                    <text x={x} y={y - 8} textAnchor="middle" fontSize="10" fill="#0F172A" fontWeight="700">{item.score}</text>
-                  </g>
-                );
-              })}
+                  {/* Month Dots */}
+                  {(freelancerProfile.scoreHistory || []).map((item, idx) => {
+                    const x = 30 + idx * 70;
+                    const y = Math.max(15, 100 - (item.score - 80) * 5.5);
+                    return (
+                      <g key={idx}>
+                        <circle cx={x} cy={y} r="4.5" fill="#1E40AF" stroke="#FFFFFF" strokeWidth="2" />
+                        <text x={x} y="118" textAnchor="middle" fontSize="10" fill="#64748B" fontWeight="600">{item.month}</text>
+                        <text x={x} y={y - 8} textAnchor="middle" fontSize="10" fill="#0F172A" fontWeight="700">{item.score}</text>
+                      </g>
+                    );
+                  })}
+                </>
+              ) : (
+                <>
+                  {/* Flat straight baseline for new user */}
+                  <path
+                    d="M 20 100 L 380 100"
+                    fill="none"
+                    stroke="#2563EB"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                  />
+                  {(freelancerProfile.scoreHistory || [
+                    { month: 'May', score: 0 },
+                    { month: 'Jun', score: 0 },
+                    { month: 'Jul', score: 0 },
+                    { month: 'Aug', score: 0 },
+                    { month: 'Sep', score: 0 },
+                    { month: 'Oct', score: 0 }
+                  ]).map((item, idx) => {
+                    const x = 30 + idx * 70;
+                    const y = 100;
+                    return (
+                      <g key={idx}>
+                        <circle cx={x} cy={y} r="4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
+                        <text x={x} y="118" textAnchor="middle" fontSize="10" fill="#64748B" fontWeight="600">{item.month}</text>
+                        <text x={x} y={y - 8} textAnchor="middle" fontSize="10" fill="#64748B" fontWeight="700">{item.score}</text>
+                      </g>
+                    );
+                  })}
+                </>
+              )}
             </svg>
           </div>
         </div>

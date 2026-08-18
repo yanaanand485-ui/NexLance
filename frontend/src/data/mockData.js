@@ -1,5 +1,135 @@
 // NexLance Comprehensive Mock Data Store
 
+export const SARAH_FREELANCER = {
+  id: "fl-sarah-01",
+  name: "Sarah Jenkins",
+  role: "Principal Full-Stack & Cloud Architect",
+  avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+  banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
+  location: "New York, NY (Remote)",
+  timezone: "EST (UTC-5)",
+  hourlyRate: 85,
+  rateDisplay: "₹6,400/hr ($85/hr)",
+  available: true,
+  availabilityText: "Available for enterprise contracts (25 hrs/week)",
+  memberSince: "January 2023",
+  bio: "Lead Software Architect with 8+ years building resilient microservices, high-throughput streaming systems, and responsive React web platforms. 48 completed contracts with 99% code quality rating.",
+  careerScore: 95,
+  rating: 4.96,
+  totalReviews: 45,
+  activeProjectsCount: 4,
+  applicationsCount: 12,
+  completedProjectsCount: 48,
+  earnedTotal: "₹45.2 Lakh ($54,000+)",
+  onTimeDeliveryRate: 98,
+  clientSatisfactionRate: 97,
+  codeQualityRate: 99,
+  communicationRate: 95,
+  budgetAdherenceRate: 94,
+  completionRate: 100,
+  scoreHistory: [
+    { month: "May", score: 84 },
+    { month: "Jun", score: 87 },
+    { month: "Jul", score: 89 },
+    { month: "Aug", score: 91 },
+    { month: "Sep", score: 93 },
+    { month: "Oct", score: 95 }
+  ],
+  verifiedSkills: [
+    { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
+    { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
+    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
+    { id: "graphql", name: "GraphQL & REST APIs", score: 94, percentile: "Top 3% Global", status: "verified", verifiedDate: "Nov 2024", retakeDate: "Nov 2025" },
+    { id: "aws", name: "AWS Cloud & DevOps", score: 90, percentile: "Top 8% Global", status: "verified", verifiedDate: "Oct 2024", retakeDate: "Oct 2025" }
+  ],
+  proofOfWork: [
+    {
+      id: "pow-sarah-1",
+      title: "OmniCart Enterprise E-Commerce",
+      client: "Meridian Retail Global",
+      role: "Lead Cloud Architect",
+      period: "3 months (Completed Jan 2025)",
+      skills: ["React", "Next.js", "TypeScript", "AWS", "GraphQL"],
+      rating: 5.0,
+      clientQuote: "Sarah delivered our multi-region enterprise storefront ahead of schedule with 99.99% uptime.",
+      satisfaction: 99,
+      deliveryTime: "5 days ahead of schedule",
+      liveUrl: "https://omnicart-demo.nexlance.dev",
+      githubUrl: "https://github.com/sarahjenkins/omnicart-storefront",
+      metrics: [
+        { label: "Core Web Vitals", value: "99/100" },
+        { label: "Conversion Lift", value: "+28.4%" },
+        { label: "Test Coverage", value: "98.5%" }
+      ],
+      description: "Architected a scalable Next.js 14 App Router platform with AWS Lambda edge SSR, multi-currency checkout, and sub-80ms faceted product search."
+    }
+  ]
+};
+
+export const PRIYA_FREELANCER = {
+  id: "fl-priya-02",
+  name: "Priya Sharma",
+  role: "Principal Product Designer & Frontend Lead",
+  avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+  banner: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&auto=format&fit=crop&q=80",
+  location: "Bangalore, India (Remote)",
+  timezone: "IST (UTC+5:30)",
+  hourlyRate: 80,
+  rateDisplay: "₹6,000/hr ($80/hr)",
+  available: true,
+  availabilityText: "Available for design systems & React UI (20 hrs/week)",
+  memberSince: "February 2023",
+  bio: "Lead UI/UX engineer and design systems architect with 7+ years creating enterprise Figma components, accessible React Design tokens, and high-conversion UX flows. 52 production apps delivered.",
+  careerScore: 94,
+  rating: 4.98,
+  totalReviews: 64,
+  activeProjectsCount: 3,
+  applicationsCount: 8,
+  completedProjectsCount: 52,
+  earnedTotal: "₹48.0 Lakh ($58,000+)",
+  onTimeDeliveryRate: 99,
+  clientSatisfactionRate: 98,
+  codeQualityRate: 97,
+  communicationRate: 96,
+  budgetAdherenceRate: 95,
+  completionRate: 100,
+  scoreHistory: [
+    { month: "May", score: 85 },
+    { month: "Jun", score: 88 },
+    { month: "Jul", score: 90 },
+    { month: "Aug", score: 92 },
+    { month: "Sep", score: 93 },
+    { month: "Oct", score: 94 }
+  ],
+  verifiedSkills: [
+    { id: "figma", name: "Figma & Design Systems", score: 98, percentile: "Top 1% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
+    { id: "react", name: "React & CSS Architecture", score: 93, percentile: "Top 4% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
+    { id: "tailwind", name: "Tailwind CSS & UX Tokens", score: 96, percentile: "Top 2% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
+    { id: "accessibility", name: "WCAG Accessibility (a11y)", score: 94, percentile: "Top 3% Global", status: "verified", verifiedDate: "Oct 2024", retakeDate: "Oct 2025" }
+  ],
+  proofOfWork: [
+    {
+      id: "pow-priya-1",
+      title: "Fintech Design System 2.0",
+      client: "VenturePulse Capital",
+      role: "Lead Design Systems Architect",
+      period: "4 months (Completed Dec 2024)",
+      skills: ["Figma", "React", "Tailwind CSS", "Accessibility"],
+      rating: 5.0,
+      clientQuote: "Priya created a cohesive design system used by 45+ engineers across 6 products with 100% WCAG compliance.",
+      satisfaction: 99,
+      deliveryTime: "Ahead of schedule",
+      liveUrl: "https://apexflow-terminal.nexlance.dev",
+      metrics: [
+        { label: "Component Adoption", value: "98.5%" },
+        { label: "Accessibility Score", value: "100/100" },
+        { label: "Design Token Coverage", value: "100%" }
+      ],
+      description: "Crafted accessible component library, interactive storybook, and token synchronization pipeline between Figma and React."
+    }
+  ]
+};
+
 export const CURRENT_USER = {
   id: "fl-alex-01",
   name: "Alex Rivera",
@@ -888,12 +1018,39 @@ export const CLIENT_DATA = {
 };
 
 export const NEW_FREELANCER = {
-  id: "fl-leo-new",
-  name: "Leo Cruz",
-  role: "Junior Full-Stack Developer",
-  avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=200&auto=format&fit=crop&q=80",
-  careerScore: null,
+  id: "fl-new-user",
+  name: "New Freelancer",
+  role: "Full-Stack Developer",
+  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+  careerScore: 0,
   isNew: true,
+  rating: 0,
+  totalReviews: 0,
+  activeProjectsCount: 0,
+  applicationsCount: 0,
+  completedProjectsCount: 0,
+  earnedTotal: "$0",
+  onTimeDeliveryRate: 0,
+  clientSatisfactionRate: 0,
+  codeQualityRate: 0,
+  communicationRate: 0,
+  budgetAdherenceRate: 0,
+  completionRate: 0,
+  scoreHistory: [
+    { month: "May", score: 0 },
+    { month: "Jun", score: 0 },
+    { month: "Jul", score: 0 },
+    { month: "Aug", score: 0 },
+    { month: "Sep", score: 0 },
+    { month: "Oct", score: 0 }
+  ],
+  verifiedSkills: [
+    { id: "react", name: "React", score: null, percentile: null, status: "unverified", note: "Assessment available" },
+    { id: "javascript", name: "JavaScript (ES6+)", score: null, percentile: null, status: "unverified", note: "Assessment available" },
+    { id: "typescript", name: "TypeScript", score: null, percentile: null, status: "unverified", note: "Assessment available" },
+    { id: "nodejs", name: "Node.js", score: null, percentile: null, status: "unverified", note: "Assessment available" }
+  ],
+  proofOfWork: [],
   steps: [
     { id: 1, title: "Complete Profile & Bio", done: true },
     { id: 2, title: "Add Core Skill Tags", done: true },

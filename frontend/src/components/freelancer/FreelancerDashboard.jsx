@@ -54,15 +54,27 @@ export const FreelancerDashboard = () => {
     }
   ];
 
+  const isNewUser = !freelancerProfile.careerScore || freelancerProfile.careerScore === 0;
+  const careerScore = freelancerProfile.careerScore || 0;
+  const clientSatisfaction = freelancerProfile.clientSatisfactionRate || 0;
+  const onTimeDelivery = freelancerProfile.onTimeDeliveryRate || 0;
+  const codeQuality = freelancerProfile.codeQualityRate || 0;
+  const activeProjects = freelancerProfile.activeProjectsCount || 0;
+  const applications = freelancerProfile.applicationsCount || 0;
+  const completedProjects = freelancerProfile.completedProjectsCount || 0;
+  const verifiedSkills = freelancerProfile.verifiedSkills || [];
+
   return (
     <div className="dashboard-main">
       {/* Header Greeting */}
       <div className="dashboard-header">
         <h1 className="dashboard-title">
-          Good morning, {freelancerProfile.name}. Here is your professional overview.
+          Welcome, {freelancerProfile.name}
         </h1>
         <p className="dashboard-subtitle">
-          Your career data is tracking ahead of industry averages this week.
+          {!isNewUser
+            ? 'Here is your professional overview. Your career data is tracking ahead of industry averages this week.'
+            : 'Welcome to NexLance! Complete skill assessments and take on your first project to build your career score.'}
         </p>
       </div>
 
@@ -75,10 +87,10 @@ export const FreelancerDashboard = () => {
             <TrendingUp size={15} color="#1E40AF" />
           </div>
           <div style={{ margin: '0.25rem 0' }}>
-            <CareerScoreBadge score={freelancerProfile.careerScore} size="md" showLabel={false} />
+            <CareerScoreBadge score={careerScore} size="md" showLabel={false} />
           </div>
-          <div style={{ textAlign: 'center', fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>
-            +3 pts from last month
+          <div style={{ textAlign: 'center', fontSize: '0.75rem', color: !isNewUser ? '#059669' : '#64748B', fontWeight: 600 }}>
+            {!isNewUser ? '+3 pts from last month' : '0 pts · New account'}
           </div>
         </div>
 
@@ -91,17 +103,17 @@ export const FreelancerDashboard = () => {
           <div style={{ padding: '0.5rem 0' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
               <span style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
-                {freelancerProfile.activeProjectsCount}
+                {activeProjects}
               </span>
               <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 500 }}>in progress</span>
             </div>
             {/* Progress bar */}
             <div style={{ width: '100%', height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', marginTop: '0.85rem', overflow: 'hidden' }}>
-              <div style={{ width: '75%', height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px' }}></div>
+              <div style={{ width: activeProjects > 0 ? '75%' : '0%', height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px' }}></div>
             </div>
           </div>
           <div style={{ fontSize: '0.75rem', color: '#64748B' }}>
-            Next delivery in 4 days
+            {activeProjects > 0 ? 'Next delivery in 4 days' : 'No active projects yet'}
           </div>
         </div>
 
@@ -114,13 +126,17 @@ export const FreelancerDashboard = () => {
           <div style={{ padding: '0.5rem 0' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
               <span style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
-                {freelancerProfile.applicationsCount}
+                {applications}
               </span>
               <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 500 }}>pending</span>
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: '#2563EB', fontWeight: 600 }}>
-            <TrendingUp size={13} /> +3 this week
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.75rem', color: applications > 0 ? '#2563EB' : '#64748B', fontWeight: 600 }}>
+            {applications > 0 ? (
+              <><TrendingUp size={13} /> +3 this week</>
+            ) : (
+              'No proposals submitted'
+            )}
           </div>
         </div>
 
@@ -133,17 +149,21 @@ export const FreelancerDashboard = () => {
           <div style={{ padding: '0.5rem 0' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
               <span style={{ fontSize: '2.4rem', fontWeight: 800, color: '#0F172A', lineHeight: 1 }}>
-                {freelancerProfile.completedProjectsCount}
+                {completedProjects}
               </span>
               <span style={{ fontSize: '0.85rem', color: '#64748B', fontWeight: 500 }}>total projects</span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: '0.25rem' }}>
-            {[1, 2, 3].map(i => (
-              <span key={i} style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E40AF' }}>
-                <Star size={11} fill="#1E40AF" />
-              </span>
-            ))}
+            {completedProjects > 0 ? (
+              [1, 2, 3].map(i => (
+                <span key={i} style={{ width: '20px', height: '20px', borderRadius: '50%', backgroundColor: '#EFF6FF', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1E40AF' }}>
+                  <Star size={11} fill="#1E40AF" />
+                </span>
+              ))
+            ) : (
+              <span style={{ fontSize: '0.75rem', color: '#64748B' }}>0 reviews yet</span>
+            )}
           </div>
         </div>
       </div>
@@ -154,13 +174,18 @@ export const FreelancerDashboard = () => {
         <div className="performance-card">
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A' }}>Performance Metrics</h3>
+            {isNewUser && (
+              <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748B', backgroundColor: '#F1F5F9', padding: '0.2rem 0.55rem', borderRadius: '4px' }}>
+                Baseline (New Account)
+              </span>
+            )}
           </div>
           <p style={{ fontSize: '0.8rem', color: '#64748B', marginBottom: '1.5rem' }}>
-            30-day trailing averages vs industry baseline
+            {!isNewUser ? '30-day trailing averages vs industry baseline' : 'Performance metrics initialize once projects and skill assessments are completed.'}
           </p>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.9fr', gap: '2rem', alignItems: 'center' }}>
-            {/* Smooth SVG Trend Line Chart */}
+            {/* SVG Trend Line Chart: Straight baseline for new users, upward curve for old users */}
             <div style={{ position: 'relative', height: '160px', width: '100%' }}>
               <svg viewBox="0 0 300 150" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
                 <defs>
@@ -175,23 +200,44 @@ export const FreelancerDashboard = () => {
                 <line x1="0" y1="75" x2="300" y2="75" stroke="#F1F5F9" strokeWidth="1" />
                 <line x1="0" y1="120" x2="300" y2="120" stroke="#F1F5F9" strokeWidth="1" />
 
-                {/* Shaded Area */}
-                <path
-                  d="M 10 130 Q 80 110, 150 65 T 290 20 L 290 140 L 10 140 Z"
-                  fill="url(#blueGradient)"
-                />
+                {!isNewUser ? (
+                  <>
+                    {/* Shaded Area for experienced user */}
+                    <path
+                      d="M 10 130 Q 80 110, 150 65 T 290 20 L 290 140 L 10 140 Z"
+                      fill="url(#blueGradient)"
+                    />
 
-                {/* Blue Line Curve */}
-                <path
-                  d="M 10 130 Q 80 110, 150 65 T 290 20"
-                  fill="none"
-                  stroke="#1E40AF"
-                  strokeWidth="3.5"
-                  strokeLinecap="round"
-                />
+                    {/* Blue Line Curve */}
+                    <path
+                      d="M 10 130 Q 80 110, 150 65 T 290 20"
+                      fill="none"
+                      stroke="#1E40AF"
+                      strokeWidth="3.5"
+                      strokeLinecap="round"
+                    />
 
-                {/* Glowing Endpoint Circle */}
-                <circle cx="290" cy="20" r="5" fill="#1E40AF" stroke="#FFFFFF" strokeWidth="2.5" />
+                    {/* Glowing Endpoint Circle */}
+                    <circle cx="290" cy="20" r="5" fill="#1E40AF" stroke="#FFFFFF" strokeWidth="2.5" />
+                  </>
+                ) : (
+                  <>
+                    {/* Straight Flat Baseline Line for New User */}
+                    <path
+                      d="M 10 135 L 290 135"
+                      fill="none"
+                      stroke="#2563EB"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                    />
+                    <circle cx="10" cy="135" r="4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
+                    <circle cx="150" cy="135" r="4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
+                    <circle cx="290" cy="135" r="4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
+                    <text x="150" y="123" textAnchor="middle" fill="#64748B" fontSize="10" fontWeight="600">
+                      0% Baseline Trajectory
+                    </text>
+                  </>
+                )}
               </svg>
             </div>
 
@@ -200,30 +246,30 @@ export const FreelancerDashboard = () => {
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.825rem', marginBottom: '0.35rem' }}>
                   <span style={{ color: '#475569', fontWeight: 500 }}>Client Satisfaction</span>
-                  <span style={{ fontWeight: 800, color: '#0F172A' }}>94%</span>
+                  <span style={{ fontWeight: 800, color: '#0F172A' }}>{clientSatisfaction}%</span>
                 </div>
                 <div style={{ height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div style={{ width: '94%', height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px' }}></div>
+                  <div style={{ width: `${clientSatisfaction}%`, height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px', transition: 'width 0.6s ease' }}></div>
                 </div>
               </div>
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.825rem', marginBottom: '0.35rem' }}>
                   <span style={{ color: '#475569', fontWeight: 500 }}>On-Time Delivery</span>
-                  <span style={{ fontWeight: 800, color: '#0F172A' }}>96%</span>
+                  <span style={{ fontWeight: 800, color: '#0F172A' }}>{onTimeDelivery}%</span>
                 </div>
                 <div style={{ height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div style={{ width: '96%', height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px' }}></div>
+                  <div style={{ width: `${onTimeDelivery}%`, height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px', transition: 'width 0.6s ease' }}></div>
                 </div>
               </div>
 
               <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.825rem', marginBottom: '0.35rem' }}>
                   <span style={{ color: '#475569', fontWeight: 500 }}>Code Quality</span>
-                  <span style={{ fontWeight: 800, color: '#0F172A' }}>98%</span>
+                  <span style={{ fontWeight: 800, color: '#0F172A' }}>{codeQuality}%</span>
                 </div>
                 <div style={{ height: '6px', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-                  <div style={{ width: '98%', height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px' }}></div>
+                  <div style={{ width: `${codeQuality}%`, height: '100%', backgroundColor: '#1E40AF', borderRadius: '9999px', transition: 'width 0.6s ease' }}></div>
                 </div>
               </div>
             </div>
@@ -237,25 +283,36 @@ export const FreelancerDashboard = () => {
             <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A' }}>Verified Skills</h3>
           </div>
           <p style={{ fontSize: '0.8rem', color: '#64748B' }}>
-            Passed assessments showing on your profile
+            {verifiedSkills.filter(s => s.status === 'verified').length > 0 
+              ? 'Passed assessments showing on your profile' 
+              : 'No verified skills yet. Pass a test to boost your score.'}
           </p>
 
           <div className="skills-pill-wrap">
-            <button className="skill-pill-btn">
-              <CheckCircle2 size={13} color="#1D4ED8" /> React
-            </button>
-            <button className="skill-pill-btn">
-              <CheckCircle2 size={13} color="#1D4ED8" /> Node.js
-            </button>
-            <button className="skill-pill-btn">
-              <CheckCircle2 size={13} color="#1D4ED8" /> TypeScript
-            </button>
-            <button className="skill-pill-btn">
-              <CheckCircle2 size={13} color="#1D4ED8" /> GraphQL
-            </button>
-            <button className="skill-pill-btn unverified">
-              <Clock size={13} color="#94A3B8" /> AWS
-            </button>
+            {verifiedSkills.length > 0 ? (
+              verifiedSkills.map((skill) => {
+                const isVerified = skill.status === 'verified';
+                return (
+                  <button
+                    key={skill.id || skill.name}
+                    className={`skill-pill-btn ${!isVerified ? 'unverified' : ''}`}
+                    onClick={() => navigateTo('skill-verification')}
+                    title={isVerified ? `Verified: ${skill.score || 90}/100` : 'Click to take assessment'}
+                  >
+                    {isVerified ? (
+                      <CheckCircle2 size={13} color="#1D4ED8" />
+                    ) : (
+                      <Clock size={13} color="#94A3B8" />
+                    )}
+                    {skill.name} {isVerified && skill.score ? `(${skill.score})` : ''}
+                  </button>
+                );
+              })
+            ) : (
+              <div style={{ fontSize: '0.8rem', color: '#64748B', fontStyle: 'italic' }}>
+                No skill tags added yet.
+              </div>
+            )}
           </div>
 
           <button

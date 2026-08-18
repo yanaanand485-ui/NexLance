@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
   CURRENT_USER,
+  SARAH_FREELANCER,
+  PRIYA_FREELANCER,
   FREELANCERS,
   PROJECTS,
   SERVICES,
@@ -14,8 +16,18 @@ import {
 const USERS_STORAGE_KEY = 'nexlance_registered_users';
 const SESSION_STORAGE_KEY = 'nexlance_active_user';
 
-// Default Demo Accounts for testing existing user login
+// Default Demo Accounts for testing existing user login (Old accounts with rich history)
 export const DEFAULT_USERS = [
+  {
+    id: "fl-sarah-01",
+    name: "Sarah Jenkins",
+    email: "sarah@nexlance.dev",
+    password: "Password123",
+    role: "freelancer",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+    profile: SARAH_FREELANCER,
+    createdAt: "2024-01-10T00:00:00.000Z"
+  },
   {
     id: "fl-alex-01",
     name: "Alex Rivera",
@@ -25,6 +37,16 @@ export const DEFAULT_USERS = [
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
     profile: CURRENT_USER,
     createdAt: "2024-01-15T00:00:00.000Z"
+  },
+  {
+    id: "fl-priya-02",
+    name: "Priya Sharma",
+    email: "priya@nexlance.dev",
+    password: "Password123",
+    role: "freelancer",
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
+    profile: PRIYA_FREELANCER,
+    createdAt: "2024-02-05T00:00:00.000Z"
   },
   {
     id: "cl-meridian-01",
@@ -49,6 +71,14 @@ export const getStoredUsers = () => {
     }
     const parsed = JSON.parse(saved);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      // Ensure all DEFAULT_USERS are present (merge by email)
+      const existingEmails = new Set(parsed.map(u => u.email?.toLowerCase()));
+      const missingDefaults = DEFAULT_USERS.filter(d => !existingEmails.has(d.email?.toLowerCase()));
+      if (missingDefaults.length > 0) {
+        const merged = [...parsed, ...missingDefaults];
+        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(merged));
+        return merged;
+      }
       return parsed;
     }
     localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
@@ -118,8 +148,8 @@ export const AppProvider = ({ children }) => {
   const [authMode, setAuthMode] = useState('signup'); // 'signup' (Get Started) | 'login'
   const [authRoleChoice, setAuthRoleChoice] = useState('freelancer'); // 'freelancer' | 'client'
 
-  // User Profile State
-  const [freelancerProfile, setFreelancerProfile] = useState(CURRENT_USER);
+  // User Profile State (Default is clean new user with 0 score)
+  const [freelancerProfile, setFreelancerProfile] = useState(NEW_FREELANCER);
   const [clientProfile, setClientProfile] = useState(CLIENT_DATA);
   const [currentUserAccount, setCurrentUserAccount] = useState(null);
 
@@ -291,13 +321,32 @@ export const AppProvider = ({ children }) => {
         email: cleanEmail,
         role: "Full-Stack Developer",
         avatar: avatarUrl,
-        careerScore: 82,
+        careerScore: 0, // NEW USERS START WITH 0 CAREER SCORE
+        isNew: true,
         earnedTotal: "$0",
+        rating: 0,
+        totalReviews: 0,
         activeProjectsCount: 0,
         completedProjectsCount: 0,
+        applicationsCount: 0,
+        clientSatisfactionRate: 0,
+        onTimeDeliveryRate: 0,
+        codeQualityRate: 0,
+        communicationRate: 0,
+        budgetAdherenceRate: 0,
+        completionRate: 0,
+        scoreHistory: [
+          { month: "May", score: 0 },
+          { month: "Jun", score: 0 },
+          { month: "Jul", score: 0 },
+          { month: "Aug", score: 0 },
+          { month: "Sep", score: 0 },
+          { month: "Oct", score: 0 }
+        ],
         verifiedSkills: [
-          { id: "react", name: "React", score: 88, percentile: "Top 10% Global", status: "verified", verifiedDate: "Just now", retakeDate: "In 1 Year" },
-          { id: "javascript", name: "JavaScript", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Just now", retakeDate: "In 1 Year" },
+          { id: "react", name: "React", score: null, percentile: null, status: "unverified", note: "Assessment available" },
+          { id: "javascript", name: "JavaScript (ES6+)", score: null, percentile: null, status: "unverified", note: "Assessment available" },
+          { id: "typescript", name: "TypeScript", score: null, percentile: null, status: "unverified", note: "Assessment available" },
           { id: "nodejs", name: "Node.js", score: null, percentile: null, status: "unverified", note: "Assessment available" }
         ],
         proofOfWork: []
@@ -365,7 +414,10 @@ export const AppProvider = ({ children }) => {
     }
 
     const users = getStoredUsers();
-    const foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+    let foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+    if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
+      foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah'));
+    }
 
     // If user does not exist in localStorage
     if (!foundUser) {
@@ -458,6 +510,7 @@ export const AppProvider = ({ children }) => {
   const logout = () => {
     saveStoredActiveUser(null);
     setCurrentUserAccount(null);
+    setFreelancerProfile(NEW_FREELANCER);
     setRole('public');
     setCurrentView('landing');
     showToast('Logged out successfully. Returned to public marketplace.', 'info');
@@ -536,7 +589,7 @@ export const AppProvider = ({ children }) => {
   // Complete Assessment
   const completeAssessment = (score, skillName) => {
     // Add or update skill in freelancer profile
-    const updatedSkills = freelancerProfile.verifiedSkills.map(skill => {
+    const updatedSkills = (freelancerProfile.verifiedSkills || []).map(skill => {
       if (skill.name.toLowerCase().includes(skillName.toLowerCase()) || skill.id === skillName.toLowerCase()) {
         return {
           ...skill,
@@ -549,10 +602,19 @@ export const AppProvider = ({ children }) => {
       return skill;
     });
 
+    const currentScore = freelancerProfile.careerScore || 0;
+    const newCareerScore = currentScore === 0 
+      ? Math.round(score * 0.85) 
+      : Math.min(100, Math.max(currentScore, Math.round(currentScore + 2)));
+
     const updatedProfile = {
       ...freelancerProfile,
       verifiedSkills: updatedSkills,
-      careerScore: Math.min(100, Math.max(freelancerProfile.careerScore, Math.round(freelancerProfile.careerScore + 1)))
+      careerScore: newCareerScore,
+      codeQualityRate: Math.max(freelancerProfile.codeQualityRate || 0, Math.round(score * 0.95)),
+      scoreHistory: (freelancerProfile.scoreHistory || []).map((item, idx, arr) => 
+        idx === arr.length - 1 ? { ...item, score: newCareerScore } : item
+      )
     };
 
     setFreelancerProfile(updatedProfile);
@@ -564,7 +626,7 @@ export const AppProvider = ({ children }) => {
       saveStoredActiveUser(active);
     }
 
-    showToast(`Skill Verified! Score: ${score}/100. Added to your verified profile.`, 'success');
+    showToast(`Skill Verified! Score: ${score}/100. Career Score updated to ${newCareerScore}.`, 'success');
   };
 
   return (
