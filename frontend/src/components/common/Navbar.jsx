@@ -284,7 +284,9 @@ export const Navbar = () => {
                         {role === 'freelancer' ? freelancerProfile.name : clientProfile.name}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '2px' }}>
-                        {role === 'freelancer' ? 'Career Score: 91/100' : clientProfile.contactPerson}
+                        {role === 'freelancer'
+                          ? `Career Score: ${freelancerProfile.careerScore || 0}/100`
+                          : clientProfile.contactPerson}
                       </div>
                     </div>
 
@@ -300,11 +302,21 @@ export const Navbar = () => {
                     {/* Switch role option inside dropdown */}
                     <div
                       onClick={() => switchRole(role === 'freelancer' ? 'client' : 'freelancer')}
-                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', color: '#1E40AF', fontWeight: 600, cursor: 'pointer', borderRadius: '6px' }}
+                      style={{
+                        padding: '0.5rem 0.75rem',
+                        fontSize: '0.85rem',
+                        color: '#1E40AF',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between'
+                      }}
                       onMouseEnter={e => e.currentTarget.style.backgroundColor = '#EFF6FF'}
                       onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      ⇄ Switch to {role === 'freelancer' ? 'Client' : 'Freelancer'} View
+                      <span>⇄ Switch to {role === 'freelancer' ? 'Client' : 'Freelancer'} Account</span>
                     </div>
 
                     <div

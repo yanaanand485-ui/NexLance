@@ -207,8 +207,29 @@ export const AppProvider = ({ children }) => {
     }
   }, []);
 
-  // Helper Navigation Functions
+  // Helper Navigation Functions with Role Protection
   const navigateTo = (view, payload = null) => {
+    // Client-only views
+    const clientOnlyViews = ['client-dashboard', 'post-project', 'smart-match', 'comparison'];
+    // Freelancer-only views
+    const freelancerOnlyViews = ['freelancer-dashboard', 'skill-verification', 'career-score', 'proof-of-work', 'opportunities', 'new-freelancer'];
+
+    if (clientOnlyViews.includes(view) && role !== 'client') {
+      showToast('Access restricted. Please sign in with a Client account to access this area.', 'warning');
+      setAuthMode('login');
+      setAuthRoleChoice('client');
+      setIsAuthModalOpen(true);
+      return;
+    }
+
+    if (freelancerOnlyViews.includes(view) && role !== 'freelancer') {
+      showToast('Access restricted. Please sign in with a Freelancer account to access this area.', 'warning');
+      setAuthMode('login');
+      setAuthRoleChoice('freelancer');
+      setIsAuthModalOpen(true);
+      return;
+    }
+
     if (payload) {
       if (view === 'freelancer-profile') setSelectedFreelancer(payload);
       if (view === 'project-detail') setSelectedProject(payload);
@@ -225,8 +246,11 @@ export const AppProvider = ({ children }) => {
       setCurrentView('client-dashboard');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (role === 'freelancer') {
-      setCurrentView('freelancer-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Logged in as freelancer: cannot switch to client without logging in as client
+      showToast('You are logged in as a Freelancer. Please sign in with a Client account to hire talent.', 'warning');
+      setAuthMode('login');
+      setAuthRoleChoice('client');
+      setIsAuthModalOpen(true);
     } else {
       // Unauthenticated visitor -> Open Auth Modal in Get Started (Signup) mode for Client
       setAuthMode('signup');
@@ -243,8 +267,11 @@ export const AppProvider = ({ children }) => {
       setCurrentView('freelancer-dashboard');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (role === 'client') {
-      setCurrentView('client-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Logged in as client: cannot switch to freelancer without logging in as freelancer
+      showToast('You are logged in as a Client. Please sign in with a Freelancer account to find work.', 'warning');
+      setAuthMode('login');
+      setAuthRoleChoice('freelancer');
+      setIsAuthModalOpen(true);
     } else {
       // Unauthenticated visitor -> Open Auth Modal in Get Started (Signup) mode for Freelancer
       setAuthMode('signup');
@@ -298,13 +325,13 @@ export const AppProvider = ({ children }) => {
 
     const users = getStoredUsers();
 
-    // Check if user already exists
-    const existing = users.find(u => u.email.toLowerCase() === cleanEmail);
+    // Check if user already exists for this role
+    const existing = users.find(u => u.email.toLowerCase() === cleanEmail && u.role === userRole);
     if (existing) {
       return {
         success: false,
         reason: 'ALREADY_EXISTS',
-        message: `An account with this email (${cleanEmail}) already exists. Please log in.`
+        message: `A ${userRole === 'client' ? 'Client' : 'Freelancer'} account with this email (${cleanEmail}) already exists. Please log in.`
       };
     }
 
@@ -402,7 +429,7 @@ export const AppProvider = ({ children }) => {
   // ==========================================
   // LOCAL STORAGE AUTH: LOGIN EXISTING USER ("Log In")
   // ==========================================
-  const loginUser = ({ email, password }) => {
+  const loginUser = ({ email, password, role: targetRole }) => {
     const cleanEmail = email ? email.trim().toLowerCase() : '';
 
     if (!cleanEmail || !password) {
@@ -414,13 +441,35 @@ export const AppProvider = ({ children }) => {
     }
 
     const users = getStoredUsers();
-    let foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
-    if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
-      foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah'));
+    
+    // Find user matching email and target role (if specified)
+    let foundUser;
+    if (targetRole) {
+      foundUser = users.find(u => u.email.toLowerCase() === cleanEmail && u.role === targetRole);
+      if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
+        foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah') && u.role === targetRole);
+      }
+    } else {
+      foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
+        foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah'));
+      }
     }
 
     // If user does not exist in localStorage
     if (!foundUser) {
+      // Check if they exist with the OTHER role
+      const otherUser = users.find(u => u.email.toLowerCase() === cleanEmail);
+      if (otherUser && targetRole && otherUser.role !== targetRole) {
+        const otherRoleName = otherUser.role === 'freelancer' ? 'Freelancer' : 'Client';
+        const targetRoleName = targetRole === 'client' ? 'Client' : 'Freelancer';
+        return {
+          success: false,
+          reason: 'NOT_FOUND',
+          message: `No ${targetRoleName} account found for ${cleanEmail} (you currently have a ${otherRoleName} account). Please Get Started (Sign Up) as a ${targetRoleName} first.`
+        };
+      }
+
       return {
         success: false,
         reason: 'NOT_FOUND',
@@ -479,7 +528,7 @@ export const AppProvider = ({ children }) => {
     if (authMode === 'signup') {
       return registerUser({ name, email, password, role: chosenRole, companyName });
     } else {
-      return loginUser({ email, password });
+      return loginUser({ email, password, role: chosenRole });
     }
   };
 
@@ -517,15 +566,59 @@ export const AppProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Switch Role
+  // Switch Role with Authentication Verification & Guided Flow
   const switchRole = (newRole) => {
-    setRole(newRole);
     if (newRole === 'public') {
-      setCurrentView('landing');
-    } else if (newRole === 'freelancer') {
-      setCurrentView('freelancer-dashboard');
-    } else if (newRole === 'client') {
+      logout();
+      return;
+    }
+
+    if (newRole === 'client') {
+      if (!currentUserAccount || currentUserAccount.role !== 'client') {
+        const users = getStoredUsers();
+        const hasExistingClientAccount = currentUserAccount?.email
+          ? users.some(u => u.email.toLowerCase() === currentUserAccount.email.toLowerCase() && u.role === 'client')
+          : false;
+
+        if (hasExistingClientAccount) {
+          showToast('You are in Freelancer mode. Please log in with your Client account.', 'info');
+          setAuthMode('login');
+        } else {
+          showToast('To switch to Client profile, please first Sign Up (Get Started) as a Client, then log in.', 'warning');
+          setAuthMode('signup');
+        }
+        setAuthRoleChoice('client');
+        setIsAuthModalOpen(true);
+        return;
+      }
+      setRole('client');
       setCurrentView('client-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (newRole === 'freelancer') {
+      if (!currentUserAccount || currentUserAccount.role !== 'freelancer') {
+        const users = getStoredUsers();
+        const hasExistingFreelancerAccount = currentUserAccount?.email
+          ? users.some(u => u.email.toLowerCase() === currentUserAccount.email.toLowerCase() && u.role === 'freelancer')
+          : false;
+
+        if (hasExistingFreelancerAccount) {
+          showToast('You are in Client mode. Please log in with your Freelancer account.', 'info');
+          setAuthMode('login');
+        } else {
+          showToast('To switch to Freelancer profile, please first Sign Up (Get Started) as a Freelancer, then log in.', 'warning');
+          setAuthMode('signup');
+        }
+        setAuthRoleChoice('freelancer');
+        setIsAuthModalOpen(true);
+        return;
+      }
+      setRole('freelancer');
+      setCurrentView('freelancer-dashboard');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
     }
   };
 

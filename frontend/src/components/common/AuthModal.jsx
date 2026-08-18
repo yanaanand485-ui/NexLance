@@ -30,7 +30,8 @@ export const AuthModal = () => {
     authRoleChoice,
     setAuthRoleChoice,
     registerUser,
-    loginUser
+    loginUser,
+    currentUserAccount
   } = useApp();
 
   const [email, setEmail] = useState('');
@@ -55,13 +56,17 @@ export const AuthModal = () => {
     setSuccessMessage('');
   }, [isAuthModalOpen, authMode, authRoleChoice]);
 
-  // Reset password field when modal opens
+  // Reset password field and optionally pre-fill name/email when modal opens
   useEffect(() => {
     if (isAuthModalOpen) {
       setPassword('');
       setErrorMessage('');
       setErrorReason('');
       setSuccessMessage('');
+      if (currentUserAccount) {
+        if (!fullName) setFullName(currentUserAccount.name || '');
+        if (!email) setEmail(currentUserAccount.email || '');
+      }
     }
   }, [isAuthModalOpen]);
 
@@ -116,7 +121,8 @@ export const AuthModal = () => {
       // Log In Flow
       const result = loginUser({
         email: email.trim(),
-        password: password
+        password: password,
+        role: authRoleChoice
       });
 
       if (!result.success) {
