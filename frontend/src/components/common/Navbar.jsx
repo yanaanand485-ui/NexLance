@@ -31,7 +31,8 @@ export const Navbar = () => {
     notifications,
     setIsNotificationOpen,
     setIsAuthModalOpen,
-    setAuthMode
+    setAuthMode,
+    setAuthRoleChoice
   } = useApp();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -40,9 +41,11 @@ export const Navbar = () => {
   const unreadCount = notifications.filter(n => n.unread).length;
   const isPublic = role === 'public';
 
-  const handleAuthClick = (mode) => {
+  const handleAuthClick = (mode, chosenRole = 'freelancer') => {
     setAuthMode(mode);
+    setAuthRoleChoice(chosenRole);
     setIsAuthModalOpen(true);
+    setIsMobileMenuOpen(false);
   };
 
   return (
@@ -79,10 +82,7 @@ export const Navbar = () => {
                 Find Work
               </span>
               <span
-                onClick={() => {
-                  setAuthMode('login');
-                  setIsAuthModalOpen(true);
-                }}
+                onClick={() => handleAuthClick('signup', 'freelancer')}
                 className="nav-item"
               >
                 Services
@@ -170,7 +170,7 @@ export const Navbar = () => {
 
         {/* Right Actions */}
         <div className="nav-actions">
-          {/* Unauthenticated: Clean Log In & Sign Up buttons (no role switcher) */}
+          {/* Unauthenticated: Clean Log In & Sign Up ("Get Started") */}
           {isPublic ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
               <button
