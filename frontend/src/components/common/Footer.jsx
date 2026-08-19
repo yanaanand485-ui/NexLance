@@ -1,5 +1,5 @@
 import React from 'react';
-import { Globe, Share2, Shield, Heart } from 'lucide-react';
+import { Shield } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const Footer = () => {
@@ -80,17 +80,11 @@ export const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom copyright & icons */}
+        {/* Bottom copyright */}
         <div style={{ paddingTop: '2rem', borderTop: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <span style={{ fontSize: '0.825rem', color: '#94A3B8' }}>
             © 2026 NexLance Inc. All rights reserved. Prove. Match. Build.
           </span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', color: '#94A3B8' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.8rem', cursor: 'pointer' }}>
-              <Globe size={15} /> English (US)
-            </span>
-            <Share2 size={16} style={{ cursor: 'pointer' }} />
-          </div>
         </div>
       </div>
     </footer>
