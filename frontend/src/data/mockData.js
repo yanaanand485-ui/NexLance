@@ -719,11 +719,13 @@ export const SERVICES = [
 export const ASSESSMENTS = {
   react: {
     id: "react",
+    name: "React",
     title: "React Engineering & Architecture Assessment",
     difficulty: "Advanced",
     questionsCount: 15,
     durationMinutes: 20,
     passingScore: 75,
+    topics: ["Hooks & State Management", "Concurrent Mode & Fiber", "RSC & Next.js", "Performance Optimization", "Error Boundaries & Testing"],
     questions: [
       {
         id: 1,
@@ -909,11 +911,13 @@ export const ASSESSMENTS = {
   },
   nodejs: {
     id: "nodejs",
+    name: "Node.js",
     title: "Node.js & Backend Architecture Assessment",
     difficulty: "Advanced",
-    questionsCount: 15,
-    durationMinutes: 20,
+    questionsCount: 10,
+    durationMinutes: 15,
     passingScore: 75,
+    topics: ["Event Loop & libuv", "Streams & Buffer API", "Clustering & Worker Threads", "Memory & Profiling", "Security & Error Handling"],
     questions: [
       {
         id: 1,
@@ -950,6 +954,354 @@ export const ASSESSMENTS = {
         ],
         correctAnswer: 0,
         explanation: "The cluster module enables easy creation of worker processes that all share server ports, distributing incoming traffic across multiple CPU cores."
+      },
+      {
+        id: 4,
+        question: "What is the purpose of `process.nextTick()` in Node.js?",
+        options: [
+          "Schedules a callback to be invoked in the next second",
+          "Queues a microtask callback to execute immediately after current operation completes before the event loop continues",
+          "Pauses CPU execution for 1 clock cycle",
+          "Forces garbage collection immediately"
+        ],
+        correctAnswer: 1,
+        explanation: "Callbacks passed to process.nextTick() run in the microtask queue right after the current operation finishes, before yielding to the event loop phases."
+      },
+      {
+        id: 5,
+        question: "How do Node.js Worker Threads differ from Child Processes?",
+        options: [
+          "Worker Threads share memory via SharedArrayBuffer while Child Processes run in completely isolated memory spaces",
+          "Worker Threads cannot execute JavaScript code",
+          "Child Processes share the same event loop with the parent process",
+          "There is no difference between Worker Threads and Child Processes"
+        ],
+        correctAnswer: 0,
+        explanation: "Worker Threads run multiple Node.js instances inside the same process and can share memory, whereas Child Processes have isolated address spaces and communicate via IPC."
+      },
+      {
+        id: 6,
+        question: "Which of the following is the best practice for handling unhandled promise rejections in production Node.js?",
+        options: [
+          "Ignore them with empty try/catch",
+          "Listen to `unhandledRejection`, log the error with stack trace, and gracefully terminate/restart the process",
+          "Disable promise rejections globally in package.json",
+          "Restart the entire operating system"
+        ],
+        correctAnswer: 1,
+        explanation: "Unhandled promise rejections leave the application in an unpredictable state; the standard practice is logging diagnostics and performing a graceful exit/restart."
+      },
+      {
+        id: 7,
+        question: "What does backpressure mean in the context of Node.js Streams?",
+        options: [
+          "The CPU cooling fan speed is too high",
+          "A writable stream receiving data faster than it can write, signaling the readable stream to pause",
+          "The database rejecting authentication tokens",
+          "Network latency exceeding 1000ms"
+        ],
+        correctAnswer: 1,
+        explanation: "Backpressure occurs when data builds up because the consumer (writable stream) is slower than the producer (readable stream). Handling it prevents buffer overflow."
+      },
+      {
+        id: 8,
+        question: "Which native library underpins Node.js asynchronous I/O and cross-platform thread pooling?",
+        options: [
+          "libuv",
+          "glibc",
+          "OpenSSL",
+          "v8-engine"
+        ],
+        correctAnswer: 0,
+        explanation: "libuv is the multi-platform support library with a focus on asynchronous I/O, event loop, and thread pool management in Node.js."
+      },
+      {
+        id: 9,
+        question: "What is the recommended method to prevent prototype pollution vulnerabilities in Node.js?",
+        options: [
+          "Use `Object.create(null)` for map dictionaries or validate/sanitize keys against `__proto__` and `constructor`",
+          "Never use objects in JavaScript",
+          "Always use global variables",
+          "Run Node.js without V8 optimization"
+        ],
+        correctAnswer: 0,
+        explanation: "Using null-prototype objects `Object.create(null)` or Map, and sanitizing recursive merge functions against `__proto__` prevents prototype pollution."
+      },
+      {
+        id: 10,
+        question: "In Express.js / Fastify middleware, why must error-handling middleware have exactly 4 arguments `(err, req, res, next)`?",
+        options: [
+          "It is just a cosmetic convention",
+          "Express inspects `fn.length` to identify error-handling middleware functions and route errors correctly",
+          "Four arguments are required by the HTTP 1.1 specification",
+          "Because JavaScript functions must have 4 parameters"
+        ],
+        correctAnswer: 1,
+        explanation: "Express checks function arity (`fn.length === 4`) to recognize and route uncaught errors to error handlers instead of standard route middlewares."
+      }
+    ]
+  },
+  javascript: {
+    id: "javascript",
+    name: "JavaScript (ES6+)",
+    title: "JavaScript Core & Modern ES6+ Assessment",
+    difficulty: "Intermediate",
+    questionsCount: 10,
+    durationMinutes: 15,
+    passingScore: 75,
+    topics: ["Closures & Scope", "Promises & Async/Await", "Event Loop & Microtasks", "Prototypes & Classes", "ESNext Features"],
+    questions: [
+      {
+        id: 1,
+        question: "What is the output order of: `console.log('1'); setTimeout(() => console.log('2'), 0); Promise.resolve().then(() => console.log('3')); console.log('4');`?",
+        options: [
+          "1, 2, 3, 4",
+          "1, 4, 3, 2",
+          "1, 4, 2, 3",
+          "4, 1, 3, 2"
+        ],
+        correctAnswer: 1,
+        explanation: "Synchronous code (1, 4) executes first, followed by microtasks (Promise -> 3), and finally macrotasks (setTimeout -> 2)."
+      },
+      {
+        id: 2,
+        question: "What is a JavaScript closure?",
+        options: [
+          "A method that closes a database connection",
+          "A combination of a function bundled together with references to its surrounding lexical environment",
+          "A private keyword in ES6 classes",
+          "A way to terminate a loop early"
+        ],
+        correctAnswer: 1,
+        explanation: "A closure gives you access to an outer function's scope from an inner function, preserved even after the outer function has executed."
+      },
+      {
+        id: 3,
+        question: "What is the key difference between `WeakMap` and standard `Map`?",
+        options: [
+          "WeakMap keys must be objects, and they do not prevent garbage collection if there are no other references to the key",
+          "WeakMap is slower than standard Map",
+          "WeakMap allows only string keys",
+          "WeakMap does not support `.get()` and `.set()`"
+        ],
+        correctAnswer: 0,
+        explanation: "WeakMap holds weak references to key objects, allowing memory reclamation by garbage collection when keys are no longer referenced elsewhere."
+      },
+      {
+        id: 4,
+        question: "What does `Object.freeze()` do to a JavaScript object?",
+        options: [
+          "Shallowly prevents adding, removing, or modifying properties on the object",
+          "Recursively freezes all nested child objects indefinitely",
+          "Converts the object to JSON format",
+          "Encrypts the object properties in memory"
+        ],
+        correctAnswer: 0,
+        explanation: "Object.freeze() performs a shallow freeze, preventing mutation of top-level properties but leaving nested objects mutable unless they are also frozen."
+      },
+      {
+        id: 5,
+        question: "How does `StructuredClone()` differ from `JSON.parse(JSON.stringify(obj))`?",
+        options: [
+          "`StructuredClone()` natively handles circular references, Dates, RegExp, Maps, and Sets without losing data types",
+          "`StructuredClone()` is only available in Python",
+          "`JSON.stringify` is faster and supports all binary formats",
+          "There is no difference"
+        ],
+        correctAnswer: 0,
+        explanation: "structuredClone() is the standard deep-clone algorithm that properly duplicates complex types like Dates, Maps, Sets, Blobs, and circular references."
+      },
+      {
+        id: 6,
+        question: "What is the return value of `typeof null` in JavaScript?",
+        options: [
+          "'null'",
+          "'undefined'",
+          "'object'",
+          "'boolean'"
+        ],
+        correctAnswer: 2,
+        explanation: "In JavaScript, `typeof null` returns 'object' due to a historical legacy artifact in the original JS type tagging implementation."
+      },
+      {
+        id: 7,
+        question: "What does the Nullish Coalescing Operator (`??`) check for?",
+        options: [
+          "Only `null` or `undefined` (unlike `||` which checks all falsy values like 0 or \"\")",
+          "Any falsy value including `0`, `false`, and `\"\"`",
+          "Only empty strings",
+          "Only NaN values"
+        ],
+        correctAnswer: 0,
+        explanation: "The `??` operator only falls back if the left-hand operand is null or undefined, preserving valid values like 0 or empty strings."
+      },
+      {
+        id: 8,
+        question: "What happens when you invoke an async function in JavaScript?",
+        options: [
+          "It runs in a separate native OS background thread",
+          "It always returns a Promise, resolving with the returned value or rejecting with thrown errors",
+          "It pauses the entire browser until completion",
+          "It executes synchronously without any Promise wrap"
+        ],
+        correctAnswer: 1,
+        explanation: "Async functions always return a Promise. If the function returns a non-promise value, JS automatically wraps it in a resolved Promise."
+      },
+      {
+        id: 9,
+        question: "What is the purpose of JavaScript Generators (`function*`)?",
+        options: [
+          "To generate random numbers on demand",
+          "To define functions that can pause execution using `yield` and resume later, producing iterable sequence values",
+          "To compile JSX templates",
+          "To create cryptographic certificates"
+        ],
+        correctAnswer: 1,
+        explanation: "Generators can exit and later re-enter their context with variable bindings retained across re-entries using the `yield` keyword."
+      },
+      {
+        id: 10,
+        question: "Which method is used to determine if two values are the exact same value (including NaN === NaN and -0 !== +0)?",
+        options: [
+          "`Object.is(val1, val2)`",
+          "`val1 === val2`",
+          "`val1 == val2`",
+          "`Object.compare(val1, val2)`"
+        ],
+        correctAnswer: 0,
+        explanation: "Object.is() evaluates SameValue equality, correctly distinguishing +0 from -0 and considering NaN equal to NaN."
+      }
+    ]
+  },
+  typescript: {
+    id: "typescript",
+    name: "TypeScript",
+    title: "TypeScript Advanced Type Systems Assessment",
+    difficulty: "Advanced",
+    questionsCount: 10,
+    durationMinutes: 15,
+    passingScore: 75,
+    topics: ["Generics & Constraints", "Conditional Types & `infer`", "Mapped & Utility Types", "Discriminated Unions", "Type Narrowing"],
+    questions: [
+      {
+        id: 1,
+        question: "What does the `infer` keyword do in TypeScript conditional types?",
+        options: [
+          "It imports a module dynamically at runtime",
+          "It introduces a type variable within the `extends` clause to deduce/extract an unknown sub-type",
+          "It forces the compiler to ignore type errors",
+          "It converts a type into a JavaScript class"
+        ],
+        correctAnswer: 1,
+        explanation: "`infer` is used in conditional types (e.g., `T extends (...args: any[]) => infer R ? R : any`) to deduce and extract return types or argument types."
+      },
+      {
+        id: 2,
+        question: "What is a Discriminated Union (tagged union) in TypeScript?",
+        options: [
+          "A union of types that all share a common literal discriminant property used by the compiler for exhaustive narrowing",
+          "A type that is deprecated and forbidden in strict mode",
+          "A database union query result",
+          "A union containing both string and number primitives"
+        ],
+        correctAnswer: 0,
+        explanation: "A discriminated union uses a common literal field (like `type: 'success' | 'error'`) enabling TypeScript to automatically narrow down types in switch/if blocks."
+      },
+      {
+        id: 3,
+        question: "What is the difference between `unknown` and `any` in TypeScript?",
+        options: [
+          "`unknown` is type-safe: you must narrow or assert its type before performing operations, whereas `any` disables all type checks",
+          "`any` is strictly typed while `unknown` is not",
+          "`unknown` can only hold strings and numbers",
+          "There is zero difference between them"
+        ],
+        correctAnswer: 0,
+        explanation: "`unknown` is the type-safe counterpart of `any`. Operations on `unknown` require type guards or narrowing before invocation."
+      },
+      {
+        id: 4,
+        question: "What does the utility type `Record<K, T>` produce?",
+        options: [
+          "An audio recording interface",
+          "An object type whose property keys are `K` and whose property values are `T`",
+          "An immutable database table schema",
+          "An array of tuples"
+        ],
+        correctAnswer: 1,
+        explanation: "Record<K, T> constructs an object type with keys of type K and values of type T."
+      },
+      {
+        id: 5,
+        question: "What does the `satisfies` operator introduced in TypeScript 4.9 do?",
+        options: [
+          "Validates that an expression matches a type WITHOUT widening or changing the inferred type of the variable",
+          "Forces type casting even if types are incompatible",
+          "Runs runtime validations using Zod",
+          "Compiles types into JSON Schema"
+        ],
+        correctAnswer: 0,
+        explanation: "`satisfies` checks that a value matches a contract without losing the specific inferred literal types of that value."
+      },
+      {
+        id: 6,
+        question: "How do you create a type that makes all properties of `T` optional and nullable?",
+        options: [
+          "`type NullablePartial<T> = { [P in keyof T]?: T[P] | null };`",
+          "`type NullablePartial<T> = Optional<T> & null;`",
+          "`type NullablePartial<T> = delete T;`",
+          "`type NullablePartial<T> = any;`"
+        ],
+        correctAnswer: 0,
+        explanation: "Mapped types allow transforming existing properties with modifiers `?` and type unions `| null`."
+      },
+      {
+        id: 7,
+        question: "What is the purpose of the `never` type in TypeScript?",
+        options: [
+          "Represents the type of values that never occur, such as a function that always throws an error or infinite loop",
+          "Represents a variable that is null",
+          "Represents an asynchronous operation",
+          "Represents an optional function parameter"
+        ],
+        correctAnswer: 0,
+        explanation: "`never` is the bottom type in TypeScript, representing values that cannot exist. It is widely used for exhaustive switch check verification."
+      },
+      {
+        id: 8,
+        question: "What is the difference between `interface` and `type` in TypeScript?",
+        options: [
+          "Interfaces support declaration merging and extends syntax, while type aliases can represent unions, primitives, and tuples",
+          "Types only work in JavaScript files",
+          "Interfaces are compiled into runtime JavaScript objects",
+          "There is no difference between them"
+        ],
+        correctAnswer: 0,
+        explanation: "Interfaces can be extended and merged across declarations, whereas type aliases are more flexible for unions, mapped types, and complex computations."
+      },
+      {
+        id: 9,
+        question: "What does the `readonly` modifier do when applied to array types e.g. `ReadonlyArray<T>`?",
+        options: [
+          "Prevents mutating methods like `.push()`, `.pop()`, `.splice()`, or index assignment from being called",
+          "Deletes the array from memory after one read",
+          "Freezes array elements using OS file permissions",
+          "Converts the array into a Set"
+        ],
+        correctAnswer: 0,
+        explanation: "ReadonlyArray<T> removes mutating methods and index assignments, ensuring references cannot modify the array contents."
+      },
+      {
+        id: 10,
+        question: "What does the `keyof` operator return when applied to an object type?",
+        options: [
+          "A union of string, number, or symbol literal types representing the object's keys",
+          "An array of string values at runtime",
+          "The number of properties in the object",
+          "The prototype of the object"
+        ],
+        correctAnswer: 0,
+        explanation: "keyof T produces a union type of all known public property keys of type T."
       }
     ]
   }

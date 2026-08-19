@@ -1671,6 +1671,119 @@
   align-items: center;
 }
 
+/* Assessment Launcher / Hub Styles */
+.assessment-launcher-card {
+  background-color: #ffffff;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  transition: all var(--transition-normal);
+}
+
+.assessment-launcher-card:hover {
+  border-color: var(--primary-300);
+}
+
+.assessment-specs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  background-color: var(--slate-50);
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+}
+
+.assessment-spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.assessment-spec-label {
+  font-size: 0.675rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.assessment-spec-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.assessment-topics-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.assessment-topic-pill {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #dbeafe;
+  padding: 0.2rem 0.6rem;
+  border-radius: 9999px;
+}
+
+.assessment-guidelines-box {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 1rem 1.15rem;
+}
+
+.assessment-guideline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  font-size: 0.825rem;
+  color: var(--slate-700);
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.assessment-guideline-item:last-child {
+  margin-bottom: 0;
+}
+
+.assessment-guideline-icon {
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+  color: var(--primary-600);
+}
+
+.skill-select-pill {
+  padding: 0.4rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  border: 1.5px solid var(--slate-200);
+  background-color: #ffffff;
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.skill-select-pill.active {
+  border-color: var(--primary-600);
+  background-color: var(--primary-50);
+  color: var(--primary-800);
+}
+
+.skill-portfolio-item.active-preview {
+  border-color: var(--primary-400);
+  background-color: #f8faff;
+}
+
 /* ---------------------------------------------------------
    Comparison Matrix & Modals
    --------------------------------------------------------- */
