@@ -8,6 +8,8 @@ import {
   SERVICES,
   ASSESSMENTS,
   NOTIFICATIONS,
+  FREELANCER_NOTIFICATIONS,
+  CLIENT_NOTIFICATIONS,
   CLIENT_DATA,
   NEW_FREELANCER
 } from '../data/mockData';
@@ -139,9 +141,34 @@ export const AppProvider = ({ children }) => {
   const [appliedProjectIds, setAppliedProjectIds] = useState([]);
   const [activeProjectsList, setActiveProjectsList] = useState(PROJECTS);
 
-  // Notifications State
-  const [notifications, setNotifications] = useState(NOTIFICATIONS);
+  // Notifications State (Personalized for Freelancer vs Client)
+  const [freelancerNotifications, setFreelancerNotifications] = useState(FREELANCER_NOTIFICATIONS);
+  const [clientNotifications, setClientNotifications] = useState(CLIENT_NOTIFICATIONS);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
+
+  const notifications = role === 'client' ? clientNotifications : freelancerNotifications;
+
+  const setNotifications = (updater) => {
+    if (role === 'client') {
+      setClientNotifications(typeof updater === 'function' ? updater : () => updater);
+    } else {
+      setFreelancerNotifications(typeof updater === 'function' ? updater : () => updater);
+    }
+  };
+
+  const addNotification = (notif, targetRole = role) => {
+    const newNotif = {
+      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      time: 'Just now',
+      unread: true,
+      ...notif
+    };
+    if (targetRole === 'client') {
+      setClientNotifications(prev => [newNotif, ...prev]);
+    } else {
+      setFreelancerNotifications(prev => [newNotif, ...prev]);
+    }
+  };
 
   // Auth Modal State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -640,8 +667,8 @@ export const AppProvider = ({ children }) => {
       setComparisonList(prev => prev.filter(item => item.id !== freelancer.id));
       showToast(`${freelancer.name} removed from comparison matrix`, 'info');
     } else {
-      if (comparisonList.length >= 4) {
-        showToast('You can compare a maximum of 4 candidates at once', 'warning');
+      if (comparisonList.length >= 3) {
+        showToast('You can compare a maximum of 3 candidates at once. Deselect one to add another.', 'warning');
         return;
       }
       setComparisonList(prev => [...prev, freelancer]);
@@ -652,6 +679,12 @@ export const AppProvider = ({ children }) => {
   // Apply to Project
   const submitProposal = (projectId, proposalData) => {
     setAppliedProjectIds(prev => [...prev, projectId]);
+    addNotification({
+      category: 'Proposals & Offers',
+      title: 'Proposal Submitted Successfully',
+      description: 'Your verified proposal and match score benchmark have been delivered to the client.',
+      action: 'view-projects'
+    }, 'freelancer');
     showToast('Proposal submitted successfully! Client has been notified.', 'success');
   };
 
@@ -675,6 +708,12 @@ export const AppProvider = ({ children }) => {
       ...projectData
     };
     setActiveProjectsList(prev => [newProj, ...prev]);
+    addNotification({
+      category: 'Smart Match',
+      title: `Smart Match started for "${projectData.title || 'New Project'}"`,
+      description: 'AI Smart Match engine is shortlisting top verified candidates based on required skills.',
+      action: 'view-smart-match'
+    }, 'client');
     showToast('Project posted successfully! Smart Match engine is finding candidates.', 'success');
     navigateTo('smart-match');
   };
@@ -719,6 +758,13 @@ export const AppProvider = ({ children }) => {
       saveStoredActiveUser(active);
     }
 
+    addNotification({
+      category: 'Skill Verification',
+      title: `Skill Verified: ${skillName} (${score}/100) 🎉`,
+      description: `Official skill badge live on your profile. Career Score upgraded to ${newCareerScore}/100.`,
+      action: 'view-skills'
+    }, 'freelancer');
+
     showToast(`Skill Verified! Score: ${score}/100. Career Score updated to ${newCareerScore}.`, 'success');
   };
 
@@ -750,6 +796,7 @@ export const AppProvider = ({ children }) => {
         selectedService,
         setSelectedService,
         comparisonList,
+        setComparisonList,
         toggleComparison,
         shortlistedFreelancers,
         toggleShortlist,
@@ -759,6 +806,7 @@ export const AppProvider = ({ children }) => {
         addNewProject,
         notifications,
         setNotifications,
+        addNotification,
         isNotificationOpen,
         setIsNotificationOpen,
         isAuthModalOpen,

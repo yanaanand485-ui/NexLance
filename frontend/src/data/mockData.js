@@ -1307,54 +1307,122 @@ export const ASSESSMENTS = {
   }
 };
 
-export const NOTIFICATIONS = [
+export const FREELANCER_NOTIFICATIONS = [
   {
-    id: "notif-1",
+    id: "notif-fl-1",
+    category: "Skill Verification",
+    title: "Skill Verification Recommended: Node.js",
+    description: "Passing the Node.js Assessment will qualify your profile for 14 new enterprise backend contracts.",
+    time: "10 min ago",
+    unread: true,
+    action: "view-skills"
+  },
+  {
+    id: "notif-fl-2",
+    category: "Career Score Updates",
+    title: "Career Score Increased to 91/100 🎉",
+    description: "Your verified React assessment (91/100) and 96% on-time delivery lifted your global rank to Top 5%.",
+    time: "1 hour ago",
+    unread: true,
+    action: "view-career-score"
+  },
+  {
+    id: "notif-fl-3",
     category: "Project Matches",
-    title: "New 96% Match: React E-Commerce Platform",
-    description: "Meridian Commerce posted a new enterprise project matching your verified React & TypeScript skills.",
-    time: "15 min ago",
+    title: "New 98% Smart Match: React E-Commerce Platform",
+    description: "Meridian Commerce Inc. posted a high-value project matching your verified React & TypeScript skills.",
+    time: "3 hours ago",
     unread: true,
     action: "view-project",
     targetId: "proj-101"
   },
   {
-    id: "notif-2",
-    category: "Career Score Updates",
-    title: "Career Score Increased to 91/100 🎉",
-    description: "Your timely delivery milestone on OmniCart lifted your reliability score by +2 points.",
-    time: "2 hours ago",
-    unread: true,
-    action: "view-career-score"
-  },
-  {
-    id: "notif-3",
+    id: "notif-fl-4",
     category: "Shortlists",
-    title: "You were shortlisted by NexGen Logistics AI",
-    description: "The client added your profile to their Top 3 candidate comparison for 'Internal Dashboard Migration'.",
+    title: "Shortlisted for 'Internal Dashboard Migration'",
+    description: "VenturePulse Capital added your profile to their Top 3 Candidate Comparison matrix.",
     time: "5 hours ago",
     unread: false,
     action: "view-applications"
   },
   {
-    id: "notif-4",
+    id: "notif-fl-5",
     category: "Assessment Results",
     title: "Verified Skill: React 91/100 (Top 5% Global)",
-    description: "Your official verification badge is now live on your public profile and Smart Match card.",
+    description: "Your official cryptographic skill badge is live on your public profile and Smart Match cards.",
     time: "1 day ago",
     unread: false,
     action: "view-skills"
   },
   {
-    id: "notif-5",
-    category: "Proposal Updates",
-    title: "Proposal Accepted for ApexFlow Terminal",
-    description: "VenturePulse Capital funded Milestone 2 ($1,800) into platform escrow.",
+    id: "notif-fl-6",
+    category: "Milestones & Escrow",
+    title: "Milestone Escrow Funded: $1,800 for OmniCart",
+    description: "Meridian Retail Global deposited funds into platform smart escrow. Work is verified safe to start.",
     time: "2 days ago",
     unread: false,
-    action: "view-projects"
+    action: "view-proof-of-work"
   }
 ];
+
+export const CLIENT_NOTIFICATIONS = [
+  {
+    id: "notif-cl-1",
+    category: "Smart Match",
+    title: "3 Top Smart Matches found for 'React E-Commerce Platform'",
+    description: "Alex Rivera (98% match, 91 Career Score) and Priya Sharma (96% match, 94 Career Score) meet 100% of your verified skill criteria.",
+    time: "15 min ago",
+    unread: true,
+    action: "view-smart-match"
+  },
+  {
+    id: "notif-cl-2",
+    category: "Candidate Comparison",
+    title: "Candidate Comparison Matrix is Ready",
+    description: "Compare your 3 shortlisted engineers on Career Scores, verified skills, and on-time delivery benchmarks.",
+    time: "45 min ago",
+    unread: true,
+    action: "view-comparison"
+  },
+  {
+    id: "notif-cl-3",
+    category: "Proposals Received",
+    title: "New Verified Proposal from Alex Rivera",
+    description: "Alex Rivera submitted a detailed 3-phase technical proposal with milestone breakdown for your review.",
+    time: "2 hours ago",
+    unread: true,
+    action: "view-applications"
+  },
+  {
+    id: "notif-cl-4",
+    category: "Milestone Approvals",
+    title: "Milestone 1 Submitted for Review on 'ApexFlow Terminal'",
+    description: "Engineer completed 'Core Architecture & API Shell' and submitted delivery artifacts for your approval.",
+    time: "1 day ago",
+    unread: false,
+    action: "view-active-contracts"
+  },
+  {
+    id: "notif-cl-5",
+    category: "Candidate Availability",
+    title: "Shortlisted Talent Update: Priya Sharma is Available",
+    description: "Priya Sharma updated availability for immediate sprint start (25 hrs/week).",
+    time: "2 days ago",
+    unread: false,
+    action: "view-talent"
+  },
+  {
+    id: "notif-cl-6",
+    category: "Escrow & Contracts",
+    title: "Milestone Escrow Secured ($2,200)",
+    description: "Escrow funds for Sprint #1 are locked in platform smart contracts pending verified milestone approval.",
+    time: "3 days ago",
+    unread: false,
+    action: "view-active-contracts"
+  }
+];
+
+export const NOTIFICATIONS = FREELANCER_NOTIFICATIONS;
 
 export const CLIENT_DATA = {
   id: "cl-meridian-01",
