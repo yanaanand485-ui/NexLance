@@ -606,113 +606,1090 @@ export const PROJECTS = [
 ];
 
 export const SERVICES = [
+  // ==========================================
+  // 1. AI, MACHINE LEARNING & GENERATIVE AI
+  // ==========================================
   {
-    id: "srv-201",
-    title: "Production React & Next.js 14 Full-Stack MVP in 14 Days",
-    freelancer: FREELANCERS[0],
+    id: "srv-ai-01",
+    title: "Production RAG Pipeline & Multi-Modal AI Agent Architecture",
+    tagline: "High-accuracy vector retrieval, semantic caching, and autonomous LangChain/LlamaIndex agents.",
+    freelancer: FREELANCERS[3], // Elena Rostova
+    rating: 4.96,
+    reviewsCount: 32,
+    startingPrice: "₹32,000 ($390)",
+    rawStartingPrice: 390,
+    deliveryDays: 7,
+    category: "AI & Machine Learning",
+    thumbnail: "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["LangChain / RAG", "Python", "Vector DBs", "OpenAI"],
+    techStack: ["LangChain", "LlamaIndex", "Pinecone / Qdrant", "OpenAI / Claude 3.5", "FastAPI", "Docker"],
+    highlights: [
+      "Hybrid Semantic + Keyword BM25 search with sub-150ms response",
+      "Zero hallucinations via citation verification & guardrails",
+      "Production-ready streaming API with token optimization",
+      "Full observability with LangSmith / Traceloop integration"
+    ],
+    packages: {
+      basic: {
+        name: "MVP RAG Pipeline",
+        price: "₹32,000 ($390)",
+        delivery: "4 Days",
+        revisions: 2,
+        features: [
+          "Document ingestion parser (PDF, Docx, CSV)",
+          "Vector indexing with Pinecone or Qdrant",
+          "OpenAI / Claude API streaming integration",
+          "FastAPI backend with auth & query endpoint",
+          "Basic prompt guardrails & citation links"
+        ]
+      },
+      standard: {
+        name: "Enterprise Multi-Agent RAG",
+        price: "₹68,000 ($820)",
+        delivery: "8 Days",
+        revisions: 4,
+        features: [
+          "Everything in MVP RAG",
+          "Hybrid search (Dense vectors + BM25 sparse reranking)",
+          "Multi-query generation & contextual chunking",
+          "Redis semantic cache (reduces API cost by 60%)",
+          "LangSmith telemetry & tracing setup",
+          "React chat widget with markdown/code formatting"
+        ]
+      },
+      premium: {
+        name: "Full Autonomous AI Agent Suite",
+        price: "₹1,25,000 ($1,500)",
+        delivery: "14 Days",
+        revisions: "Unlimited",
+        features: [
+          "Everything in Enterprise Multi-Agent",
+          "Autonomous tool-calling agents with DB query execution",
+          "Self-correction loop with synthetic evaluation test suite",
+          "Role-based multi-tenant vector partitioning",
+          "On-prem / VPC deployment with Ollama / vLLM fallback",
+          "45 Days post-delivery maintenance & SLA support"
+        ]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Data Audit & Chunking Strategy", desc: "Analyzing proprietary data formats, chunk overlap, and embedding dimensionality." },
+      { step: "02", title: "Vector Store & Indexing", desc: "Setting up serverless vector DBs with metadata filters and hybrid retrieval." },
+      { step: "03", title: "Agentic Logic & Guardrails", desc: "Implementing LangChain orchestrations, rerankers, and NeMo guardrails." },
+      { step: "04", title: "Evaluation & Benchmarking", desc: "Running RAGAS evaluation metrics to verify answer relevance and context recall." },
+      { step: "05", title: "Deployment & CI/CD", desc: "Containerizing backend with Docker, rate-limiting, and streaming WebSocket/SSE." }
+    ],
+    faqs: [
+      { q: "Can we use our own self-hosted or local open-source LLMs?", a: "Yes! The architecture is model-agnostic and fully supports vLLM, Ollama, DeepSeek, Llama 3.3, Mistral, as well as OpenAI and Anthropic." },
+      { q: "How do you prevent data leaks or privacy issues?", a: "All data stays within your dedicated VPC or private vector collection. We never train external models on your proprietary records." },
+      { q: "What is the typical token cost reduction?", a: "Through intelligent semantic caching and contextual compression reranking, client API costs typically drop by 45% to 70%." }
+    ],
+    verifiedReviews: [
+      { author: "Marcus Thorne", role: "CTO, LegalSaaS Inc.", rating: 5.0, date: "3 weeks ago", comment: "Elena built an outstanding legal RAG system for us with 99.2% citation accuracy. Super clean Python code and zero hallucinations." },
+      { author: "Kavita Rao", role: "Founder, MedQuery", rating: 4.9, date: "1 month ago", comment: "Incredible AI engineer. The streaming chat interface and hybrid search handle thousands of clinical PDFs with zero lag." }
+    ]
+  },
+  {
+    id: "srv-ai-02",
+    title: "Custom LLM Fine-Tuning & Function-Calling Automation Workflows",
+    tagline: "Domain-adapted open source LLMs (Llama 3, Mistral) & complex multi-step automated agent pipelines.",
+    freelancer: FREELANCERS[3], // Elena Rostova
+    rating: 4.93,
+    reviewsCount: 24,
+    startingPrice: "₹40,000 ($480)",
+    rawStartingPrice: 480,
+    deliveryDays: 10,
+    category: "AI & Machine Learning",
+    thumbnail: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Python", "PyTorch & ML", "LangChain / RAG"],
+    techStack: ["PyTorch", "HuggingFace", "Unsloth / LoRA", "OpenAI Tool Calling", "FastAPI", "Celery"],
+    highlights: [
+      "Parameter-Efficient Fine-Tuning (QLoRA) saving 80% VRAM",
+      "Deterministic JSON Schema validation on model outputs",
+      "Automated function calling for CRM, SQL & REST integrations",
+      "Comprehensive benchmark report against base model"
+    ],
+    packages: {
+      basic: {
+        name: "Structured Output & Function Tooling",
+        price: "₹40,000 ($480)",
+        delivery: "5 Days",
+        revisions: 2,
+        features: ["Structured JSON schema output validation", "OpenAI / Anthropic tool calling workflows", "3 External API tool integrations (e.g. CRM/Stripe)", "Error recovery & retry loops", "FastAPI wrapper"]
+      },
+      standard: {
+        name: "Domain LoRA Fine-Tuning",
+        price: "₹85,000 ($1,020)",
+        delivery: "10 Days",
+        revisions: 4,
+        features: ["Everything in Basic", "Dataset cleaning, deduplication & formatting (5,000+ pairs)", "LoRA / QLoRA fine-tuning on Llama 3.3 or Mistral", "Quantization to 4-bit / 8-bit GGUF & AWQ", "HuggingFace & vLLM deployment specs"]
+      },
+      premium: {
+        name: "Full Autonomous Enterprise Pipeline",
+        price: "₹1,50,000 ($1,800)",
+        delivery: "16 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Standard", "Multi-turn RLHF / DPO alignment tuning", "Continuous fine-tuning automated worker pipeline", "Self-hosted vLLM GPU inference cluster setup", "Comprehensive safety filters & adversarial testing", "60 Days support"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Dataset Engineering", desc: "Synthesizing and cleaning domain conversational data pairs." },
+      { step: "02", title: "LoRA Training Loop", desc: "Fine-tuning weights with Unsloth / Hugging Face for optimal perplexity." },
+      { step: "03", title: "Tool Calling Harness", desc: "Building strict JSON schema contracts and function executors." },
+      { step: "04", title: "Evaluation & Benchmarking", desc: "Testing model accuracy against domain test sets." }
+    ],
+    faqs: [
+      { q: "Do I need expensive GPU infrastructure?", a: "We can perform training on cloud GPUs (RunPod/AWS/Modal) and export efficient 4-bit quantized models that run on affordable single-GPU instances." },
+      { q: "How many training examples are needed?", a: "With LoRA, as few as 500-2,000 high-quality formatted examples produce dramatic improvements in style, tone, and strict output formatting." }
+    ],
+    verifiedReviews: [
+      { author: "Liam Vance", role: "VP Product, AutoFlow", rating: 5.0, date: "2 weeks ago", comment: "Elena fine-tuned Llama 3 for our specialized healthcare taxonomy. 99% JSON validity and our inference cost dropped by $4,000/month." }
+    ]
+  },
+  {
+    id: "srv-ai-03",
+    title: "Conversational AI Voice Agent & Real-Time Call Assistant",
+    tagline: "Sub-500ms voice bot with Whisper speech-to-text, streaming LLM logic, and ultra-realistic ElevenLabs TTS.",
+    freelancer: FREELANCERS[3], // Elena Rostova
     rating: 4.95,
-    reviewsCount: 28,
+    reviewsCount: 18,
+    startingPrice: "₹38,000 ($460)",
+    rawStartingPrice: 460,
+    deliveryDays: 8,
+    category: "AI & Machine Learning",
+    thumbnail: "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Python", "FastAPI", "LangChain / RAG"],
+    techStack: ["LiveKit / WebRTC", "Whisper STT", "ElevenLabs / Deepgram", "OpenAI Realtime API", "Twilio / SIP", "Node.js"],
+    highlights: [
+      "Sub-500ms latency voice response loop",
+      "Natural interruption handling (barge-in detection)",
+      "Twilio / SIP phone telephony or WebRTC browser mic support",
+      "Automatic call transcript generation & CRM webhook delivery"
+    ],
+    packages: {
+      basic: {
+        name: "WebRTC Browser Voice Bot",
+        price: "₹38,000 ($460)",
+        delivery: "5 Days",
+        revisions: 2,
+        features: ["LiveKit / WebRTC audio streaming", "Deepgram STT + ElevenLabs TTS voice", "Real-time OpenAI LLM response", "Audio visualization widget for React/Next.js", "Transcript export"]
+      },
+      standard: {
+        name: "Full Telephony & Twilio Integration",
+        price: "₹78,000 ($940)",
+        delivery: "9 Days",
+        revisions: 4,
+        features: ["Everything in Basic", "Twilio / SIP phone number inbound & outbound dialing", "Human handover fallback trigger", "Barge-in conversational interruption handling", "Post-call summary sent to HubSpot / Salesforce / Webhook"]
+      },
+      premium: {
+        name: "Enterprise Multi-Lingual Voice Support Suite",
+        price: "₹1,40,000 ($1,680)",
+        delivery: "15 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Standard", "Multi-lingual auto-detection (12+ languages)", "Custom ElevenLabs cloned brand voice", "Knowledge-base RAG lookup during live calls", "Call recording, sentiment analytics & PCI compliant masking", "30 Days live monitoring"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Voice Pipeline Architecture", desc: "Setting up WebRTC audio streaming server and low-latency audio codecs." },
+      { step: "02", title: "STT & TTS Optimization", desc: "Configuring Deepgram streaming transcribers and ElevenLabs voice generation." },
+      { step: "03", title: "Conversation State & Tool Calling", desc: "Programming conversational intents, booking tools, and interruption handlers." },
+      { step: "04", title: "Telephony Integration & Testing", desc: "Connecting Twilio SIP trunks and conducting real-world latency load tests." }
+    ],
+    faqs: [
+      { q: "Can callers interrupt the bot while it is speaking?", a: "Yes! We implement real-time voice activity detection (VAD) that cuts audio playback immediately when the user begins speaking." },
+      { q: "Can this book appointments directly on Google Calendar / Cal.com?", a: "Absolutely. The voice agent can execute function calls to check availability and create calendar events during the conversation." }
+    ],
+    verifiedReviews: [
+      { author: "Samantha Wright", role: "Operations Lead, QuickDental", rating: 5.0, date: "1 month ago", comment: "Our inbound dental appointment booking is now 80% handled by this voice agent. Incredible low latency and human-like inflection." }
+    ]
+  },
+
+  // ==========================================
+  // 2. FULL-STACK WEB DEVELOPMENT
+  // ==========================================
+  {
+    id: "srv-web-01",
+    title: "Production React 19 & Next.js 15 Full-Stack SaaS MVP in 14 Days",
+    tagline: "End-to-end full stack application with Supabase/PostgreSQL, Stripe billing, Tailwind CSS & clean TypeScript.",
+    freelancer: FREELANCERS[0], // Alex Rivera
+    rating: 4.95,
+    reviewsCount: 38,
     startingPrice: "₹25,000 ($320)",
     rawStartingPrice: 320,
     deliveryDays: 14,
     category: "Full-Stack Web Development",
     thumbnail: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&auto=format&fit=crop&q=80",
-    verifiedSkills: ["React", "TypeScript", "Node.js"],
+    gallery: [
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["React", "TypeScript", "Node.js", "Next.js"],
+    techStack: ["Next.js 15", "React 19", "TypeScript", "Tailwind CSS", "Supabase / PostgreSQL", "Stripe", "Prisma / Drizzle"],
+    highlights: [
+      "100% Type-safe server actions & Drizzle ORM queries",
+      "Sub-100ms Server-Side Rendering & 99+ Lighthouse performance",
+      "Complete multi-tier Stripe subscription & webhook lifecycle",
+      "Role-based RBAC authentication with email magic links & OAuth"
+    ],
     packages: {
       basic: {
         name: "Basic MVP Landing & Auth",
-        price: "₹15,000 ($200)",
+        price: "₹25,000 ($320)",
         delivery: "5 Days",
         revisions: 2,
-        features: ["Landing page + 2 subpages", "Supabase / Clerk Auth", "Tailwind CSS responsive design", "Clean TypeScript setup", "Vercel deployment"]
+        features: [
+          "High-converting landing page + 2 core subpages",
+          "Supabase / Clerk Authentication (Google, GitHub, Email)",
+          "Tailwind CSS responsive dark/light UI",
+          "Clean TypeScript architecture with ESLint & Prettier",
+          "Vercel automated deployment pipeline"
+        ]
       },
       standard: {
         name: "Standard Full-Stack SaaS",
-        price: "₹35,000 ($450)",
+        price: "₹55,000 ($680)",
         delivery: "10 Days",
         revisions: 4,
-        features: ["Everything in Basic", "CRUD dashboard + Database schema", "Stripe payment subscription", "Email notifications (Resend)", "Admin portal"]
+        features: [
+          "Everything in Basic MVP",
+          "Interactive dashboard with CRUD data tables & filters",
+          "PostgreSQL database schema with Drizzle/Prisma ORM",
+          "Stripe Subscription checkout & billing customer portal",
+          "Transactional email system (Resend / React Email)",
+          "Admin management console"
+        ]
       },
       premium: {
         name: "Enterprise Production Suite",
-        price: "₹65,000 ($850)",
+        price: "₹95,000 ($1,180)",
         delivery: "14 Days",
         revisions: "Unlimited",
-        features: ["Everything in Standard", "Role-based ACL permissions", "High-speed search & filters", "Automated CI/CD + Unit tests", "30 days post-launch support"]
+        features: [
+          "Everything in Standard Full-Stack",
+          "Team organization workspaces & multi-seat billing",
+          "Role-based ACL permissions & audit logging",
+          "High-speed full-text search with Meilisearch / Algolia",
+          "Automated Playwright E2E & Vitest unit testing suites",
+          "30 Days post-launch warranty & priority bugfixes"
+        ]
       }
-    }
+    },
+    processSteps: [
+      { step: "01", title: "Architecture Blueprint", desc: "Entity-relationship diagrams, API routes map, and design tokens alignment." },
+      { step: "02", title: "Database & Auth Shell", desc: "Setting up Supabase PostgreSQL schemas, RLS security policies, and authentication." },
+      { step: "03", title: "Core Feature Sprints", desc: "Developing interactive React components, optimistic updates, and server actions." },
+      { step: "04", title: "Payment & Webhook Plumbing", desc: "Hooking up Stripe customer portals, subscription tiers, and webhook listeners." },
+      { step: "05", title: "Audit & Production Cutover", desc: "Running Lighthouse audits, SEO meta validation, and Vercel domain provisioning." }
+    ],
+    faqs: [
+      { q: "Will the codebase be fully documented and type-safe?", a: "Yes! 100% strict TypeScript typing with zero 'any' escapes, clean modular folder structure, and a comprehensive README with local setup instructions." },
+      { q: "Do I get full intellectual property rights?", a: "Yes. All code, repository access, and database credentials belong 100% to you with an MIT/Commercial license upon project completion." },
+      { q: "Can you assist with connecting our custom domain and email?", a: "Yes, full DNS configuration on Cloudflare/Vercel and transactional email domain verification (DKIM/SPF) is included in all packages." }
+    ],
+    verifiedReviews: [
+      { author: "Arthur Pendelton", role: "CEO, PulseMetrics", rating: 5.0, date: "1 week ago", comment: "Alex built our entire B2B SaaS MVP in 12 days flat. Cleanest Next.js codebase I have seen. Stripe billing worked on the first try." },
+      { author: "Nadia Belov", role: "Product Manager, CloudNest", rating: 4.9, date: "3 weeks ago", comment: "Outstanding speed and technical rigor. Lighthouse scores are 98 across the board. Highly recommended!" }
+    ]
   },
   {
-    id: "srv-202",
-    title: "Complete SaaS Design System & Interactive Figma Prototype",
-    freelancer: FREELANCERS[1],
+    id: "srv-web-02",
+    title: "High-Performance Headless E-Commerce Storefront (Next.js + Shopify / Medusa)",
+    tagline: "Instant sub-second page loads, custom cart drawer, Algolia search, and high-conversion checkout.",
+    freelancer: FREELANCERS[0], // Alex Rivera
     rating: 4.98,
-    reviewsCount: 34,
+    reviewsCount: 29,
+    startingPrice: "₹35,000 ($420)",
+    rawStartingPrice: 420,
+    deliveryDays: 10,
+    category: "Full-Stack Web Development",
+    thumbnail: "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1472851294608-062f824d29cc?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["React", "TypeScript", "Next.js"],
+    techStack: ["Next.js App Router", "Shopify Storefront API / MedusaJS", "Tailwind CSS", "Algolia Search", "Stripe", "Framer Motion"],
+    highlights: [
+      "99+ Google PageSpeed Mobile score for explosive conversion",
+      "Optimistic UI cart drawer with free shipping threshold counter",
+      "Instant faceted search and product filtering",
+      "International multi-currency & localized pricing"
+    ],
+    packages: {
+      basic: {
+        name: "Standard Storefront",
+        price: "₹35,000 ($420)",
+        delivery: "6 Days",
+        revisions: 3,
+        features: ["Shopify / Medusa API synchronization", "Responsive Home, Collection & Product detail pages", "Slide-over cart drawer with variant selector", "SEO schema structured data markup", "Vercel edge deployment"]
+      },
+      standard: {
+        name: "Advanced Brand Experience",
+        price: "₹72,000 ($870)",
+        delivery: "10 Days",
+        revisions: 5,
+        features: ["Everything in Standard", "Algolia instant search with product previews", "Customer account portal with order tracking", "Reviews & UGC integration (Judge.me / Yotpo)", "Custom bundle builder & upsell module", "Dynamic mega-menu"]
+      },
+      premium: {
+        name: "Global Multi-Currency Flagship",
+        price: "₹1,30,000 ($1,580)",
+        delivery: "16 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Advanced", "Multi-region localization (GeoIP auto currency switch)", "Custom CMS integration (Sanity / Strapi)", "Automated inventory sync & ERP webhook hooks", "Micro-animations with Framer Motion", "30 Days post-launch conversion optimization"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Catalog & Storefront Schema", desc: "Setting up Storefront GraphQL queries, product variants, and collection hierarchies." },
+      { step: "02", title: "Component Design System", desc: "Crafting fluid product cards, image galleries, and accessible variant swatches." },
+      { step: "03", title: "Cart & Checkout Flow", desc: "Building optimistic cart states, discount code handlers, and checkout redirects." },
+      { step: "04", title: "Performance Tuning", desc: "Optimizing WebP image sizes, prefetching routes, and achieving top Lighthouse scores." }
+    ],
+    faqs: [
+      { q: "Can we connect this to our existing Shopify backend?", a: "Yes! Your inventory, fulfillment, payment gateways, and orders remain 100% inside your current Shopify admin. Next.js powers the high-speed frontend." },
+      { q: "How fast is page navigation?", a: "Because Next.js prefetches collection and product data on hover, page transitions feel virtually instant (under 100ms)." }
+    ],
+    verifiedReviews: [
+      { author: "Chloe Martin", role: "E-Commerce Director, Veloce Apparel", rating: 5.0, date: "3 weeks ago", comment: "Our mobile conversion rate surged by 34% after switching from our old Shopify theme to Alex's headless Next.js build." }
+    ]
+  },
+  {
+    id: "srv-web-03",
+    title: "High-Throughput REST & GraphQL API Microservices in Go & Node.js",
+    tagline: "Ultra-low latency microservices, connection pooling, Redis caching, rate limiting, and bulletproof security.",
+    freelancer: FREELANCERS[5], // Aisha Patel
+    rating: 4.91,
+    reviewsCount: 22,
+    startingPrice: "₹28,000 ($340)",
+    rawStartingPrice: 340,
+    deliveryDays: 7,
+    category: "Full-Stack Web Development",
+    thumbnail: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["PostgreSQL", "Go (Golang)", "Node.js", "Redis & Caching"],
+    techStack: ["Golang / Gin", "Node.js / Fastify", "PostgreSQL", "Redis", "Docker", "OpenAPI / Swagger"],
+    highlights: [
+      "Sub-20ms P95 API response times under 5,000 RPS load",
+      "Token bucket rate limiting & DDoS protection",
+      "Strict OpenAPI 3.1 Swagger interactive documentation",
+      "Automated unit & load testing scripts with k6"
+    ],
+    packages: {
+      basic: {
+        name: "Microservice Core Endpoints",
+        price: "₹28,000 ($340)",
+        delivery: "4 Days",
+        revisions: 2,
+        features: ["5 High-speed REST endpoints in Go or Fastify", "PostgreSQL connection pooling & schema migrations", "JWT Auth with refresh tokens", "Input validation & error formatting", "Docker containerization"]
+      },
+      standard: {
+        name: "High-Throughput Production Service",
+        price: "₹60,000 ($720)",
+        delivery: "8 Days",
+        revisions: 4,
+        features: ["Everything in Core", "15+ REST / GraphQL endpoints", "Redis distributed caching & query memoization", "Distributed rate limiting & IP throttling", "OpenAPI Swagger live documentation", "k6 Load testing verification report"]
+      },
+      premium: {
+        name: "Enterprise Distributed Architecture",
+        price: "₹1,15,000 ($1,380)",
+        delivery: "14 Days",
+        revisions: "Unlimited",
+        features: ["Everything in High-Throughput", "Event-driven architecture with RabbitMQ / Kafka", "Database read-replica routing & automated failover", "Prometheus metrics & Grafana dashboard setup", "Role-based ACL permissions middleware", "30 Days support"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "API Contract & Schema Design", desc: "Defining OpenAPI specifications and normalized PostgreSQL tables." },
+      { step: "02", title: "High-Performance Implementation", desc: "Writing concurrency-safe Go/Fastify handlers with zero memory leaks." },
+      { step: "03", title: "Caching & Security Hardening", desc: "Configuring Redis cache keys, rate-limiters, and sanitization middleware." },
+      { step: "04", title: "Load Testing & Verification", desc: "Simulating 5,000 concurrent virtual users using k6 load testing tools." }
+    ],
+    faqs: [
+      { q: "Which backend language is better: Go or Node.js?", a: "For raw CPU throughput, microsecond latency, and heavy concurrency, Go is unbeatable. For rapid iteration and rich NPM ecosystems, Node.js (Fastify) is ideal. We advise based on your team's stack." },
+      { q: "Do you supply automated test coverage?", a: "Yes, every endpoint includes unit tests and integration tests with >85% code coverage." }
+    ],
+    verifiedReviews: [
+      { author: "Devon Clark", role: "Engineering VP, TradeSignal", rating: 5.0, date: "2 weeks ago", comment: "Aisha optimized our telemetry microservice in Go. Latency dropped from 120ms to 8ms. Absolute masterclass in backend engineering." }
+    ]
+  },
+
+  // ==========================================
+  // 3. MOBILE APP DEVELOPMENT
+  // ==========================================
+  {
+    id: "srv-mob-01",
+    title: "Cross-Platform Flutter Mobile App (iOS & Android) with BLoC Architecture",
+    tagline: "60fps buttery smooth performance, offline-first SQLite synchronization, push notifications, and App Store readiness.",
+    freelancer: FREELANCERS[4], // David Chen
+    rating: 4.94,
+    reviewsCount: 31,
+    startingPrice: "₹30,000 ($360)",
+    rawStartingPrice: 360,
+    deliveryDays: 10,
+    category: "Mobile App Development",
+    thumbnail: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Flutter", "iOS / Swift", "Firebase"],
+    techStack: ["Flutter 3.x", "Dart", "BLoC State Management", "Firebase", "SQLite / Hive", "Stripe In-App"],
+    highlights: [
+      "Single Dart codebase for native iOS & Android binaries",
+      "Clean BLoC architecture for maintainable enterprise state",
+      "Offline-first caching with background sync",
+      "Guaranteed Apple App Store & Google Play compliance"
+    ],
+    packages: {
+      basic: {
+        name: "MVP Mobile Application",
+        price: "₹30,000 ($360)",
+        delivery: "6 Days",
+        revisions: 2,
+        features: ["5 Interactive mobile screens", "Firebase Auth (Email, Google, Apple Sign-In)", "Smooth 60fps animations", "Responsive tablet & mobile layouts", "APK & TestFlight builds"]
+      },
+      standard: {
+        name: "Complete Production App",
+        price: "₹65,000 ($780)",
+        delivery: "12 Days",
+        revisions: 4,
+        features: ["Everything in MVP", "12-15 Custom application screens", "Offline SQLite / Hive local database storage", "Push notifications with Firebase Cloud Messaging (FCM)", "In-App Purchases / Stripe Mobile SDK", "Biometric FaceID / TouchID authentication"]
+      },
+      premium: {
+        name: "Enterprise Flagship App & Store Submission",
+        price: "₹1,20,000 ($1,450)",
+        delivery: "18 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Production App", "25+ Screens & custom micro-interactions", "Real-time chat & WebSocket telemetry", "Audio / Camera / Geolocation native hardware access", "Complete Apple App Store & Google Play Store submission & approval guarantee", "45 Days post-launch support"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "UI Prototype & Architecture", desc: "Wireframing screens and establishing BLoC event-state contracts." },
+      { step: "02", title: "Flutter Core Development", desc: "Building modular widgets, animations, and local SQLite data layer." },
+      { step: "03", title: "Native API & Cloud Integrations", desc: "Connecting Push Notifications, Camera, GPS, and Payment SDKs." },
+      { step: "04", title: "Device Testing & Store Deploy", desc: "Testing across multiple physical iOS & Android devices and submitting builds." }
+    ],
+    faqs: [
+      { q: "Will the app feel native on both iOS and Android?", a: "Yes! Flutter compiles directly to native ARM machine code with Skia/Impeller rendering, delivering consistent 60fps to 120fps performance." },
+      { q: "Do you help get the app approved on the App Store?", a: "Yes! We prepare all store assets, privacy manifests, and guide the app through Apple and Google review until it is live." }
+    ],
+    verifiedReviews: [
+      { author: "Julian Ramos", role: "CEO, HabitPulse", rating: 5.0, date: "1 month ago", comment: "David delivered our fitness tracking app ahead of schedule. The animations are silky smooth and TestFlight testers loved it." }
+    ]
+  },
+  {
+    id: "srv-mob-02",
+    title: "React Native & Expo SDK 52 Production Mobile App for Fintech & SaaS",
+    tagline: "Cross-platform React Native app with Reanimated 3 gestures, Stripe payments, and web code sharing.",
+    freelancer: FREELANCERS[4], // David Chen
+    rating: 4.90,
+    reviewsCount: 26,
+    startingPrice: "₹32,000 ($380)",
+    rawStartingPrice: 380,
+    deliveryDays: 10,
+    category: "Mobile App Development",
+    thumbnail: "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1551650975-87deedd944c3?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["React Native", "TypeScript", "iOS / Swift"],
+    techStack: ["React Native 0.76+", "Expo SDK 52", "TypeScript", "React Navigation 7", "Reanimated 3", "Zustand"],
+    highlights: [
+      "TurboModules & New Architecture enabled for peak speed",
+      "Reanimated 3 fluid gesture physics & swipe interactions",
+      "EAS Build CI/CD automated OTA update pipeline",
+      "Secure Keychain / Keystore hardware encryption"
+    ],
+    packages: {
+      basic: {
+        name: "Expo MVP Screen Flow",
+        price: "₹32,000 ($380)",
+        delivery: "5 Days",
+        revisions: 2,
+        features: ["Expo managed workflow setup", "6 High-fidelity screens with smooth transitions", "TypeScript + Zustand state store", "REST API integration", "Expo Go test previews"]
+      },
+      standard: {
+        name: "Full Feature Mobile App",
+        price: "₹68,000 ($820)",
+        delivery: "11 Days",
+        revisions: 4,
+        features: ["Everything in MVP", "15 Application screens & modals", "Stripe payment integration", "Push notifications via Expo Push Service", "Secure biometric authentication (FaceID/Fingerprint)", "EAS Build automated pipelines"]
+      },
+      premium: {
+        name: "Enterprise Native Modules & Universal Web",
+        price: "₹1,25,000 ($1,520)",
+        delivery: "16 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Full Feature", "Custom Swift / Kotlin native modules bridge", "Expo Universal Web deployment (one codebase for iOS, Android & Web)", "Over-The-Air (OTA) instant hotfix updates", "Store listing optimization & publishing support", "30 Days maintenance"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Architecture & Types", desc: "Setting up Expo SDK 52, TypeScript interfaces, and navigation stacks." },
+      { step: "02", title: "UI Components & Gestures", desc: "Developing Reanimated gesture screens and theme system." },
+      { step: "03", title: "Hardware & Secure Enclave", desc: "Integrating biometrics, Keychain encryption, and push listeners." },
+      { step: "04", title: "EAS CI/CD Pipeline", desc: "Setting up automated cloud builds and TestFlight distribution." }
+    ],
+    faqs: [
+      { q: "Can we use Over-The-Air (OTA) updates to push bugfixes without store review?", a: "Yes! Using Expo EAS Update, JavaScript bugfixes and UI updates can be deployed to users instantly without waiting for Apple or Google app review." }
+    ],
+    verifiedReviews: [
+      { author: "Tanya Morrison", role: "Co-founder, PayNest", rating: 4.9, date: "3 weeks ago", comment: "David made our fintech wallet app look and feel top-notch. The biometrics and gesture animations work flawlessly." }
+    ]
+  },
+
+  // ==========================================
+  // 4. UI/UX & PRODUCT DESIGN
+  // ==========================================
+  {
+    id: "srv-des-01",
+    title: "Complete SaaS Design System & Interactive Figma Prototype",
+    tagline: "Scalable auto-layout 5.0 components, design tokens, dark/light modes, and developer-ready handoff.",
+    freelancer: FREELANCERS[1], // Priya Sharma
+    rating: 4.98,
+    reviewsCount: 46,
     startingPrice: "₹18,000 ($240)",
     rawStartingPrice: 240,
     deliveryDays: 7,
     category: "UI/UX & Product Design",
     thumbnail: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=600&auto=format&fit=crop&q=80",
-    verifiedSkills: ["Figma UI/UX", "Design Systems", "Prototyping"],
+    gallery: [
+      "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Figma UI/UX", "Design Systems", "Prototyping", "User Research"],
+    techStack: ["Figma", "Figma Variables & Tokens", "Auto-Layout 5.0", "Protopie", "Storybook Specs", "Tailwind Theme"],
+    highlights: [
+      "100+ Dynamic components with nested variants and states",
+      "Figma Variables for instant dark/light theme switching",
+      "Clickable interactive prototype mimicking 100% real app flow",
+      "Exportable Tailwind CSS config and design token JSON"
+    ],
     packages: {
       basic: {
         name: "Core UI Kit & Foundations",
         price: "₹18,000 ($240)",
         delivery: "4 Days",
         revisions: 3,
-        features: ["Color tokens & Typography scale", "50+ Core UI components (buttons, inputs)", "Auto-layout 5.0 ready", "Figma design tokens"]
+        features: [
+          "Color palette tokens (accessible WCAG AAA)",
+          "Typography scale & spacing grid system",
+          "50+ Core UI components (Buttons, Inputs, Dropdowns, Badges, Modals)",
+          "Auto-layout 5.0 component library in Figma",
+          "Figma token export"
+        ]
       },
       standard: {
         name: "Full App Screen Suite (15 Screens)",
         price: "₹38,000 ($490)",
         delivery: "7 Days",
         revisions: 5,
-        features: ["Everything in Basic", "15 High-fidelity application screens", "Interactive clickable prototype", "Dark & light mode variants", "Developer handover specs"]
+        features: [
+          "Everything in Core UI Kit",
+          "15 High-fidelity custom SaaS application screens",
+          "Interactive clickable prototype with micro-animations",
+          "Dark & Light mode visual variants",
+          "Empty states, error states & loading skeletons",
+          "Developer handover spec sheets"
+        ]
       },
       premium: {
         name: "Complete Enterprise Brand & UI Suite",
-        price: "₹60,000 ($780)",
+        price: "₹65,000 ($820)",
         delivery: "12 Days",
         revisions: "Unlimited",
-        features: ["Everything in Standard", "30+ Application screens & states", "Custom icon set & micro-illustrations", "Storybook coordination guide", "Usability test recordings"]
+        features: [
+          "Everything in Standard Suite",
+          "30+ Application screens & complex dashboard states",
+          "Custom icon set & vector micro-illustrations",
+          "Tailwind CSS theme config sync & Storybook documentation",
+          "User usability testing recording analysis (3 rounds)",
+          "30 Days design sprint iteration support"
+        ]
       }
-    }
+    },
+    processSteps: [
+      { step: "01", title: "Discovery & User Journey", desc: "Mapping user mental models, information hierarchy, and core UX flows." },
+      { step: "02", title: "Foundations & Tokens", desc: "Establishing typography, color variables, elevation, and component contracts." },
+      { step: "03", title: "High-Fidelity Screen Design", desc: "Designing responsive application screens with Auto-Layout and variant matrices." },
+      { step: "04", title: "Interactive Prototyping", desc: "Connecting smart-animate transitions and simulating real application behavior." },
+      { step: "05", title: "Developer Handover", desc: "Documenting CSS token mappings, asset exports, and Storybook guidelines." }
+    ],
+    faqs: [
+      { q: "Will the Figma file be easy for our developers to build from?", a: "Yes! Every single element is built using strict 8pt grid spacing, Auto-Layout 5.0, and named variables mapped directly to Tailwind CSS utility classes." },
+      { q: "Can you provide mobile responsive layouts as well?", a: "Yes! Responsive viewport frames (Desktop, Tablet, and Mobile 390px) are included for all major screen workflows." }
+    ],
+    verifiedReviews: [
+      { author: "Emily Sterling", role: "CPO, Vertex Analytics", rating: 5.0, date: "2 weeks ago", comment: "Priya is in the top 1% of designers globally. Her Figma systems are so clean that our engineering team cut frontend development time in half." }
+    ]
   },
   {
-    id: "srv-203",
-    title: "Production Kubernetes, AWS EKS & Automated CI/CD Infrastructure",
-    freelancer: FREELANCERS[2],
+    id: "srv-des-02",
+    title: "Conversion-Focused UX Audit & High-Impact Web App Redesign",
+    tagline: "Fix drop-offs, reduce cognitive friction, and revamp low-converting SaaS onboarding workflows.",
+    freelancer: FREELANCERS[1], // Priya Sharma
+    rating: 4.96,
+    reviewsCount: 30,
+    startingPrice: "₹20,000 ($260)",
+    rawStartingPrice: 260,
+    deliveryDays: 5,
+    category: "UI/UX & Product Design",
+    thumbnail: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Figma UI/UX", "User Research", "Design Systems"],
+    techStack: ["Figma", "Hotjar Analysis", "Heuristic Evaluation Framework", "Loom Video Breakdown"],
+    highlights: [
+      "Comprehensive 30+ point UX heuristic audit report",
+      "Redesigned high-converting user onboarding funnel",
+      "A/B testing variant wireframes for checkout/signup",
+      "Video walkthrough explaining every UX friction fix"
+    ],
+    packages: {
+      basic: {
+        name: "Quick UX Audit & Friction Report",
+        price: "₹20,000 ($260)",
+        delivery: "3 Days",
+        revisions: 2,
+        features: ["Heuristic evaluation of 5 key app flows", "Detailed PDF report with annotated friction screenshots", "Top 10 quick-win UX recommendations", "20-Minute recorded video walkthrough"]
+      },
+      standard: {
+        name: "Audit + Complete Flow Redesign",
+        price: "₹45,000 ($560)",
+        delivery: "7 Days",
+        revisions: 4,
+        features: ["Everything in Quick Audit", "Full redesign of Onboarding, Signup & Core Dashboard flows", "High-fidelity Figma mockups & prototypes", "A/B testing layout variants", "Developer ready specs"]
+      },
+      premium: {
+        name: "Enterprise Growth & CRO Overhaul",
+        price: "₹80,000 ($980)",
+        delivery: "12 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Audit + Redesign", "Complete 15-screen application redesign", "Checkout & pricing page conversion optimization", "User session recording analysis", "Design system alignment", "30 Days CRO follow-up"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Friction Discovery", desc: "Analyzing current analytics, user session drop-offs, and usability roadblocks." },
+      { step: "02", title: "Heuristic Scorecard", desc: "Evaluating usability against Nielsen Norman 10 core usability heuristics." },
+      { step: "03", title: "Redesign & Wireframes", desc: "Crafting streamlined, cognitive-load-reduced screens in Figma." },
+      { step: "04", title: "Prototype & Validation", desc: "Testing redesigned flows with clickable user interaction prototypes." }
+    ],
+    faqs: [
+      { q: "What average conversion improvements do clients see?", a: "Past clients have recorded a 25% to 45% lift in onboarding completion and signup conversion after implementing our UX recommendations." }
+    ],
+    verifiedReviews: [
+      { author: "Nikhil Mehra", role: "Growth Lead, FinFlow", rating: 5.0, date: "1 month ago", comment: "Priya identified 4 critical onboarding bottlenecks we had completely overlooked. The redesigned funnel improved our trial conversion by 38%." }
+    ]
+  },
+
+  // ==========================================
+  // 5. CLOUD, DEVOPS & INFRASTRUCTURE
+  // ==========================================
+  {
+    id: "srv-dev-01",
+    title: "Production Kubernetes, AWS EKS & Automated GitOps CI/CD Infrastructure",
+    tagline: "Enterprise-grade EKS/GKE cluster, Helm charts, ArgoCD GitOps, Cert-Manager SSL & zero-downtime deploys.",
+    freelancer: FREELANCERS[2], // Marcus Vance
     rating: 4.95,
-    reviewsCount: 19,
+    reviewsCount: 28,
     startingPrice: "₹28,000 ($360)",
     rawStartingPrice: 360,
     deliveryDays: 7,
     category: "DevOps & Cloud Architecture",
     thumbnail: "https://images.unsplash.com/photo-1618401471353-b98aedd04e11?w=600&auto=format&fit=crop&q=80",
-    verifiedSkills: ["Kubernetes", "AWS Cloud", "Terraform IaC"],
+    gallery: [
+      "https://images.unsplash.com/photo-1618401471353-b98aedd04e11?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Kubernetes", "AWS Cloud", "Terraform IaC", "Docker CI/CD"],
+    techStack: ["Kubernetes (EKS/GKE)", "Terraform", "Helm 3", "ArgoCD", "Prometheus & Grafana", "GitHub Actions"],
+    highlights: [
+      "Zero-downtime rolling updates & automated canary deployments",
+      "Automated Let's Encrypt SSL certificate renewal via Cert-Manager",
+      "Prometheus & Grafana dashboards with Slack / PagerDuty alerts",
+      "Hardened Pod Security Standards & RBAC least privilege access"
+    ],
     packages: {
       basic: {
         name: "Docker & GitHub Actions CI/CD",
-        price: "₹20,000 ($260)",
+        price: "₹28,000 ($360)",
         delivery: "3 Days",
         revisions: 2,
-        features: ["Multi-stage Dockerfile optimization", "Automated GitHub Actions lint/test/build", "Staging auto-deploy", "Secrets management"]
+        features: [
+          "Multi-stage Dockerfile optimization (reduces image sizes by 70%)",
+          "Automated GitHub Actions lint/test/build pipeline",
+          "Container registry (ECR / GHCR) push with image scanning",
+          "Automated staging deployment",
+          "Secrets management & documentation"
+        ]
       },
       standard: {
         name: "Terraform IaC on AWS/GCP",
-        price: "₹42,000 ($540)",
+        price: "₹55,000 ($680)",
         delivery: "6 Days",
         revisions: 4,
-        features: ["Everything in Basic", "VPC, Subnets, RDS, S3 via Terraform", "Automated zero-downtime deployments", "CloudWatch alerts & Grafana dashboards"]
+        features: [
+          "Everything in Docker CI/CD",
+          "VPC, Subnets, RDS PostgreSQL, S3 via Terraform code",
+          "ECS Fargate or GCP Cloud Run automated container deployments",
+          "CloudWatch / Datadog alerts & Grafana dashboards",
+          "Automated database backups & SSL certificate provisioning"
+        ]
       },
       premium: {
-        name: "Production EKS / K8s Cluster",
-        price: "₹75,000 ($980)",
+        name: "Production EKS / K8s GitOps Cluster",
+        price: "₹95,000 ($1,180)",
         delivery: "10 Days",
         revisions: "Unlimited",
-        features: ["Everything in Standard", "Production-grade EKS cluster with Helm", "Cert-Manager SSL & Ingress controller", "ArgoCD GitOps pipeline", "Disaster recovery & backup strategy"]
+        features: [
+          "Everything in Terraform IaC",
+          "Production-grade AWS EKS / GKE cluster with Karpenter auto-scaling",
+          "ArgoCD GitOps pipeline for multi-environment releases",
+          "Cert-Manager SSL & Ingress-Nginx controller",
+          "Disaster recovery, automated velero backups & chaos testing",
+          "45 Days 24/7 on-call infrastructure warranty"
+        ]
       }
-    }
+    },
+    processSteps: [
+      { step: "01", title: "Infrastructure Blueprint", desc: "Designing VPC network topology, subnets, and IAM security boundaries." },
+      { step: "02", title: "Terraform IaC Provisioning", desc: "Coding reproducible infrastructure modules with remote state locking." },
+      { step: "03", title: "Kubernetes & Helm Setup", desc: "Configuring EKS nodes, Karpenter autoscaling, and Helm application charts." },
+      { step: "04", title: "GitOps & CI/CD Pipeline", desc: "Setting up ArgoCD continuous delivery and GitHub Actions release tags." },
+      { step: "05", title: "Monitoring & Handover", desc: "Deploying Grafana dashboards, Slack alert webhooks, and disaster recovery runs." }
+    ],
+    faqs: [
+      { q: "Is everything scripted as Infrastructure as Code (IaC)?", a: "100%. Everything is codified in clean, modular Terraform files so you can spin up or tear down identical environments in minutes." },
+      { q: "Can this help reduce our existing AWS monthly bill?", a: "Yes! Using Karpenter spot instance auto-scaling and right-sizing database instances typically cuts AWS compute costs by 30% to 50%." }
+    ],
+    verifiedReviews: [
+      { author: "Dominic Scott", role: "VP Engineering, ScaleGrid", rating: 5.0, date: "3 weeks ago", comment: "Marcus set up our entire production EKS cluster with ArgoCD in under a week. Our deployment frequency went from weekly to multiple times a day." }
+    ]
+  },
+  {
+    id: "srv-dev-02",
+    title: "AWS Cloud Cost Optimization Audit & 40% Infrastructure Bill Reduction",
+    tagline: "Stop cloud waste: EC2 right-sizing, Karpenter spot instances, RDS optimization, and automated lifecycle policies.",
+    freelancer: FREELANCERS[2], // Marcus Vance
+    rating: 4.97,
+    reviewsCount: 20,
+    startingPrice: "₹22,000 ($280)",
+    rawStartingPrice: 280,
+    deliveryDays: 4,
+    category: "DevOps & Cloud Architecture",
+    thumbnail: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1618401471353-b98aedd04e11?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["AWS Cloud", "Kubernetes", "Terraform IaC"],
+    techStack: ["AWS Cost Explorer", "AWS Compute Optimizer", "Karpenter", "Terraform", "Infracost"],
+    highlights: [
+      "Guaranteed minimum 25% to 50% monthly AWS bill savings",
+      "Safe zero-downtime instance type migrations (Graviton3)",
+      "Automated idle resource teardown & S3 lifecycle tiering",
+      "Real-time Infracost budget alarms for pull requests"
+    ],
+    packages: {
+      basic: {
+        name: "Cloud Cost Audit & Roadmap",
+        price: "₹22,000 ($280)",
+        delivery: "3 Days",
+        revisions: 2,
+        features: ["Complete AWS account spend analysis", "Unused EBS volumes, unattached Elastic IPs identification", "Reserved Instance / Savings Plan strategy roadmap", "Detailed ROI savings projection report"]
+      },
+      standard: {
+        name: "Hands-on Cost Optimization & Execution",
+        price: "₹48,000 ($590)",
+        delivery: "6 Days",
+        revisions: 4,
+        features: ["Everything in Cost Audit", "Hands-on migration of EC2/RDS to ARM-based Graviton3 instances", "S3 intelligent-tiering & lifecycle rule automation", "Karpenter Spot Instance auto-scaling on EKS", "CloudWatch log retention optimization"]
+      },
+      premium: {
+        name: "Enterprise Multi-Account FinOps Architecture",
+        price: "₹85,000 ($1,050)",
+        delivery: "10 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Hands-on Execution", "AWS Organizations multi-account consolidated billing setup", "Infracost CI/CD integration blocking expensive PRs", "Custom Grafana FinOps dashboard for team cost attribution", "60 Days monthly cost monitoring & guarantee"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Read-Only Cost Audit", desc: "Connecting read-only IAM roles to inspect Cost Explorer and resource utilization metrics." },
+      { step: "02", title: "Savings Matrix", desc: "Drafting a prioritized list of savings with projected monthly dollar reductions." },
+      { step: "03", title: "Zero-Downtime Execution", desc: "Implementing Graviton upgrades, spot autoscaling, and storage tiering." },
+      { step: "04", title: "Automated Guardrails", desc: "Installing Infracost budget alarms to prevent future cloud cost regressions." }
+    ],
+    faqs: [
+      { q: "Is there any risk of downtime during optimization?", a: "None. All database migrations and instance upgrades are executed with zero downtime using blue/green deployment and replica promotion." }
+    ],
+    verifiedReviews: [
+      { author: "Simon Hayes", role: "CFO, CloudNova", rating: 5.0, date: "1 month ago", comment: "Marcus reduced our AWS bill from $14,000/month to $8,200/month in one week. The service paid for itself ten times over." }
+    ]
+  },
+
+  // ==========================================
+  // 6. CYBERSECURITY & WEB3
+  // ==========================================
+  {
+    id: "srv-sec-01",
+    title: "Full Web Application Security Audit & Penetration Testing (OWASP Top 10)",
+    tagline: "Thorough DAST/SAST penetration testing, vulnerability discovery, remediation diffs & official compliance report.",
+    freelancer: FREELANCERS[2], // Marcus Vance
+    rating: 4.96,
+    reviewsCount: 19,
+    startingPrice: "₹35,000 ($420)",
+    rawStartingPrice: 420,
+    deliveryDays: 6,
+    category: "Cybersecurity & Web3",
+    thumbnail: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["Kubernetes", "AWS Cloud", "Docker CI/CD"],
+    techStack: ["Burp Suite Professional", "OWASP ZAP", "SonarQube", "Snyk", "Semgrep", "Nmap"],
+    highlights: [
+      "Manual + automated testing across OWASP Top 10 vulnerabilities",
+      "Proof-of-Concept exploit demonstrations for every finding",
+      "Copy-paste code diffs for immediate engineering fixes",
+      "Official signed Security Assessment Certificate for SOC2 / ISO27001"
+    ],
+    packages: {
+      basic: {
+        name: "Standard Vulnerability Assessment",
+        price: "₹35,000 ($420)",
+        delivery: "4 Days",
+        revisions: 2,
+        features: ["Automated SAST & DAST vulnerability scanning", "OWASP Top 10 vulnerability inspection (SQLi, XSS, CSRF, IDOR)", "Summary PDF report with severity classification", "Verification of SSL, CORS, and HTTP security headers"]
+      },
+      standard: {
+        name: "Comprehensive Penetration Test",
+        price: "₹75,000 ($920)",
+        delivery: "7 Days",
+        revisions: 4,
+        features: ["Everything in Standard Assessment", "In-depth manual penetration testing with Burp Suite Pro", "Business logic flaw exploitation & privilege escalation checks", "API endpoint fuzzing & token replay testing", "Direct code remediation diffs for developers", "1 Retest round after fixes are applied"]
+      },
+      premium: {
+        name: "Enterprise Compliance & Continuous Audit",
+        price: "₹1,40,000 ($1,720)",
+        delivery: "14 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Comprehensive Pentest", "Cloud infrastructure security audit (AWS IAM, S3, Security Groups)", "Official signed Attestation of Assessment for SOC2 auditors", "Automated Semgrep & Snyk CI/CD security gating setup", "2 Retest rounds & developer debrief meeting"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Scope & Reconnaissance", desc: "Mapping target domains, API endpoints, authentication flows, and asset footprint." },
+      { step: "02", title: "Automated & Manual Exploitation", desc: "Executing rigorous testing against authentication, IDOR, injection, and logic flaws." },
+      { step: "03", title: "Triage & Remediation Diffs", desc: "Documenting verified vulnerabilities with exact reproduction steps and code patches." },
+      { step: "04", title: "Retest & Official Certification", desc: "Verifying patches and generating executive and developer compliance certificates." }
+    ],
+    faqs: [
+      { q: "Will testing disrupt our production application?", a: "No. All tests are conducted with strict rate limits or against dedicated staging environments to guarantee zero user impact." }
+    ],
+    verifiedReviews: [
+      { author: "Lucas Meyer", role: "Security Director, FinSafe", rating: 5.0, date: "3 weeks ago", comment: "Marcus uncovered a critical IDOR flaw in our billing API that automated scanners completely missed. The remediation code diff was spot on." }
+    ]
+  },
+  {
+    id: "srv-sec-02",
+    title: "Solidity Smart Contract Development, Web3 DApp & Staking Protocols",
+    tagline: "Gas-optimized EVM smart contracts, Hardhat/Foundry testing, audited tokenomics, and Ethers.js frontend.",
+    freelancer: FREELANCERS[0], // Alex Rivera
+    rating: 4.93,
+    reviewsCount: 16,
+    startingPrice: "₹38,000 ($460)",
+    rawStartingPrice: 460,
+    deliveryDays: 8,
+    category: "Cybersecurity & Web3",
+    thumbnail: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["React", "TypeScript", "Node.js"],
+    techStack: ["Solidity 0.8.x", "Foundry / Hardhat", "Ethers.js / Viem", "Wagmi & RainbowKit", "OpenZeppelin", "Slither"],
+    highlights: [
+      "OpenZeppelin-audited contracts with 100% Foundry test coverage",
+      "Gas optimization via custom assembly (Yul) and storage packing",
+      "RainbowKit + Wagmi modern wallet connection modal",
+      "Slither automated static security analysis report"
+    ],
+    packages: {
+      basic: {
+        name: "Standard ERC20 / ERC721 Contract",
+        price: "₹38,000 ($460)",
+        delivery: "4 Days",
+        revisions: 2,
+        features: ["Gas-optimized ERC20 / ERC721A smart contract", "OpenZeppelin battle-tested security standard", "Foundry test suite with 100% test coverage", "Etherscan source code verification & deployment script"]
+      },
+      standard: {
+        name: "Full DApp + Staking / Minting Engine",
+        price: "₹78,000 ($960)",
+        delivery: "9 Days",
+        revisions: 4,
+        features: ["Everything in Basic", "Staking, rewards, or NFT minting smart contract", "Next.js Web3 frontend with RainbowKit & Wagmi", "Slither security vulnerability analysis report", "Testnet deployment on Arbitrum / Base / Polygon"]
+      },
+      premium: {
+        name: "Enterprise DeFi Protocol Suite",
+        price: "₹1,45,000 ($1,780)",
+        delivery: "15 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Full DApp", "Multi-sig Timelock administration & upgradable proxy (UUPS)", "Automated indexing subgraph (The Graph / Goldsky)", "Flash-loan attack mitigation & reentrancy guardrails", "Mainnet deployment & liquidity pool initialization", "30 Days protocol support"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Tokenomics & Math Specification", desc: "Formulating token distribution mathematical models, staking APYs, and vesting schedules." },
+      { step: "02", title: "Solidity Coding & Gas Optimization", desc: "Writing gas-efficient contracts using OpenZeppelin standards and Yul memory optimization." },
+      { step: "03", title: "Foundry Testing & Invariant Fuzzing", desc: "Simulating thousands of edge cases, reentrancy vectors, and mathematical overflows." },
+      { step: "04", title: "Frontend DApp & Mainnet Cutover", desc: "Hooking up Wagmi hooks, transaction receipt toasts, and verified block explorer code." }
+    ],
+    faqs: [
+      { q: "Which blockchain networks do you support?", a: "Ethereum Mainnet, Arbitrum, Base, Optimism, Polygon, Avalanche, and Binance Smart Chain." }
+    ],
+    verifiedReviews: [
+      { author: "Ethan Caldwell", role: "Founder, NovaLend", rating: 5.0, date: "1 month ago", comment: "Alex built our staking protocol on Base with Foundry tests that caught two subtle edge cases. Contracts deployed smoothly and gas fees are ultra-low." }
+    ]
+  },
+
+  // ==========================================
+  // 7. DATA ENGINEERING & ANALYTICS
+  // ==========================================
+  {
+    id: "srv-dat-01",
+    title: "Real-Time Data Streaming Pipeline with Apache Kafka, dbt & Snowflake",
+    tagline: "High-throughput event ingestion, automated dbt transformations, clean data marts, and instant analytics.",
+    freelancer: FREELANCERS[5], // Aisha Patel
+    rating: 4.94,
+    reviewsCount: 21,
+    startingPrice: "₹34,000 ($410)",
+    rawStartingPrice: 410,
+    deliveryDays: 8,
+    category: "Data Engineering & Analytics",
+    thumbnail: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["PostgreSQL", "Go (Golang)", "Node.js", "Redis & Caching"],
+    techStack: ["Apache Kafka", "dbt (data build tool)", "Snowflake / BigQuery", "Airflow / Dagster", "Python", "SQL"],
+    highlights: [
+      "Real-time event streaming handling 10,000+ events/sec",
+      "Automated dbt models with data quality tests and lineage docs",
+      "Optimized Snowflake clustering reducing query compute by 50%",
+      "Automated schema evolution without data loss"
+    ],
+    packages: {
+      basic: {
+        name: "ELT Ingestion & dbt Models",
+        price: "₹34,000 ($410)",
+        delivery: "5 Days",
+        revisions: 2,
+        features: ["Data pipeline connecting PostgreSQL / Webhooks to Data Warehouse", "5 Core dbt transformation models (Staging & Marts)", "Automated dbt data tests (null checks, uniqueness)", "Documentation & lineage DAG"]
+      },
+      standard: {
+        name: "Production Real-Time Pipeline",
+        price: "₹72,000 ($880)",
+        delivery: "9 Days",
+        revisions: 4,
+        features: ["Everything in Basic", "Apache Kafka / AWS Kinesis event streaming ingestion", "Incremental dbt transformations running on Dagster/Airflow", "Snowflake warehouse auto-suspend optimization", "Data anomaly alerts via Slack webhook"]
+      },
+      premium: {
+        name: "Enterprise Data Lakehouse & BI Sync",
+        price: "₹1,35,000 ($1,650)",
+        delivery: "16 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Production Pipeline", "Multi-source ingestion (Salesforce, Stripe, MongoDB, Postgres)", "Reverse-ETL sync back into operational tools (Census / Hightouch)", "Executive BI dashboard integration (Superset/Metabase/PowerBI)", "30 Days data engineering monitoring"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Source Schema & Volume Audit", desc: "Analyzing data velocity, entity relationships, and downstream BI requirements." },
+      { step: "02", title: "Streaming Ingestion Setup", desc: "Configuring Kafka producers/consumers and raw data lake landing tables." },
+      { step: "03", title: "dbt Modeling & Data Marts", desc: "Writing modular SQL transformation models with incremental materialization." },
+      { step: "04", title: "Orchestration & Quality Tests", desc: "Setting up Airflow schedules, dbt test assertions, and Slack failure alerts." }
+    ],
+    faqs: [
+      { q: "Can you optimize our existing Snowflake / BigQuery bills?", a: "Yes! By implementing intelligent table clustering, incremental dbt materializations, and auto-suspension policies, query warehouse costs frequently drop by 40-60%." }
+    ],
+    verifiedReviews: [
+      { author: "Gareth Cole", role: "Data Lead, FleetPulse", rating: 5.0, date: "2 weeks ago", comment: "Aisha built our entire real-time Kafka-to-Snowflake pipeline in 8 days. Query times on 50M rows dropped from 4 minutes to 3 seconds." }
+    ]
+  },
+  {
+    id: "srv-dat-02",
+    title: "Executive Business Intelligence Dashboard (PowerBI / Apache Superset / Metabase)",
+    tagline: "Interactive KPI dashboards, real-time revenue cohorts, retention analytics, and automated executive email reports.",
+    freelancer: FREELANCERS[5], // Aisha Patel
+    rating: 4.92,
+    reviewsCount: 18,
+    startingPrice: "₹24,000 ($300)",
+    rawStartingPrice: 300,
+    deliveryDays: 6,
+    category: "Data Engineering & Analytics",
+    thumbnail: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80",
+    gallery: [
+      "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&auto=format&fit=crop&q=80",
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&auto=format&fit=crop&q=80"
+    ],
+    verifiedSkills: ["PostgreSQL", "Redis & Caching", "Node.js"],
+    techStack: ["Apache Superset", "PowerBI", "Metabase", "PostgreSQL", "Python", "SQL Data Marts"],
+    highlights: [
+      "Sub-second dashboard loading via indexed aggregation tables",
+      "Executive summaries: MRR, Churn, LTV, CAC, and Cohorts",
+      "Role-based row-level security (RLS) data filtering",
+      "Automated PDF & Slack snapshot reports scheduled weekly"
+    ],
+    packages: {
+      basic: {
+        name: "Standard Analytics Dashboard",
+        price: "₹24,000 ($300)",
+        delivery: "4 Days",
+        revisions: 2,
+        features: ["1 Master interactive dashboard (up to 8 KPI widgets)", "PostgreSQL / MySQL database connection", "Filtering by date range, customer segment & product", "Clean modern UI styling & charts"]
+      },
+      standard: {
+        name: "Executive Suite (3 Dashboards)",
+        price: "₹50,000 ($620)",
+        delivery: "7 Days",
+        revisions: 4,
+        features: ["Everything in Standard", "3 Specialized dashboards (Revenue/Finance, Marketing CRO, Product Usage)", "Cohort retention heatmaps & funnel drop-off visualizers", "Automated weekly email report delivery", "Self-hosted Metabase or Apache Superset setup"]
+      },
+      premium: {
+        name: "Enterprise Multi-Department BI Portal",
+        price: "₹90,000 ($1,100)",
+        delivery: "12 Days",
+        revisions: "Unlimited",
+        features: ["Everything in Executive Suite", "Multi-tenant role-based data visibility (Sales team sees only their accounts)", "Real-time alerts on KPI threshold breaches", "Custom SQL semantic layer & drill-down capabilities", "30 Days support"]
+      }
+    },
+    processSteps: [
+      { step: "01", title: "Metrics Alignment", desc: "Defining core north star metrics, calculation formulas, and data grain." },
+      { step: "02", title: "SQL Views & Aggregations", desc: "Writing optimized database views and caching indexes for instant chart rendering." },
+      { step: "03", title: "Dashboard Construction", desc: "Designing intuitive visualizations, KPI cards, and cross-filter interactions." },
+      { step: "04", title: "Automations & Handoff", desc: "Setting up scheduled report emails, user access roles, and video documentation." }
+    ],
+    faqs: [
+      { q: "Can we embed these dashboards inside our own SaaS application?", a: "Yes! We can configure signed embedded iframes using Metabase or Apache Superset with row-level security for customer-facing dashboards." }
+    ],
+    verifiedReviews: [
+      { author: "Rachel Adams", role: "COO, SaaSMetric", rating: 5.0, date: "3 weeks ago", comment: "Aisha transformed our messy SQL queries into a stunning executive dashboard in Metabase. Our leadership team uses it every single morning." }
+    ]
   }
 ];
 

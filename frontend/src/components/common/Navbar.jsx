@@ -82,8 +82,8 @@ export const Navbar = () => {
                 Find Work
               </span>
               <span
-                onClick={() => handleAuthClick('signup', 'freelancer')}
-                className="nav-item"
+                onClick={() => navigateTo('services-marketplace')}
+                className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
               >
                 Services
               </span>
@@ -113,6 +113,12 @@ export const Navbar = () => {
                 Find Projects
               </span>
               <span
+                onClick={() => navigateTo('services-marketplace')}
+                className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
+              >
+                Services Catalog
+              </span>
+              <span
                 onClick={() => navigateTo('skill-verification')}
                 className={`nav-item ${currentView === 'skill-verification' ? 'active' : ''}`}
               >
@@ -139,6 +145,12 @@ export const Navbar = () => {
                 className={`nav-item ${currentView === 'client-dashboard' ? 'active' : ''}`}
               >
                 Dashboard
+              </span>
+              <span
+                onClick={() => navigateTo('services-marketplace')}
+                className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
+              >
+                Services
               </span>
               <span
                 onClick={() => navigateTo('post-project')}

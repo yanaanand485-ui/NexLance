@@ -45,8 +45,18 @@ const MainRouter = () => {
   );
 
   const renderContent = () => {
-    // If not logged in, only show public landing page until user logs in
-    if (role === 'public' && currentView !== 'landing') {
+    // Public-accessible views before login
+    const publicAllowedViews = [
+      'landing',
+      'services-marketplace',
+      'service-detail',
+      'freelancer-profile',
+      'talent-discovery',
+      'project-discovery',
+      'project-detail'
+    ];
+
+    if (role === 'public' && !publicAllowedViews.includes(currentView)) {
       return <LandingPage />;
     }
 
