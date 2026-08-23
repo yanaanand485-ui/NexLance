@@ -3,7 +3,8 @@ import { Shield } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const Footer = () => {
-  const { navigateTo } = useApp();
+  const { navigateTo, goToDashboard, role } = useApp();
+  const isPublic = role === 'public';
 
   return (
     <footer style={{ backgroundColor: '#FFFFFF', borderTop: '1px solid #E2E8F0', marginTop: 'auto', padding: '4rem 1.5rem 2rem' }}>
@@ -11,7 +12,11 @@ export const Footer = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr 1fr 1fr 1fr', gap: '3rem', marginBottom: '3.5rem' }}>
           {/* Brand Info */}
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem' }}>
+            <div
+              onClick={isPublic ? () => navigateTo('landing') : goToDashboard}
+              style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', marginBottom: '1rem', cursor: 'pointer' }}
+              title={isPublic ? 'NexLance Home' : 'Back to Dashboard'}
+            >
               <div className="brand-icon-box" style={{ width: '28px', height: '28px' }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>

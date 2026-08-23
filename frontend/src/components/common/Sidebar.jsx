@@ -13,7 +13,8 @@ import {
   Sparkles,
   Columns,
   Layers,
-  FileCheck2
+  FileCheck2,
+  LogOut
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -22,6 +23,8 @@ export const Sidebar = () => {
     role,
     currentView,
     navigateTo,
+    goToDashboard,
+    logout,
     freelancerProfile,
     clientProfile,
     setIsNotificationOpen
@@ -44,6 +47,7 @@ export const Sidebar = () => {
   const clientNav = [
     { id: 'client-dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { id: 'post-project', label: 'Post Project', icon: <PlusCircle size={18} /> },
+    { id: 'smart-match', label: 'Smart Match', icon: <Sparkles size={18} /> },
     { id: 'comparison', label: 'Candidate Comparison', icon: <Columns size={18} /> },
     { id: 'applications', label: 'Applications Received', icon: <FileCheck2 size={18} /> },
     { id: 'talent-discovery', label: 'Find Freelancers', icon: <Users size={18} /> },
@@ -82,11 +86,7 @@ export const Sidebar = () => {
         {/* Navigation List */}
         <ul className="sidebar-nav">
           {navItems.map((item) => {
-            const isActive =
-              currentView === item.id ||
-              (item.id === 'services-marketplace' && currentView === 'service-detail') ||
-              (item.id === 'talent-discovery' && currentView === 'freelancer-profile') ||
-              (item.id === 'project-discovery' && currentView === 'project-detail');
+            const isActive = currentView === item.id;
             return (
               <li
                 key={item.id}
@@ -107,23 +107,62 @@ export const Sidebar = () => {
         </ul>
       </div>
 
-      {/* Brand Watermark Bottom */}
-      <div style={{ paddingTop: '1.5rem', borderTop: '1px solid #F1F5F9' }}>
+      {/* Brand & Logout Section */}
+      <div style={{ paddingTop: '1.25rem', borderTop: '1px solid #F1F5F9', marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
         <div
-          onClick={() => navigateTo('landing')}
+          onClick={goToDashboard}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0.5rem 0.65rem',
+            borderRadius: '8px',
+            backgroundColor: '#F8FAFC',
+            border: '1px solid #E2E8F0',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease'
+          }}
+          title="Return to your Dashboard"
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <div className="brand-icon-box" style={{ width: '22px', height: '22px' }}>
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+              </svg>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <span style={{ color: '#0F172A', fontWeight: 800, fontSize: '0.875rem', fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1.1 }}>NexLance</span>
+              <span style={{ fontSize: '0.675rem', color: '#64748B', fontWeight: 600 }}>{isFreelancer ? 'Freelancer Portal' : 'Client Workspace'}</span>
+            </div>
+          </div>
+          <span style={{ fontSize: '0.7rem', color: '#1E40AF', fontWeight: 700, backgroundColor: '#EFF6FF', padding: '2px 6px', borderRadius: '4px' }}>Active</span>
+        </div>
+
+        {/* Dedicated Sidebar Logout Button */}
+        <button
+          type="button"
+          onClick={logout}
           style={{
             display: 'flex',
             alignItems: 'center',
             gap: '0.5rem',
+            width: '100%',
+            padding: '0.5rem 0.75rem',
+            borderRadius: '8px',
+            border: '1px solid #FEE2E2',
+            backgroundColor: '#FEF2F2',
+            color: '#DC2626',
+            fontSize: '0.8rem',
+            fontWeight: 600,
             cursor: 'pointer',
-            color: '#1E40AF',
-            fontWeight: 800,
-            fontSize: '1.1rem',
-            fontFamily: "'Plus Jakarta Sans', sans-serif"
+            transition: 'all 0.2s ease',
+            justifyContent: 'center'
           }}
+          title="Log out of your account to return to public view"
         >
-          <span>NexLance</span>
-        </div>
+          <LogOut size={14} />
+          <span>Log Out</span>
+        </button>
       </div>
     </aside>
   );

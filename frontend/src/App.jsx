@@ -60,6 +60,13 @@ const MainRouter = () => {
       return <LandingPage />;
     }
 
+    // Authenticated users (freelancer / client) cannot view landing page; route to dashboard
+    if (role !== 'public' && currentView === 'landing') {
+      return role === 'freelancer'
+        ? renderDashboardView(FreelancerDashboard)
+        : renderDashboardView(ClientDashboard);
+    }
+
     switch (currentView) {
       case 'landing':
         return <LandingPage />;
@@ -105,7 +112,7 @@ const MainRouter = () => {
     }
   };
 
-  const showFooter = ['landing'].includes(currentView) || (role === 'public' && ['talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView));
+  const showFooter = role === 'public' && ['landing', 'talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView);
 
   return (
     <div className="app-container">

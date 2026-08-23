@@ -128,23 +128,30 @@ export const AppProvider = ({ children }) => {
   const navigateTo = (view, payload = null, options = {}) => {
     const { pushHistory = true, replace = false } = options;
 
+    let targetView = view;
+    // Logged-in freelancers & clients must stay in their authenticated workspace/dashboard views
+    // and cannot navigate to public landing view unless they log out.
+    if (role !== 'public' && targetView === 'landing') {
+      targetView = getDefaultDashboard(role);
+    }
+
     if (payload) {
-      if (view === 'freelancer-profile') setSelectedFreelancer(payload);
-      if (view === 'project-detail') setSelectedProject(payload);
-      if (view === 'service-detail') setSelectedService(payload);
+      if (targetView === 'freelancer-profile') setSelectedFreelancer(payload);
+      if (targetView === 'project-detail') setSelectedProject(payload);
+      if (targetView === 'service-detail') setSelectedService(payload);
     }
 
     if (pushHistory) {
-      const stateObj = { view, payload: payload ? { id: payload.id } : null };
+      const stateObj = { view: targetView, payload: payload ? { id: payload.id } : null };
       if (replace) {
-        window.history.replaceState(stateObj, '', `#${view}`);
+        window.history.replaceState(stateObj, '', `#${targetView}`);
       } else {
-        window.history.pushState(stateObj, '', `#${view}`);
+        window.history.pushState(stateObj, '', `#${targetView}`);
       }
     }
 
-    setViewHistory(prev => [...prev, view]);
-    setCurrentView(view);
+    setViewHistory(prev => [...prev, targetView]);
+    setCurrentView(targetView);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -154,7 +161,10 @@ export const AppProvider = ({ children }) => {
     if (window.history.state && window.history.length > 1 && viewHistory.length > 1) {
       window.history.back();
     } else {
-      const targetFallback = fallbackView || getDefaultDashboard();
+      let targetFallback = fallbackView || getDefaultDashboard();
+      if (role !== 'public' && targetFallback === 'landing') {
+        targetFallback = getDefaultDashboard(role);
+      }
       navigateTo(targetFallback, null, { pushHistory: true });
     }
   };
@@ -172,7 +182,10 @@ export const AppProvider = ({ children }) => {
 
     const handlePopState = (event) => {
       if (event.state && event.state.view) {
-        const targetView = event.state.view;
+        let targetView = event.state.view;
+        if (role !== 'public' && targetView === 'landing') {
+          targetView = getDefaultDashboard(role);
+        }
         if (event.state.payload && event.state.payload.id) {
           if (targetView === 'service-detail') {
             const found = SERVICES.find(s => s.id === event.state.payload.id);
@@ -197,7 +210,7 @@ export const AppProvider = ({ children }) => {
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
+  }, [role]);
 
   const handleFindTalent = () => {
     if (role === 'client') {
@@ -386,7 +399,9 @@ export const AppProvider = ({ children }) => {
     setFreelancerProfile(NEW_FREELANCER);
     setRole('public');
     setCurrentView('landing');
-    showToast('Logged out successfully.', 'info');
+    setViewHistory(['landing']);
+    window.history.replaceState({ view: 'landing', payload: null }, '', '#landing');
+    showToast('Logged out successfully. Returned to public site.', 'info');
   };
 
   const switchRole = (newRole) => {
