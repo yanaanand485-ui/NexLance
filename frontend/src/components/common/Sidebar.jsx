@@ -44,7 +44,6 @@ export const Sidebar = () => {
   const clientNav = [
     { id: 'client-dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { id: 'post-project', label: 'Post Project', icon: <PlusCircle size={18} /> },
-    { id: 'smart-match', label: 'Smart Match', icon: <Sparkles size={18} /> },
     { id: 'comparison', label: 'Candidate Comparison', icon: <Columns size={18} /> },
     { id: 'applications', label: 'Applications Received', icon: <FileCheck2 size={18} /> },
     { id: 'talent-discovery', label: 'Find Freelancers', icon: <Users size={18} /> },
@@ -83,7 +82,11 @@ export const Sidebar = () => {
         {/* Navigation List */}
         <ul className="sidebar-nav">
           {navItems.map((item) => {
-            const isActive = currentView === item.id;
+            const isActive =
+              currentView === item.id ||
+              (item.id === 'services-marketplace' && currentView === 'service-detail') ||
+              (item.id === 'talent-discovery' && currentView === 'freelancer-profile') ||
+              (item.id === 'project-discovery' && currentView === 'project-detail');
             return (
               <li
                 key={item.id}

@@ -96,8 +96,7 @@ export const NotificationDrawer = () => {
     setNotifications(prev => prev.map(n => n.id === item.id ? { ...n, unread: false } : n));
 
     // Route to appropriate view based on action
-    if (item.action === 'view-smart-match') navigateTo('smart-match');
-    else if (item.action === 'view-comparison') navigateTo('comparison');
+    if (item.action === 'view-smart-match' || item.action === 'view-comparison') navigateTo('comparison');
     else if (item.action === 'view-project') navigateTo('project-detail');
     else if (item.action === 'view-career-score') navigateTo('career-score');
     else if (item.action === 'view-skills') navigateTo('skill-verification');

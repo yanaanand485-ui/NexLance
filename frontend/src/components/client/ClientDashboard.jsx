@@ -117,10 +117,10 @@ export const ClientDashboard = () => {
             </p>
           </div>
           <button
-            onClick={() => navigateTo('smart-match')}
+            onClick={() => navigateTo('comparison')}
             className="btn btn-secondary btn-sm"
           >
-            View All 18 Matches <ArrowRight size={14} />
+            Compare Candidates <ArrowRight size={14} />
           </button>
         </div>
 

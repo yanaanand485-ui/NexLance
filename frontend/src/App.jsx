@@ -27,7 +27,6 @@ import { NewFreelancerExperience } from './components/freelancer/NewFreelancerEx
 
 // Client Platform
 import { ClientDashboard } from './components/client/ClientDashboard';
-import { SmartMatchView } from './components/client/SmartMatchView';
 import { CandidateComparison } from './components/client/CandidateComparison';
 import { PostProjectWizard } from './components/client/PostProjectWizard';
 import { ApplicationsView } from './components/client/ApplicationsView';
@@ -65,17 +64,17 @@ const MainRouter = () => {
       case 'landing':
         return <LandingPage />;
       case 'talent-discovery':
-        return <TalentDiscovery />;
+        return role === 'client' ? renderDashboardView(TalentDiscovery) : <TalentDiscovery />;
       case 'project-discovery':
-        return <ProjectDiscovery />;
+        return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
       case 'services-marketplace':
-        return <ServicesMarketplace />;
-      case 'freelancer-profile':
-        return <FreelancerProfile />;
-      case 'project-detail':
-        return <ProjectDetail />;
+        return role === 'client' ? renderDashboardView(ServicesMarketplace) : <ServicesMarketplace />;
       case 'service-detail':
-        return <ServiceDetail />;
+        return role === 'client' ? renderDashboardView(ServiceDetail) : <ServiceDetail />;
+      case 'freelancer-profile':
+        return role === 'client' ? renderDashboardView(FreelancerProfile) : <FreelancerProfile />;
+      case 'project-detail':
+        return role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />;
 
       // Freelancer Views
       case 'freelancer-dashboard':
@@ -94,8 +93,6 @@ const MainRouter = () => {
       // Client Views
       case 'client-dashboard':
         return renderDashboardView(ClientDashboard);
-      case 'smart-match':
-        return renderDashboardView(SmartMatchView);
       case 'comparison':
         return renderDashboardView(CandidateComparison);
       case 'post-project':
@@ -108,7 +105,7 @@ const MainRouter = () => {
     }
   };
 
-  const showFooter = ['landing', 'talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView);
+  const showFooter = ['landing'].includes(currentView) || (role === 'public' && ['talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView));
 
   return (
     <div className="app-container">

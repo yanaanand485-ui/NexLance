@@ -2356,7 +2356,7 @@ export const CLIENT_NOTIFICATIONS = [
     description: "Alex Rivera (98% match, 91 Career Score) and Priya Sharma (96% match, 94 Career Score) meet 100% of your verified skill criteria.",
     time: "15 min ago",
     unread: true,
-    action: "view-smart-match"
+    action: "view-comparison"
   },
   {
     id: "notif-cl-2",

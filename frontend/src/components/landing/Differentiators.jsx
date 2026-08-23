@@ -35,7 +35,7 @@ export const Differentiators = () => {
       title: 'Smart Match',
       icon: <Sparkles size={22} color="#1E40AF" />,
       description: 'Intelligent matching that maps your project requirements to deep skill signatures for perfect alignment.',
-      action: 'smart-match',
+      action: 'comparison',
       badge: '98% Alignment'
     }
   ];

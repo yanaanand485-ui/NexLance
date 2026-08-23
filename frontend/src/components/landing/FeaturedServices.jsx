@@ -35,7 +35,7 @@ export const FeaturedServices = () => {
 
   const handleCardClick = (srv) => {
     setSelectedService(srv);
-    navigateTo('service-detail');
+    navigateTo('services-marketplace');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -240,7 +240,7 @@ export const FeaturedServices = () => {
                 </div>
               </div>
 
-              {/* Bottom Price & View CTA */}
+              {/* Bottom Price Bar */}
               <div
                 style={{
                   padding: '1rem 1.5rem',
@@ -260,16 +260,9 @@ export const FeaturedServices = () => {
                   </span>
                 </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleCardClick(srv);
-                  }}
-                  className="btn btn-primary btn-sm"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontWeight: 700 }}
-                >
-                  View Details <ChevronRight size={14} />
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', color: '#059669', fontWeight: 700, backgroundColor: '#ECFDF5', padding: '0.25rem 0.6rem', borderRadius: '6px' }}>
+                  <Clock size={12} /> {srv.deliveryDays}d delivery
+                </div>
               </div>
             </div>
           ))}

@@ -182,12 +182,6 @@ export const Navbar = () => {
                 Post Project
               </span>
               <span
-                onClick={() => navigateTo('smart-match')}
-                className={`nav-item ${currentView === 'smart-match' ? 'active' : ''}`}
-              >
-                Smart Match
-              </span>
-              <span
                 onClick={() => navigateTo('comparison')}
                 className={`nav-item ${currentView === 'comparison' ? 'active' : ''}`}
               >

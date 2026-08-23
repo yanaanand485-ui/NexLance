@@ -22,13 +22,18 @@ import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
 import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
+import { CareerScoreBadge } from '../common/CareerScoreBadge';
+import { X, Check, Lock } from 'lucide-react';
+
 export const ServicesMarketplace = () => {
-  const { navigateTo, setSelectedService, role, setIsAuthModalOpen, setAuthMode, setAuthRoleChoice } = useApp();
+  const { navigateTo, role, setIsAuthModalOpen, setAuthMode, setAuthRoleChoice, showToast, addNotification, clientProfile } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('popular'); // 'popular' | 'price-low' | 'price-high' | 'rating' | 'fastest'
   const [deliveryFilter, setDeliveryFilter] = useState('all'); // 'all' | '7' | '14'
+  const [activeServiceModal, setActiveServiceModal] = useState(null);
+  const [selectedTier, setSelectedTier] = useState('standard');
 
   const categories = [
     { id: 'all', label: 'All Services', icon: Layers, count: SERVICES.length },
@@ -76,13 +81,12 @@ export const ServicesMarketplace = () => {
   }, [searchTerm, selectedCategory, sortBy, deliveryFilter]);
 
   const handleServiceClick = (srv) => {
-    setSelectedService(srv);
-    navigateTo('service-detail');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setActiveServiceModal(srv);
+    setSelectedTier('standard');
   };
 
   return (
-    <main style={{ maxWidth: '1320px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
+    <main className={role === 'client' ? 'dashboard-main' : ''} style={role === 'client' ? { width: '100%', paddingBottom: '4rem' } : { maxWidth: '1320px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
       {/* Navigation Header */}
       <BackToDashboardButton
         label={role === 'public' ? 'Back to Home' : 'Back to Dashboard'}
@@ -432,7 +436,7 @@ export const ServicesMarketplace = () => {
                 </div>
               </div>
 
-              {/* Bottom Price & CTA Bar */}
+              {/* Bottom Price & Timeline Bar */}
               <div
                 style={{
                   padding: '1rem 1.5rem',
@@ -452,16 +456,10 @@ export const ServicesMarketplace = () => {
                   </span>
                 </div>
 
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleServiceClick(srv);
-                  }}
-                  className="btn btn-primary btn-sm"
-                  style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700 }}
-                >
-                  View Details <ArrowRight size={14} />
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.785rem', color: '#059669', fontWeight: 700, backgroundColor: '#ECFDF5', padding: '0.35rem 0.75rem', borderRadius: '8px', border: '1px solid #A7F3D0' }}>
+                  <Clock size={13} />
+                  <span>{srv.deliveryDays} Days Turnaround</span>
+                </div>
               </div>
             </div>
           ))}
@@ -507,28 +505,244 @@ export const ServicesMarketplace = () => {
 
         <div style={{ backgroundColor: 'rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1.75rem', border: '1px solid rgba(255,255,255,0.1)' }}>
           <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#FFFFFF', marginBottom: '0.75rem' }}>
-            Need a Custom Architecture or Scope?
+            Instant Fixed-Scope Execution
           </h3>
-          <p style={{ fontSize: '0.85rem', color: '#94A3B8', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-            If your project requires specialized milestone scoping or custom team engineering, post your project requirement directly to our Smart Match engine.
+          <p style={{ fontSize: '0.85rem', color: '#94A3B8', lineHeight: 1.5, margin: 0 }}>
+            Every service listed above is backed by verified code reviews, fixed pricing, and milestone-based escrow. Select any service to explore detailed architecture specs, deliverables, and tiers.
           </p>
-          <button
-            onClick={() => {
-              if (role === 'client') {
-                navigateTo('post-project');
-              } else {
-                setAuthMode('signup');
-                setAuthRoleChoice('client');
-                setIsAuthModalOpen(true);
-              }
-            }}
-            className="btn btn-primary"
-            style={{ width: '100%', justifyContent: 'center' }}
-          >
-            Post Custom Project Requirement
-          </button>
         </div>
       </div>
+
+      {/* ========================================= */}
+      {/* INLINE SERVICE DETAIL MODAL (Stays right on Marketplace) */}
+      {/* ========================================= */}
+      {activeServiceModal && (
+        <div
+          className="modal-backdrop"
+          onClick={() => setActiveServiceModal(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            backgroundColor: 'rgba(15, 23, 42, 0.7)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            padding: '1.5rem'
+          }}
+        >
+          <div
+            className="modal-container"
+            onClick={e => e.stopPropagation()}
+            style={{
+              maxWidth: '860px',
+              width: '100%',
+              backgroundColor: '#FFFFFF',
+              borderRadius: '20px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 25px 50px -12px rgba(15, 23, 42, 0.25)',
+              maxHeight: '90vh',
+              overflowY: 'auto',
+              padding: '2rem',
+              position: 'relative'
+            }}
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => setActiveServiceModal(null)}
+              style={{
+                position: 'absolute',
+                top: '1.25rem',
+                right: '1.25rem',
+                background: '#F1F5F9',
+                border: 'none',
+                width: '36px',
+                height: '36px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                color: '#64748B',
+                transition: 'all 0.15s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#E2E8F0'; e.currentTarget.style.color = '#0F172A'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#F1F5F9'; e.currentTarget.style.color = '#64748B'; }}
+            >
+              <X size={18} />
+            </button>
+
+            {/* Header Badges */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.25rem 0.65rem', borderRadius: '9999px', border: '1px solid #DBEAFE' }}>
+                {activeServiceModal.category}
+              </span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', fontSize: '0.85rem', fontWeight: 700, color: '#0F172A' }}>
+                <Star size={14} fill="#D97706" color="#D97706" />
+                <span>{activeServiceModal.rating}</span>
+                <span style={{ color: '#64748B', fontWeight: 500 }}>({activeServiceModal.reviewsCount} reviews)</span>
+              </div>
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#059669', backgroundColor: '#ECFDF5', padding: '0.2rem 0.5rem', borderRadius: '6px' }}>
+                ✓ {activeServiceModal.deliveryDays}d Turnaround
+              </span>
+            </div>
+
+            {/* Title & Tagline */}
+            <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: '#0F172A', lineHeight: 1.3, marginBottom: '0.5rem', paddingRight: '2.5rem' }}>
+              {activeServiceModal.title}
+            </h2>
+            <p style={{ fontSize: '0.925rem', color: '#475569', lineHeight: 1.55, marginBottom: '1.5rem' }}>
+              {activeServiceModal.tagline}
+            </p>
+
+            {/* 2-Column Content */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.95fr', gap: '1.75rem', alignItems: 'start' }}>
+              {/* Left Column */}
+              <div>
+                <div style={{ borderRadius: '12px', overflow: 'hidden', height: '220px', backgroundColor: '#0F172A', marginBottom: '1.25rem' }}>
+                  <img
+                    src={activeServiceModal.thumbnail}
+                    alt={activeServiceModal.title}
+                    onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/rag-pipeline.jpg'; }}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                </div>
+
+                {/* Creator Card */}
+                <div style={{ padding: '1rem', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <img
+                      src={activeServiceModal.freelancer.avatar}
+                      alt={activeServiceModal.freelancer.name}
+                      style={{ width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' }}
+                    />
+                    <div>
+                      <h4 style={{ fontSize: '0.925rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                        {activeServiceModal.freelancer.name}
+                      </h4>
+                      <p style={{ fontSize: '0.75rem', color: '#64748B', margin: '2px 0 0' }}>
+                        {activeServiceModal.freelancer.title}
+                      </p>
+                    </div>
+                  </div>
+                  <CareerScoreBadge score={activeServiceModal.freelancer.careerScore} size="sm" showLabel={false} />
+                </div>
+
+                {/* Highlights */}
+                {activeServiceModal.highlights && (
+                  <div>
+                    <h4 style={{ fontSize: '0.8rem', fontWeight: 800, color: '#0F172A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: '0.5rem' }}>
+                      Key Deliverables
+                    </h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                      {activeServiceModal.highlights.map((h, i) => (
+                        <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', fontSize: '0.825rem', color: '#334155' }}>
+                          <CheckCircle2 size={15} color="#1E40AF" style={{ flexShrink: 0, marginTop: '2px' }} />
+                          <span>{h}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right Column: Interactive Pricing Tier */}
+              <div style={{ backgroundColor: '#F8FAFC', border: '1.5px solid #1E40AF', borderRadius: '14px', padding: '1.35rem', boxShadow: '0 4px 12px rgba(30,64,175,0.06)' }}>
+                {/* Tier Switcher */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.35rem', backgroundColor: '#E2E8F0', padding: '0.25rem', borderRadius: '10px', marginBottom: '1.25rem' }}>
+                  {['basic', 'standard', 'premium'].map(tier => (
+                    <button
+                      key={tier}
+                      onClick={() => setSelectedTier(tier)}
+                      style={{
+                        padding: '0.45rem',
+                        borderRadius: '7px',
+                        border: 'none',
+                        fontSize: '0.75rem',
+                        fontWeight: 700,
+                        textTransform: 'capitalize',
+                        cursor: 'pointer',
+                        backgroundColor: selectedTier === tier ? '#FFFFFF' : 'transparent',
+                        color: selectedTier === tier ? '#1E40AF' : '#64748B',
+                        boxShadow: selectedTier === tier ? '0 1px 3px rgba(0,0,0,0.1)' : 'none',
+                        transition: 'all 0.15s'
+                      }}
+                    >
+                      {tier}
+                    </button>
+                  ))}
+                </div>
+
+                {(() => {
+                  const pkgs = activeServiceModal.packages || {
+                    basic: { name: 'Basic Starter', price: activeServiceModal.startingPrice, delivery: '5 Days', revisions: 2, features: ['Core deliverable setup', 'Documentation'] },
+                    standard: { name: 'Standard Full Suite', price: '₹45,000 ($550)', delivery: '10 Days', revisions: 4, features: ['Everything in Basic', 'Full deployment'] },
+                    premium: { name: 'Enterprise Flagship', price: '₹85,000 ($1,050)', delivery: '14 Days', revisions: 'Unlimited', features: ['Priority support', 'Automated CI/CD'] }
+                  };
+                  const cur = pkgs[selectedTier] || pkgs.standard || pkgs.basic;
+                  return (
+                    <div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.35rem' }}>
+                        <h3 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+                          {cur.name}
+                        </h3>
+                        <span style={{ fontSize: '1.3rem', fontWeight: 800, color: '#1E40AF' }}>
+                          {cur.price}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.75rem', fontSize: '0.775rem', color: '#64748B', marginBottom: '1rem' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                          <Clock size={13} /> {cur.delivery}
+                        </span>
+                        <span>•</span>
+                        <span>{cur.revisions} Revisions</span>
+                      </div>
+
+                      <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem', marginBottom: '1.25rem' }}>
+                        <span style={{ fontSize: '0.725rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
+                          Includes:
+                        </span>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                          {(cur.features || []).map((feat, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.8rem', color: '#334155' }}>
+                              <Check size={14} color="#059669" />
+                              <span>{feat}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => {
+                          if (role === 'public') {
+                            showToast('Please sign in or create a Client account to order services with 100% Escrow Protection.', 'info');
+                            setAuthMode('signup');
+                            setAuthRoleChoice('client');
+                            setIsAuthModalOpen(true);
+                            return;
+                          }
+                          showToast(`🎉 Order Placed! Escrow funded for "${cur.name}" (${cur.price}). ${activeServiceModal.freelancer.name} has been notified.`, 'success');
+                          setActiveServiceModal(null);
+                        }}
+                        className="btn btn-primary"
+                        style={{ width: '100%', padding: '0.8rem', justifyContent: 'center', fontSize: '0.925rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.4rem' }}
+                      >
+                        <ShieldCheck size={17} /> Order in Escrow
+                      </button>
+
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.35rem', marginTop: '0.75rem', fontSize: '0.725rem', color: '#64748B' }}>
+                        <Lock size={12} color="#059669" /> Funds held safely in Escrow until milestone approval
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

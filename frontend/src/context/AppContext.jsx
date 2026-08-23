@@ -173,6 +173,18 @@ export const AppProvider = ({ children }) => {
     const handlePopState = (event) => {
       if (event.state && event.state.view) {
         const targetView = event.state.view;
+        if (event.state.payload && event.state.payload.id) {
+          if (targetView === 'service-detail') {
+            const found = SERVICES.find(s => s.id === event.state.payload.id);
+            if (found) setSelectedService(found);
+          } else if (targetView === 'project-detail') {
+            const found = PROJECTS.find(p => p.id === event.state.payload.id);
+            if (found) setSelectedProject(found);
+          } else if (targetView === 'freelancer-profile') {
+            const found = FREELANCERS.find(f => f.id === event.state.payload.id);
+            if (found) setSelectedFreelancer(found);
+          }
+        }
         setCurrentView(targetView);
         setViewHistory(prev => (prev.length > 1 ? prev.slice(0, -1) : [targetView]));
       } else {
@@ -445,7 +457,7 @@ export const AppProvider = ({ children }) => {
     };
     setActiveProjectsList(prev => [newProj, ...prev]);
     showToast('Project posted successfully!', 'success');
-    navigateTo('smart-match');
+    navigateTo('comparison');
   };
 
   // 13. Skill Assessment & Profile Updating

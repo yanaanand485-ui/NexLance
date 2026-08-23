@@ -34,20 +34,35 @@ export const ServiceDetail = () => {
   } = useApp();
 
   const service = selectedService || SERVICES[0];
+  const freelancer = service?.freelancer || {
+    name: 'Verified Engineer',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80',
+    title: 'Senior Specialist',
+    location: 'Remote',
+    careerScore: 92,
+    tags: ['Verified Pro']
+  };
+
   const [selectedTier, setSelectedTier] = useState('standard'); // 'basic' | 'standard' | 'premium'
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState(null);
   const [isOrderConfirmModalOpen, setIsOrderConfirmModalOpen] = useState(false);
   const [orderProcessing, setOrderProcessing] = useState(false);
 
-  const packages = service.packages || {
-    basic: { name: "Basic Starter", price: service.startingPrice, delivery: "5 Days", revisions: 2, features: ["Core deliverable setup", "Documentation"] },
+  React.useEffect(() => {
+    setSelectedTier('standard');
+    setSelectedImageIndex(0);
+    setOpenFaqIndex(null);
+  }, [service?.id]);
+
+  const packages = service?.packages || {
+    basic: { name: "Basic Starter", price: service?.startingPrice || "₹25,000 ($300)", delivery: "5 Days", revisions: 2, features: ["Core deliverable setup", "Documentation"] },
     standard: { name: "Standard Full Suite", price: "₹45,000 ($550)", delivery: "10 Days", revisions: 4, features: ["Everything in Basic", "Advanced features", "Full deployment"] },
     premium: { name: "Enterprise Flagship", price: "₹85,000 ($1,050)", delivery: "14 Days", revisions: "Unlimited", features: ["Everything in Standard", "Priority support", "Automated CI/CD"] }
   };
 
-  const currentPkg = packages[selectedTier] || packages.standard;
-  const galleryImages = service.gallery && service.gallery.length > 0 ? service.gallery : [service.thumbnail];
+  const currentPkg = packages[selectedTier] || packages.standard || packages.basic || Object.values(packages)[0];
+  const galleryImages = service?.gallery && service.gallery.length > 0 ? service.gallery : [service?.thumbnail || '/rag-pipeline.jpg'];
 
   // Handle Order CTA click
   const handleOrderInitiation = () => {
@@ -82,25 +97,25 @@ export const ServiceDetail = () => {
       addNotification({
         category: 'Escrow & Orders',
         title: `Service Ordered: "${service.title}"`,
-        description: `Escrow funded for "${currentPkg.name}" (${currentPkg.price}). ${service.freelancer.name} has been notified to begin Discovery Phase.`,
+        description: `Escrow funded for "${currentPkg.name}" (${currentPkg.price}). ${freelancer.name} has been notified to begin Discovery Phase.`,
         action: 'view-client-dashboard'
       }, 'client');
 
       // Add Notification to freelancer
       addNotification({
         category: 'New Client Order',
-        title: `New Order Received from ${clientProfile.name}`,
+        title: `New Order Received from ${clientProfile?.name || 'Client'}`,
         description: `Client ordered package "${currentPkg.name}" (${currentPkg.price}). Funds safely deposited in Escrow.`,
         action: 'view-freelancer-dashboard'
       }, 'freelancer');
 
-      showToast(`🎉 Order Placed Successfully! Escrow funded for "${currentPkg.name}" (${currentPkg.price}). ${service.freelancer.name} notified!`, 'success');
+      showToast(`🎉 Order Placed Successfully! Escrow funded for "${currentPkg.name}" (${currentPkg.price}). ${freelancer.name} notified!`, 'success');
       navigateTo('client-dashboard');
     }, 1200);
   };
 
   return (
-    <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
+    <main className={role === 'client' ? 'dashboard-main' : ''} style={role === 'client' ? { width: '100%', paddingBottom: '4rem' } : { maxWidth: '1280px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
       {/* Top Breadcrumbs & Back Navigation */}
       <BackToDashboardButton
         label="Back to All Services"
@@ -197,28 +212,28 @@ export const ServiceDetail = () => {
           <div className="card" style={{ padding: '1.5rem', marginBottom: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', border: '1px solid #E2E8F0', borderRadius: '16px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
               <img
-                src={service.freelancer.avatar}
-                alt={service.freelancer.name}
+                src={freelancer.avatar}
+                alt={freelancer.name}
                 style={{ width: '60px', height: '60px', borderRadius: '14px', objectFit: 'cover', border: '2px solid #E2E8F0' }}
               />
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                   <h3
                     onClick={() => {
-                      setSelectedFreelancer(service.freelancer);
-                      navigateTo('freelancer-profile');
+                      setSelectedFreelancer(freelancer);
+                      navigateTo('freelancer-profile', freelancer);
                     }}
                     style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', cursor: 'pointer', textDecoration: 'none' }}
                   >
-                    {service.freelancer.name}
+                    {freelancer.name}
                   </h3>
                   <span className="badge badge-verified" style={{ fontSize: '0.7rem' }}>✓ Verified Pro</span>
                 </div>
                 <p style={{ fontSize: '0.85rem', color: '#64748B', margin: '2px 0 6px' }}>
-                  {service.freelancer.title} • {service.freelancer.location}
+                  {freelancer.title} • {freelancer.location}
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                  {(service.verifiedSkills || service.freelancer.tags || []).slice(0, 4).map((v, i) => (
+                  {(service.verifiedSkills || freelancer.tags || []).slice(0, 4).map((v, i) => (
                     <span key={i} className="badge badge-verified" style={{ fontSize: '0.7rem' }}>
                       ✓ {v}
                     </span>
@@ -228,14 +243,14 @@ export const ServiceDetail = () => {
             </div>
 
             <div style={{ textAlign: 'center', borderLeft: '1px solid #F1F5F9', paddingLeft: '1.5rem' }}>
-              <CareerScoreBadge score={service.freelancer.careerScore} size="md" showLabel={false} />
+              <CareerScoreBadge score={freelancer.careerScore} size="md" showLabel={false} />
               <span style={{ fontSize: '0.7rem', fontWeight: 800, color: '#1E40AF', textTransform: 'uppercase', display: 'block', marginTop: '0.35rem' }}>
                 Career Score
               </span>
               <button
                 onClick={() => {
-                  setSelectedFreelancer(service.freelancer);
-                  navigateTo('freelancer-profile');
+                  setSelectedFreelancer(freelancer);
+                  navigateTo('freelancer-profile', freelancer);
                 }}
                 style={{
                   background: 'none',
@@ -581,7 +596,7 @@ export const ServiceDetail = () => {
             </div>
 
             <p style={{ fontSize: '0.9rem', color: '#64748B', lineHeight: 1.5, marginBottom: '1.25rem' }}>
-              You are funding the escrow deposit for <strong>{service.title}</strong> by <strong>{service.freelancer.name}</strong>.
+              You are funding the escrow deposit for <strong>{service.title}</strong> by <strong>{freelancer.name}</strong>.
             </p>
 
             {/* Order Summary Box */}
