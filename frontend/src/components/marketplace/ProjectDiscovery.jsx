@@ -12,10 +12,12 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SmartMatchBadge } from '../common/SmartMatchBadge';
+import { calculateProjectMatch } from '../../utils/matchEngine';
 
 export const ProjectDiscovery = () => {
   const {
     role,
+    freelancerProfile,
     setIsAuthModalOpen,
     setAuthMode,
     setAuthRoleChoice,
@@ -104,6 +106,7 @@ export const ProjectDiscovery = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {filteredProjects.map((proj) => {
           const hasApplied = appliedProjectIds.includes(proj.id);
+          const matchData = calculateProjectMatch(proj, freelancerProfile);
 
           return (
             <div
@@ -185,7 +188,7 @@ export const ProjectDiscovery = () => {
 
                     <div style={{ textAlign: 'right' }}>
                       <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#64748B', textTransform: 'uppercase' }}>Skill Match</span>
-                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#1E40AF', lineHeight: 1 }}>{proj.matchScore}%</div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 800, color: matchData.matchScore >= 80 ? '#1E40AF' : '#475569', lineHeight: 1 }}>{matchData.matchScore}%</div>
                     </div>
                   </div>
 
@@ -195,10 +198,10 @@ export const ProjectDiscovery = () => {
                       Match Breakdown:
                     </span>
                     <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                      {proj.whyMatchReasons.slice(0, 2).map((r, i) => (
-                        <li key={i} style={{ fontSize: '0.75rem', color: '#334155', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                          <CheckCircle2 size={12} color="#059669" />
-                          <span>{r.replace(/^✓\s*/, '')}</span>
+                      {matchData.whyMatchReasons.slice(0, 2).map((r, i) => (
+                        <li key={i} style={{ fontSize: '0.75rem', color: r.startsWith('⚠') ? '#B45309' : '#334155', display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                          <CheckCircle2 size={12} color={r.startsWith('⚠') ? '#F59E0B' : '#059669'} />
+                          <span>{r.replace(/^✓\s*/, '').replace(/^⚠\s*/, '').replace(/^⚡\s*/, '')}</span>
                         </li>
                       ))}
                     </ul>

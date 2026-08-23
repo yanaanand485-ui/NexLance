@@ -35,6 +35,8 @@ export const SARAH_FREELANCER = {
     { month: "Sep", score: 93 },
     { month: "Oct", score: 95 }
   ],
+  experienceLevel: "Senior / Expert",
+  skills: ["React", "Next.js", "TypeScript", "Node.js", "GraphQL", "AWS", "Stripe", "Tailwind CSS"],
   verifiedSkills: [
     { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
@@ -101,6 +103,8 @@ export const PRIYA_FREELANCER = {
     { month: "Sep", score: 93 },
     { month: "Oct", score: 94 }
   ],
+  experienceLevel: "Senior / Expert",
+  skills: ["Figma", "UI/UX Design", "Design Systems", "React", "Tailwind CSS", "Accessibility"],
   verifiedSkills: [
     { id: "figma", name: "Figma & Design Systems", score: 98, percentile: "Top 1% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "react", name: "React & CSS Architecture", score: 93, percentile: "Top 4% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
@@ -165,6 +169,8 @@ export const CURRENT_USER = {
     { month: "Sep", score: 90 },
     { month: "Oct", score: 91 }
   ],
+  experienceLevel: "Senior / Expert",
+  skills: ["React", "TypeScript", "Node.js", "GraphQL", "Redis", "AWS", "Jest", "Redux Toolkit", "JavaScript (ES6+)"],
   verifiedSkills: [
     { id: "react", name: "React", score: 91, percentile: "Top 5% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "javascript", name: "JavaScript (ES6+)", score: 87, percentile: "Top 15% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
@@ -2441,6 +2447,8 @@ export const NEW_FREELANCER = {
     { month: "Sep", score: 0 },
     { month: "Oct", score: 0 }
   ],
+  experienceLevel: "Mid-Level",
+  skills: ["React", "JavaScript (ES6+)", "TypeScript", "Node.js"],
   verifiedSkills: [
     { id: "react", name: "React", score: null, percentile: null, status: "unverified", note: "Assessment available" },
     { id: "javascript", name: "JavaScript (ES6+)", score: null, percentile: null, status: "unverified", note: "Assessment available" },

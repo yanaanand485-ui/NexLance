@@ -14,10 +14,12 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { PROJECTS } from '../../data/mockData';
+import { calculateProjectMatch } from '../../utils/matchEngine';
 
 export const ProjectDetail = () => {
   const {
     role,
+    freelancerProfile,
     setIsAuthModalOpen,
     setAuthMode,
     setAuthRoleChoice,
@@ -30,6 +32,7 @@ export const ProjectDetail = () => {
 
   const project = selectedProject || PROJECTS[0];
   const hasApplied = appliedProjectIds.includes(project.id);
+  const matchData = calculateProjectMatch(project, freelancerProfile);
 
   const [proposedBudget, setProposedBudget] = useState('₹1,50,000');
   const [deliveryTime, setDeliveryTime] = useState('3 weeks');
@@ -203,22 +206,43 @@ export const ProjectDetail = () => {
               <Sparkles size={18} color="#1E40AF" />
             </div>
 
-            <div style={{ fontSize: '3rem', fontWeight: 800, color: '#1E40AF', fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1, marginBottom: '1rem' }}>
-              {project.matchScore}%
+            <div style={{ fontSize: '3rem', fontWeight: 800, color: matchData.matchScore >= 80 ? '#1E40AF' : '#475569', fontFamily: "'Plus Jakarta Sans', sans-serif", lineHeight: 1, marginBottom: '1rem' }}>
+              {matchData.matchScore}%
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
-              {project.whyMatchReasons.map((r, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', fontSize: '0.825rem', color: '#1E3A8A', fontWeight: 600 }}>
-                  <CheckCircle2 size={15} color="#1E40AF" style={{ flexShrink: 0, marginTop: '2px' }} />
-                  <span>{r.replace(/^✓\s*/, '')}</span>
+              {matchData.whyMatchReasons.map((r, i) => (
+                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.4rem', fontSize: '0.825rem', color: r.startsWith('⚠') ? '#B45309' : '#1E3A8A', fontWeight: 600 }}>
+                  <CheckCircle2 size={15} color={r.startsWith('⚠') ? '#F59E0B' : '#1E40AF'} style={{ flexShrink: 0, marginTop: '2px' }} />
+                  <span>{r.replace(/^✓\s*/, '').replace(/^⚠\s*/, '').replace(/^⚡\s*/, '')}</span>
                 </div>
               ))}
             </div>
 
-            <p style={{ fontSize: '0.775rem', color: '#3B82F6', borderTop: '1px solid #BFDBFE', paddingTop: '0.75rem' }}>
-              Your profile ranks in the top 2% of applicants for this project specification.
-            </p>
+            <div style={{ borderTop: '1px solid #BFDBFE', paddingTop: '0.75rem', fontSize: '0.775rem', color: '#1E40AF' }}>
+              <div style={{ fontWeight: 700, marginBottom: '0.25rem' }}>Matched Skills:</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.3rem' }}>
+                {project.requiredSkills.map(req => {
+                  const isMatched = matchData.matchingSkills.includes(req);
+                  return (
+                    <span
+                      key={req}
+                      style={{
+                        padding: '0.15rem 0.45rem',
+                        borderRadius: '4px',
+                        fontSize: '0.72rem',
+                        fontWeight: 600,
+                        backgroundColor: isMatched ? '#FFFFFF' : '#FEF2F2',
+                        color: isMatched ? '#1E40AF' : '#991B1B',
+                        border: isMatched ? '1px solid #93C5FD' : '1px solid #FECACA'
+                      }}
+                    >
+                      {req} {isMatched ? '✓' : '✗'}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           {/* Client Details Card */}

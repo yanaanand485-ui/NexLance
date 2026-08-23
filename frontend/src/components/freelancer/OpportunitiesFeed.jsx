@@ -1,9 +1,10 @@
 import React from 'react';
 import { Sparkles, CheckCircle2, Clock, ArrowRight, DollarSign, Send, ShieldCheck } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { calculateProjectMatch } from '../../utils/matchEngine';
 
 export const OpportunitiesFeed = () => {
-  const { activeProjectsList, navigateTo, setSelectedProject, appliedProjectIds, submitProposal } = useApp();
+  const { activeProjectsList, freelancerProfile, navigateTo, setSelectedProject, appliedProjectIds, submitProposal } = useApp();
 
   return (
     <div className="dashboard-main">
@@ -20,6 +21,7 @@ export const OpportunitiesFeed = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
         {activeProjectsList.map((proj) => {
           const hasApplied = appliedProjectIds.includes(proj.id);
+          const matchData = calculateProjectMatch(proj, freelancerProfile);
           return (
             <div
               key={proj.id}
@@ -92,8 +94,8 @@ export const OpportunitiesFeed = () => {
               <div style={{ borderLeft: '1px solid #F1F5F9', paddingLeft: '1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '1.35rem', fontWeight: 800, color: '#1E40AF' }}>
-                      {proj.matchScore}% Match
+                    <span style={{ fontSize: '1.35rem', fontWeight: 800, color: matchData.matchScore >= 80 ? '#1E40AF' : '#475569' }}>
+                      {matchData.matchScore}% Match
                     </span>
                     <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0F172A' }}>
                       {proj.budget}
@@ -105,10 +107,10 @@ export const OpportunitiesFeed = () => {
                   </span>
 
                   <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.25rem 0', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                    {proj.whyMatchReasons.map((r, i) => (
-                      <li key={i} style={{ fontSize: '0.775rem', color: '#334155', display: 'flex', alignItems: 'flex-start', gap: '0.35rem' }}>
-                        <CheckCircle2 size={13} color="#059669" style={{ flexShrink: 0, marginTop: '2px' }} />
-                        <span>{r.replace(/^✓\s*/, '')}</span>
+                    {matchData.whyMatchReasons.map((r, i) => (
+                      <li key={i} style={{ fontSize: '0.775rem', color: r.startsWith('⚠') ? '#B45309' : '#334155', display: 'flex', alignItems: 'flex-start', gap: '0.35rem' }}>
+                        <CheckCircle2 size={13} color={r.startsWith('⚠') ? '#F59E0B' : '#059669'} style={{ flexShrink: 0, marginTop: '2px' }} />
+                        <span>{r.replace(/^✓\s*/, '').replace(/^⚠\s*/, '').replace(/^⚡\s*/, '')}</span>
                       </li>
                     ))}
                   </ul>

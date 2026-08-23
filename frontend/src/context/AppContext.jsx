@@ -175,6 +175,10 @@ export const AppProvider = ({ children }) => {
   const [authMode, setAuthMode] = useState('signup'); // 'signup' (Get Started) | 'login'
   const [authRoleChoice, setAuthRoleChoice] = useState('freelancer'); // 'freelancer' | 'client'
 
+  // Skill Selection & Customization Modal State
+  const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
+  const [isSkillModalOnboarding, setIsSkillModalOnboarding] = useState(false);
+
   // User Profile State (Default is clean new user with 0 score)
   const [freelancerProfile, setFreelancerProfile] = useState(NEW_FREELANCER);
   const [clientProfile, setClientProfile] = useState(CLIENT_DATA);
@@ -445,6 +449,11 @@ export const AppProvider = ({ children }) => {
     if (userRole === 'freelancer') {
       setCurrentView('freelancer-dashboard');
       showToast(`Account created successfully! Welcome to NexLance, ${cleanName}.`, 'success');
+      // Launch Skill Selection Onboarding Wizard right away!
+      setTimeout(() => {
+        setIsSkillModalOnboarding(true);
+        setIsSkillModalOpen(true);
+      }, 400);
     } else {
       setCurrentView('client-dashboard');
       showToast(`Client account created successfully! Welcome, ${cleanName}.`, 'success');
@@ -768,6 +777,57 @@ export const AppProvider = ({ children }) => {
     showToast(`Skill Verified! Score: ${score}/100. Career Score updated to ${newCareerScore}.`, 'success');
   };
 
+  // Update Freelancer Skills, Role, and Experience
+  const updateFreelancerSkills = ({ role: newRole, skills: newSkills, experienceLevel: newExp }) => {
+    setFreelancerProfile(prev => {
+      const existingVerified = prev.verifiedSkills || [];
+      const updatedVerifiedSkills = (newSkills || []).map(skillName => {
+        const found = existingVerified.find(v => (v.name || v.id || '').toLowerCase() === skillName.toLowerCase());
+        if (found) return found;
+        return {
+          id: skillName.toLowerCase().replace(/[^a-z0-9]/g, ''),
+          name: skillName,
+          score: null,
+          percentile: null,
+          status: 'unverified',
+          note: 'Assessment available'
+        };
+      });
+
+      const updated = {
+        ...prev,
+        role: newRole || prev.role || 'Full-Stack Developer',
+        skills: newSkills || prev.skills || [],
+        experienceLevel: newExp || prev.experienceLevel || 'Mid-Level',
+        verifiedSkills: updatedVerifiedSkills
+      };
+
+      // Also update active session & user store in localStorage
+      const active = getStoredActiveUser();
+      if (active && active.role === 'freelancer') {
+        active.profile = updated;
+        saveStoredActiveUser(active);
+
+        const users = getStoredUsers();
+        const updatedUsers = users.map(u => 
+          u.email.toLowerCase() === active.email.toLowerCase() && u.role === 'freelancer' 
+            ? { ...u, profile: updated } 
+            : u
+        );
+        saveStoredUsers(updatedUsers);
+      }
+
+      return updated;
+    });
+
+    addNotification({
+      category: 'Smart Match',
+      title: 'Skill Profile Updated 🎯',
+      description: 'Your project recommendation match scores have been recalculated dynamically based on your updated skills.',
+      action: 'view-projects'
+    }, 'freelancer');
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -815,6 +875,11 @@ export const AppProvider = ({ children }) => {
         setAuthMode,
         authRoleChoice,
         setAuthRoleChoice,
+        isSkillModalOpen,
+        setIsSkillModalOpen,
+        isSkillModalOnboarding,
+        setIsSkillModalOnboarding,
+        updateFreelancerSkills,
         activeAssessment,
         setActiveAssessment,
         assessmentResult,
