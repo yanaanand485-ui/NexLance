@@ -7,6 +7,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { PROJECTS } from '../../data/mockData';
 import { calculateProjectMatch } from '../../utils/matchEngine';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ProjectDetail = () => {
   const {
@@ -44,7 +45,18 @@ export const ProjectDetail = () => {
   };
 
   return (
-    <main style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 1.5rem', width: '100%' }}>
+    <main style={{ maxWidth: '1240px', margin: '0 auto', padding: '2rem 1.5rem 4rem', width: '100%' }}>
+      {/* Navigation & Breadcrumbs */}
+      <BackToDashboardButton
+        label="Back to Projects"
+        fallbackView="project-discovery"
+        showDashboardDirect={true}
+        breadcrumbs={[
+          { label: 'Find Projects', view: 'project-discovery' },
+          { label: project.title }
+        ]}
+      />
+
       {/* Top Banner Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 0.75fr', gap: '2.5rem' }}>
         {/* Left Column: Project Scope & Specifications */}

@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { calculateProjectMatch } from '../../utils/matchEngine';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ProjectDiscovery = () => {
   const {
@@ -41,7 +42,16 @@ export const ProjectDiscovery = () => {
   });
 
   return (
-    <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem', width: '100%' }}>
+    <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1.5rem 4rem', width: '100%' }}>
+      {/* Navigation Header */}
+      <BackToDashboardButton
+        label={role === 'public' ? 'Back to Home' : 'Back to Dashboard'}
+        fallbackView={role === 'freelancer' ? 'freelancer-dashboard' : role === 'client' ? 'client-dashboard' : 'landing'}
+        breadcrumbs={[
+          { label: 'Find Projects' }
+        ]}
+      />
+
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', backgroundColor: '#EFF6FF', color: '#1E40AF', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>

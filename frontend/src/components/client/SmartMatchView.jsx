@@ -11,6 +11,7 @@ import { useApp } from '../../context/AppContext';
 import { FREELANCERS, SERVICES } from '../../data/mockData';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const SmartMatchView = () => {
   const {
@@ -30,6 +31,14 @@ export const SmartMatchView = () => {
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="client-dashboard"
+        breadcrumbs={[
+          { label: 'Smart Match Engine' }
+        ]}
+      />
+
       <div className="dashboard-header">
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', backgroundColor: '#EFF6FF', color: '#1E40AF', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
           <Sparkles size={14} /> Smart Match Engine

@@ -101,37 +101,16 @@ export const ServiceDetail = () => {
 
   return (
     <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
-      {/* Top Breadcrumbs & Back link */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-        <button
-          onClick={() => navigateTo('services-marketplace')}
-          style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '0.4rem',
-            background: 'none',
-            border: 'none',
-            color: '#1E40AF',
-            fontSize: '0.9rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            padding: '0.4rem 0.6rem',
-            borderRadius: '6px'
-          }}
-        >
-          <ArrowLeft size={16} /> Back to All Services
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.85rem', color: '#64748B' }}>
-          <span onClick={() => navigateTo('landing')} style={{ cursor: 'pointer', color: '#1E40AF' }}>Home</span>
-          <ChevronRight size={13} />
-          <span onClick={() => navigateTo('services-marketplace')} style={{ cursor: 'pointer', color: '#1E40AF' }}>Services</span>
-          <ChevronRight size={13} />
-          <span style={{ color: '#0F172A', fontWeight: 600, maxWidth: '280px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {service.title}
-          </span>
-        </div>
-      </div>
+      {/* Top Breadcrumbs & Back Navigation */}
+      <BackToDashboardButton
+        label="Back to All Services"
+        fallbackView="services-marketplace"
+        showDashboardDirect={true}
+        breadcrumbs={[
+          { label: 'Services', view: 'services-marketplace' },
+          { label: service.title }
+        ]}
+      />
 
       {/* Main Two-Column Grid */}
       <div style={{ display: 'grid', gridTemplateColumns: '1.35fr 0.85fr', gap: '2.5rem', alignItems: 'start' }}>
@@ -172,6 +151,10 @@ export const ServiceDetail = () => {
               <img
                 src={galleryImages[selectedImageIndex] || service.thumbnail}
                 alt={service.title}
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/rag-pipeline.jpg';
+                }}
                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
               />
             </div>
@@ -195,7 +178,15 @@ export const ServiceDetail = () => {
                       transition: 'all 0.15s'
                     }}
                   >
-                    <img src={img} alt="Thumbnail preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <img
+                      src={img}
+                      alt="Thumbnail preview"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/rag-pipeline.jpg';
+                      }}
+                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
                   </button>
                 ))}
               </div>

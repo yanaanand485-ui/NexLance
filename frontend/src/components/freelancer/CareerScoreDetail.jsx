@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const CareerScoreDetail = () => {
   const { freelancerProfile } = useApp();
@@ -60,6 +61,14 @@ export const CareerScoreDetail = () => {
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="freelancer-dashboard"
+        breadcrumbs={[
+          { label: 'Career Score Analytics' }
+        ]}
+      />
+
       <div className="dashboard-header">
         <h1 className="dashboard-title">Career Score Analytics</h1>
         <p className="dashboard-subtitle">

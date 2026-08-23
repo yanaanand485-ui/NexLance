@@ -4,7 +4,8 @@ import {
   ChevronDown,
   LogOut,
   Menu,
-  X
+  X,
+  ArrowLeft
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -13,6 +14,8 @@ export const Navbar = () => {
     role,
     currentView,
     navigateTo,
+    goBack,
+    goToDashboard,
     handleFindTalent,
     handleFindWork,
     logout,
@@ -31,6 +34,7 @@ export const Navbar = () => {
 
   const unreadCount = notifications.filter(n => n.unread).length;
   const isPublic = role === 'public';
+  const isRootView = currentView === 'landing' || currentView === 'freelancer-dashboard' || currentView === 'client-dashboard';
 
   const handleAuthClick = (mode, chosenRole = 'freelancer') => {
     setAuthMode(mode);
@@ -42,8 +46,8 @@ export const Navbar = () => {
   return (
     <header className="navbar-wrapper">
       <div className="navbar">
-        {/* Left: Brand Logo & Links */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '2rem' }}>
+        {/* Left: Brand Logo & Back Button & Links */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div
             onClick={() => navigateTo(role === 'freelancer' ? 'freelancer-dashboard' : role === 'client' ? 'client-dashboard' : 'landing')}
             className="brand-logo"
@@ -56,6 +60,34 @@ export const Navbar = () => {
             </div>
             <span>NexLance</span>
           </div>
+
+          {/* Quick Back to Dashboard Button in Navbar (Visible when navigating subviews) */}
+          {!isRootView && (
+            <button
+              type="button"
+              onClick={() => goBack()}
+              className="nav-back-pill"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.4rem',
+                padding: '0.35rem 0.75rem',
+                borderRadius: '8px',
+                backgroundColor: '#EFF6FF',
+                border: '1px solid #BFDBFE',
+                color: '#1E40AF',
+                fontSize: '0.8rem',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap'
+              }}
+              title={isPublic ? 'Back to Home' : 'Back to Dashboard'}
+            >
+              <ArrowLeft size={14} />
+              <span>{isPublic ? 'Back' : 'Back to Dashboard'}</span>
+            </button>
+          )}
 
           {/* Navigation Links for Public View */}
           {isPublic ? (

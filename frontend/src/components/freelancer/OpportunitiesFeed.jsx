@@ -2,12 +2,21 @@ import React from 'react';
 import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { calculateProjectMatch } from '../../utils/matchEngine';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const OpportunitiesFeed = () => {
   const { activeProjectsList, freelancerProfile, navigateTo, setSelectedProject, appliedProjectIds, submitProposal } = useApp();
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="freelancer-dashboard"
+        breadcrumbs={[
+          { label: 'Tailored Opportunities' }
+        ]}
+      />
+
       <div className="dashboard-header">
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', backgroundColor: '#EFF6FF', color: '#1E40AF', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
           <Sparkles size={14} /> AI Tailored Opportunities

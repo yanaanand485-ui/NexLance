@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ServicesMarketplace = () => {
   const { navigateTo, setSelectedService, role, setIsAuthModalOpen, setAuthMode, setAuthRoleChoice } = useApp();
@@ -81,14 +82,18 @@ export const ServicesMarketplace = () => {
   };
 
   return (
-    <main style={{ maxWidth: '1320px', margin: '0 auto', padding: '2.5rem 1.5rem 5rem', width: '100%' }}>
-      {/* Top Breadcrumb & Hero Header */}
+    <main style={{ maxWidth: '1320px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
+      {/* Navigation Header */}
+      <BackToDashboardButton
+        label={role === 'public' ? 'Back to Home' : 'Back to Dashboard'}
+        fallbackView={role === 'freelancer' ? 'freelancer-dashboard' : role === 'client' ? 'client-dashboard' : 'landing'}
+        breadcrumbs={[
+          { label: 'Services Marketplace' }
+        ]}
+      />
+
+      {/* Hero Header */}
       <div style={{ marginBottom: '2.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem' }}>
-          <span onClick={() => navigateTo('landing')} style={{ cursor: 'pointer', color: '#1E40AF', fontWeight: 600 }}>Home</span>
-          <ChevronRight size={14} />
-          <span style={{ color: '#0F172A', fontWeight: 700 }}>Services Marketplace</span>
-        </div>
 
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1.5rem' }}>
           <div style={{ maxWidth: '780px' }}>
@@ -304,6 +309,10 @@ export const ServicesMarketplace = () => {
                   <img
                     src={srv.thumbnail}
                     alt={srv.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/rag-pipeline.jpg';
+                    }}
                     style={{
                       width: '100%',
                       height: '100%',

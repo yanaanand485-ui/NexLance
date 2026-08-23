@@ -3,6 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { FREELANCERS } from '../../data/mockData';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ApplicationsView = () => {
   const {
@@ -11,7 +12,8 @@ export const ApplicationsView = () => {
     toggleShortlist,
     shortlistedFreelancers,
     toggleComparison,
-    comparisonList
+    comparisonList,
+    role
   } = useApp();
 
   const [minScore, setMinScore] = useState(85);
@@ -25,6 +27,14 @@ export const ApplicationsView = () => {
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView={role === 'freelancer' ? 'freelancer-dashboard' : 'client-dashboard'}
+        breadcrumbs={[
+          { label: role === 'freelancer' ? 'My Applications' : 'Applications Received' }
+        ]}
+      />
+
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="dashboard-title">Applications Received (48)</h1>

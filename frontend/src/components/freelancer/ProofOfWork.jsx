@@ -7,12 +7,21 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ProofOfWork = () => {
   const { freelancerProfile, showToast } = useApp();
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="freelancer-dashboard"
+        breadcrumbs={[
+          { label: 'Proof of Work' }
+        ]}
+      />
+
       <div className="dashboard-header">
         <h1 className="dashboard-title">Proof of Work</h1>
         <p className="dashboard-subtitle">

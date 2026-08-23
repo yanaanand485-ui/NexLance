@@ -8,12 +8,21 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { NEW_FREELANCER } from '../../data/mockData';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const NewFreelancerExperience = () => {
   const { navigateTo } = useApp();
 
   return (
     <div className="dashboard-main" style={{ maxWidth: '840px' }}>
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="freelancer-dashboard"
+        breadcrumbs={[
+          { label: 'Onboarding Roadmap' }
+        ]}
+      />
+
       <div className="dashboard-header">
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', backgroundColor: '#EFF6FF', color: '#1E40AF', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>
           <Sparkles size={14} /> Welcome to NexLance

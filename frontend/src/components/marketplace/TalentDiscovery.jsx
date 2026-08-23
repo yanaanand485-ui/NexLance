@@ -8,6 +8,7 @@ import { useApp } from '../../context/AppContext';
 import { FREELANCERS } from '../../data/mockData';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const TalentDiscovery = () => {
   const {
@@ -16,7 +17,8 @@ export const TalentDiscovery = () => {
     toggleShortlist,
     shortlistedFreelancers,
     toggleComparison,
-    comparisonList
+    comparisonList,
+    role
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,7 +50,16 @@ export const TalentDiscovery = () => {
   });
 
   return (
-    <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2.5rem 1.5rem', width: '100%' }}>
+    <main style={{ maxWidth: '1280px', margin: '0 auto', padding: '2rem 1.5rem 4rem', width: '100%' }}>
+      {/* Navigation Header */}
+      <BackToDashboardButton
+        label={role === 'public' ? 'Back to Home' : 'Back to Dashboard'}
+        fallbackView={role === 'client' ? 'client-dashboard' : role === 'freelancer' ? 'freelancer-dashboard' : 'landing'}
+        breadcrumbs={[
+          { label: 'Find Talent' }
+        ]}
+      />
+
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.3rem 0.8rem', borderRadius: '9999px', backgroundColor: '#EFF6FF', color: '#1E40AF', fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>

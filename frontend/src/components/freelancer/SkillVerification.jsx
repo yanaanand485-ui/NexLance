@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { ASSESSMENTS } from '../../data/mockData';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const SkillVerification = () => {
   const { freelancerProfile, completeAssessment, showToast } = useApp();
@@ -130,6 +131,17 @@ export const SkillVerification = () => {
 
   return (
     <div className="dashboard-main verification-container">
+      {/* Back Navigation Bar */}
+      {!isTestActive && (
+        <BackToDashboardButton
+          label="Back to Dashboard"
+          fallbackView="freelancer-dashboard"
+          breadcrumbs={[
+            { label: 'Skill Verification Hub' }
+          ]}
+        />
+      )}
+
       {/* Top Header */}
       <div className="dashboard-header" style={{ marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.25rem' }}>

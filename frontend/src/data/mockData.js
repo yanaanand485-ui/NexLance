@@ -626,9 +626,9 @@ export const SERVICES = [
     rawStartingPrice: 390,
     deliveryDays: 7,
     category: "AI & Machine Learning",
-    thumbnail: "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=600&auto=format&fit=crop&q=80",
+    thumbnail: "/rag-pipeline.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80",
+      "/rag-pipeline.jpg",
       "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
       "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
     ],

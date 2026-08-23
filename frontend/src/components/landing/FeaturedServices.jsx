@@ -124,6 +124,10 @@ export const FeaturedServices = () => {
                   <img
                     src={srv.thumbnail}
                     alt={srv.title}
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/rag-pipeline.jpg';
+                    }}
                     style={{
                       width: '100%',
                       height: '100%',

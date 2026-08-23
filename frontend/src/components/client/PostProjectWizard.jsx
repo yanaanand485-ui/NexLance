@@ -6,6 +6,7 @@ import {
   ArrowLeft
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const PostProjectWizard = () => {
   const { addNewProject } = useApp();
@@ -44,19 +45,25 @@ export const PostProjectWizard = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleFileUpload = (e) => {
+    const uploaded = Array.from(e.target.files).map(f => f.name);
+    setFormData(prev => ({
+      ...prev,
+      files: [...prev.files, ...uploaded]
+    }));
+  };
+
+  const handleSubmit = () => {
     addNewProject({
       title: formData.title,
       category: formData.category,
       description: formData.description,
-      requiredSkills: formData.requiredSkills,
-      experienceLevel: formData.experienceLevel,
-      budget: `${formData.budgetCurrency}${formData.budgetMin} – ${formData.budgetCurrency}${formData.budgetMax}`,
-      budgetType: 'Fixed Price',
+      budget: `${formData.budgetCurrency}${formData.budgetMin} - ${formData.budgetCurrency}${formData.budgetMax}`,
       deadline: formData.deadline,
+      experienceLevel: formData.experienceLevel,
+      requiredSkills: formData.requiredSkills,
       whyMatchReasons: [
-        `✓ ${formData.requiredSkills[0]} verified skill match`,
+        '✓ High skill overlap with candidate pool',
         '✓ High client satisfaction index',
         '✓ Available for immediate start'
       ]
@@ -65,6 +72,14 @@ export const PostProjectWizard = () => {
 
   return (
     <div className="dashboard-main" style={{ maxWidth: '880px' }}>
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="client-dashboard"
+        breadcrumbs={[
+          { label: 'Post a New Project' }
+        ]}
+      />
+
       {/* Header */}
       <div className="dashboard-header">
         <h1 className="dashboard-title">Post a New Project</h1>

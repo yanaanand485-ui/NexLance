@@ -7,6 +7,7 @@ import {
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const FreelancerProfile = () => {
   const {
@@ -39,7 +40,18 @@ export const FreelancerProfile = () => {
   };
 
   return (
-    <main style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 1.5rem', width: '100%' }}>
+    <main style={{ maxWidth: '1240px', margin: '0 auto', padding: '2rem 1.5rem 4rem', width: '100%' }}>
+      {/* Navigation & Breadcrumbs */}
+      <BackToDashboardButton
+        label="Back to Talent"
+        fallbackView="talent-discovery"
+        showDashboardDirect={true}
+        breadcrumbs={[
+          { label: 'Find Talent', view: 'talent-discovery' },
+          { label: freelancer.name }
+        ]}
+      />
+
       {/* Top Profile Header Card (Section 9) */}
       <div className="card" style={{ padding: '2.5rem', borderRadius: '20px', marginBottom: '2rem', boxShadow: '0 4px 6px -1px rgba(15, 23, 42, 0.04)' }}>
         <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 0.8fr', gap: '2.5rem', alignItems: 'center' }}>

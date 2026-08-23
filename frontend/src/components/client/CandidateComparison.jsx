@@ -15,6 +15,7 @@ import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
 import { FREELANCERS } from '../../data/mockData';
+import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const CandidateComparison = () => {
   const {
@@ -177,6 +178,14 @@ export const CandidateComparison = () => {
 
   return (
     <div className="dashboard-main">
+      <BackToDashboardButton
+        label="Back to Dashboard"
+        fallbackView="client-dashboard"
+        breadcrumbs={[
+          { label: 'Candidate Comparison Matrix' }
+        ]}
+      />
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>

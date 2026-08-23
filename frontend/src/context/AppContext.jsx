@@ -108,39 +108,105 @@ export const AppProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, [toastMessage]);
 
-  // 10. Navigation Handler
-  const navigateTo = (view, payload = null) => {
+  // 10. Browser History & Navigation Synchronization
+  const getDefaultDashboard = (userRole = role) => {
+    if (userRole === 'freelancer') return 'freelancer-dashboard';
+    if (userRole === 'client') return 'client-dashboard';
+    return 'landing';
+  };
+
+  const [viewHistory, setViewHistory] = useState(() => {
+    const initial = currentUserAccount?.role === 'freelancer'
+      ? 'freelancer-dashboard'
+      : currentUserAccount?.role === 'client'
+        ? 'client-dashboard'
+        : 'landing';
+    return [initial];
+  });
+
+  // Navigate to any view with browser history integration
+  const navigateTo = (view, payload = null, options = {}) => {
+    const { pushHistory = true, replace = false } = options;
+
     if (payload) {
       if (view === 'freelancer-profile') setSelectedFreelancer(payload);
       if (view === 'project-detail') setSelectedProject(payload);
       if (view === 'service-detail') setSelectedService(payload);
     }
+
+    if (pushHistory) {
+      const stateObj = { view, payload: payload ? { id: payload.id } : null };
+      if (replace) {
+        window.history.replaceState(stateObj, '', `#${view}`);
+      } else {
+        window.history.pushState(stateObj, '', `#${view}`);
+      }
+    }
+
+    setViewHistory(prev => [...prev, view]);
     setCurrentView(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  // Smart in-app back navigation function
+  const goBack = (fallbackView = null) => {
+    // If browser has history, use standard history back to maintain natural flow
+    if (window.history.state && window.history.length > 1 && viewHistory.length > 1) {
+      window.history.back();
+    } else {
+      const targetFallback = fallbackView || getDefaultDashboard();
+      navigateTo(targetFallback, null, { pushHistory: true });
+    }
+  };
+
+  // Direct return to the user's dashboard (or landing for public)
+  const goToDashboard = () => {
+    navigateTo(getDefaultDashboard(), null, { pushHistory: true });
+  };
+
+  // Setup initial history state and listen for browser Back/Forward (popstate)
+  useEffect(() => {
+    const initialView = currentView;
+    // Replace initial state with current view so browser knows root
+    window.history.replaceState({ view: initialView, payload: null }, '', `#${initialView}`);
+
+    const handlePopState = (event) => {
+      if (event.state && event.state.view) {
+        const targetView = event.state.view;
+        setCurrentView(targetView);
+        setViewHistory(prev => (prev.length > 1 ? prev.slice(0, -1) : [targetView]));
+      } else {
+        // Fallback: If user hits back to the empty initial state, stay on dashboard rather than exiting
+        const fallback = getDefaultDashboard();
+        setCurrentView(fallback);
+        window.history.replaceState({ view: fallback, payload: null }, '', `#${fallback}`);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
   const handleFindTalent = () => {
     if (role === 'client') {
-      setCurrentView('client-dashboard');
+      navigateTo('client-dashboard');
     } else {
       setAuthMode('signup');
       setAuthRoleChoice('client');
       setIsAuthModalOpen(true);
       showToast('Sign in or create a Client account to hire verified talent.', 'info');
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleFindWork = () => {
     if (role === 'freelancer') {
-      setCurrentView('freelancer-dashboard');
+      navigateTo('freelancer-dashboard');
     } else {
       setAuthMode('signup');
       setAuthRoleChoice('freelancer');
       setIsAuthModalOpen(true);
       showToast('Sign in or create a Freelancer account to verify skills and get projects.', 'info');
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // 11. Auth Actions (Register, Login, Switch Role, Logout)
@@ -409,6 +475,9 @@ export const AppProvider = ({ children }) => {
     currentView,
     setCurrentView,
     navigateTo,
+    goBack,
+    goToDashboard,
+    viewHistory,
     freelancerProfile,
     setFreelancerProfile,
     clientProfile,
