@@ -632,110 +632,146 @@ export const AuthModal = () => {
               backgroundColor: '#F8FAFC',
               border: '1px dashed #CBD5E1'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.725rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '0.4rem' }}>
-                <Zap size={13} color="#F59E0B" />
-                <span>One-Click Demo Credentials:</span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.725rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <Zap size={13} color="#F59E0B" />
+                  <span>One-Click {isClient ? 'Client' : 'Freelancer'} Credentials:</span>
+                </div>
+                <span style={{ fontSize: '0.7rem', color: isClient ? '#1E40AF' : '#059669', fontWeight: 700 }}>
+                  pass: Password123
+                </span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('sarah@nexlance.dev', 'Password123', 'freelancer')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.4rem 0.6rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    fontSize: '0.75rem',
-                    color: '#0F172A',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                >
-                  <div>
-                    <span style={{ fontWeight: 700, color: '#059669' }}>🌟 Sarah (Old Freelancer · Score 95):</span> sarah@nexlance.dev
-                  </div>
-                  <span style={{ color: '#64748B', fontSize: '0.7rem' }}>pass: Password123</span>
-                </button>
+                {isClient ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleFillDemo('sarah@meridian.com', 'Password123', 'client')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        fontSize: '0.75rem',
+                        color: '#0F172A',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#1E40AF'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#1E40AF' }}>🏢 Sarah Jenkins (Meridian Retail):</span> sarah@meridian.com
+                      </div>
+                      <span style={{ color: '#1E40AF', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('alex@nexlance.dev', 'Password123', 'freelancer')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.4rem 0.6rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    fontSize: '0.75rem',
-                    color: '#0F172A',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                >
-                  <div>
-                    <span style={{ fontWeight: 700, color: '#059669' }}>💻 Alex (Old Freelancer · Score 91):</span> alex@nexlance.dev
-                  </div>
-                  <span style={{ color: '#64748B', fontSize: '0.7rem' }}>pass: Password123</span>
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFillDemo('client@nexlance.dev', 'Password123', 'client')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        fontSize: '0.75rem',
+                        color: '#0F172A',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#1E40AF'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#1E40AF' }}>💼 Enterprise Client:</span> client@nexlance.dev
+                      </div>
+                      <span style={{ color: '#1E40AF', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => handleFillDemo('sarah@nexlance.dev', 'Password123', 'freelancer')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        fontSize: '0.75rem',
+                        color: '#0F172A',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#059669' }}>🌟 Sarah (React Architect · Score 95):</span> sarah@nexlance.dev
+                      </div>
+                      <span style={{ color: '#059669', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('priya@nexlance.dev', 'Password123', 'freelancer')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.4rem 0.6rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    fontSize: '0.75rem',
-                    color: '#0F172A',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                >
-                  <div>
-                    <span style={{ fontWeight: 700, color: '#059669' }}>🎨 Priya (Old Freelancer · Score 94):</span> priya@nexlance.dev
-                  </div>
-                  <span style={{ color: '#64748B', fontSize: '0.7rem' }}>pass: Password123</span>
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFillDemo('alex@nexlance.dev', 'Password123', 'freelancer')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        fontSize: '0.75rem',
+                        color: '#0F172A',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#059669' }}>💻 Alex (Full-Stack Engineer · Score 91):</span> alex@nexlance.dev
+                      </div>
+                      <span style={{ color: '#059669', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleFillDemo('sarah@meridian.com', 'Password123', 'client')}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '0.4rem 0.6rem',
-                    borderRadius: '6px',
-                    backgroundColor: '#FFFFFF',
-                    border: '1px solid #E2E8F0',
-                    fontSize: '0.75rem',
-                    color: '#0F172A',
-                    cursor: 'pointer',
-                    textAlign: 'left'
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = '#1E40AF'}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                >
-                  <div>
-                    <span style={{ fontWeight: 700, color: '#1E40AF' }}>Client:</span> sarah@meridian.com
-                  </div>
-                  <span style={{ color: '#64748B', fontSize: '0.7rem' }}>pass: Password123</span>
-                </button>
+                    <button
+                      type="button"
+                      onClick={() => handleFillDemo('priya@nexlance.dev', 'Password123', 'freelancer')}
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        padding: '0.4rem 0.6rem',
+                        borderRadius: '6px',
+                        backgroundColor: '#FFFFFF',
+                        border: '1px solid #E2E8F0',
+                        fontSize: '0.75rem',
+                        color: '#0F172A',
+                        cursor: 'pointer',
+                        textAlign: 'left'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
+                    >
+                      <div>
+                        <span style={{ fontWeight: 700, color: '#059669' }}>🎨 Priya (UI/UX Specialist · Score 94):</span> priya@nexlance.dev
+                      </div>
+                      <span style={{ color: '#059669', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           )}

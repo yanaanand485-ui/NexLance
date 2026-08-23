@@ -51,6 +51,28 @@ export const DEFAULT_USERS = [
     avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80",
     profile: CLIENT_DATA,
     createdAt: "2024-02-01T00:00:00.000Z"
+  },
+  {
+    id: "cl-nexlance-01",
+    name: "Client Account",
+    email: "client@nexlance.dev",
+    password: "Password123",
+    role: "client",
+    companyName: "NexLance Enterprise Client",
+    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&auto=format&fit=crop&q=80",
+    profile: CLIENT_DATA,
+    createdAt: "2024-02-10T00:00:00.000Z"
+  },
+  {
+    id: "cl-meridian-client",
+    name: "Meridian Client",
+    email: "client@meridian.com",
+    password: "Password123",
+    role: "client",
+    companyName: "Meridian Retail Global",
+    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80",
+    profile: CLIENT_DATA,
+    createdAt: "2024-02-12T00:00:00.000Z"
   }
 ];
 
@@ -64,15 +86,25 @@ export const getStoredUsers = () => {
     }
     const parsed = JSON.parse(saved);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      // Ensure all DEFAULT_USERS are present (merge by email)
-      const existingEmails = new Set(parsed.map(u => u.email?.toLowerCase()));
-      const missingDefaults = DEFAULT_USERS.filter(d => !existingEmails.has(d.email?.toLowerCase()));
+      // Ensure all DEFAULT_USERS are present (merge by email & role)
+      const existingKeys = new Set(parsed.map(u => `${u.email?.toLowerCase()}_${u.role}`));
+      const missingDefaults = DEFAULT_USERS.filter(d => !existingKeys.has(`${d.email?.toLowerCase()}_${d.role}`));
+      
+      // Also ensure standard default accounts have their password refreshed if needed
+      const updatedParsed = parsed.map(user => {
+        const defaultMatch = DEFAULT_USERS.find(d => d.email?.toLowerCase() === user.email?.toLowerCase() && d.role === user.role);
+        if (defaultMatch && !user.password) {
+          return { ...user, password: defaultMatch.password };
+        }
+        return user;
+      });
+
       if (missingDefaults.length > 0) {
-        const merged = [...parsed, ...missingDefaults];
+        const merged = [...updatedParsed, ...missingDefaults];
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(merged));
         return merged;
       }
-      return parsed;
+      return updatedParsed;
     }
     localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
     return DEFAULT_USERS;
