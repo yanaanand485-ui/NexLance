@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Play, Pause, Volume2, VolumeX, Maximize2, Sparkles, Activity, ShieldCheck, Zap, Layers, CheckCircle2, ArrowUpRight } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Sparkles, Activity, ShieldCheck, Zap, Layers, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const HeroLiveVideo = () => {
-  const { navigateTo, handleFindTalent, handleFindWork } = useApp();
+  const { handleFindTalent, handleFindWork } = useApp();
   const videoRef = useRef(null);
   
   const [isPlaying, setIsPlaying] = useState(true);

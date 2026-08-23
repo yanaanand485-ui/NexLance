@@ -10,7 +10,6 @@ import {
   ShieldCheck,
   Columns,
   DollarSign,
-  FileCheck,
   ArrowRight
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';

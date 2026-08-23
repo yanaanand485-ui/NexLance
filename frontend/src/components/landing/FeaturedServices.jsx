@@ -5,7 +5,6 @@ import {
   ArrowRight,
   Star,
   Clock,
-  ShieldCheck,
   Cpu,
   Globe,
   Smartphone,

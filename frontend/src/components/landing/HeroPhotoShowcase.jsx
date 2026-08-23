@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { ShieldCheck, Sparkles, Star, Users, CheckCircle2, ArrowRight, Lock, Award, Briefcase } from 'lucide-react';
+import { ShieldCheck, Sparkles, Star, CheckCircle2, ArrowRight, Lock, Award, Briefcase } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const HeroPhotoShowcase = () => {
-  const { role, setIsAuthModalOpen, setAuthMode, setAuthRoleChoice, handleFindTalent, handleFindWork } = useApp();
+  const { setIsAuthModalOpen, setAuthMode, setAuthRoleChoice } = useApp();
   const [activeTab, setActiveTab] = useState('talent'); // 'talent' | 'freelancer'
 
   const openRegister = (chosenRole) => {

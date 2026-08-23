@@ -4,10 +4,7 @@ import {
   CheckCircle2,
   Circle,
   ArrowRight,
-  ShieldCheck,
-  Award,
-  Zap,
-  TrendingUp
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { NEW_FREELANCER } from '../../data/mockData';

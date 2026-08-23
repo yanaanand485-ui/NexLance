@@ -6,7 +6,6 @@ import {
   ShieldCheck,
   TrendingUp,
   FolderGit2,
-  Mail,
   Bell,
   Settings,
   PlusCircle,

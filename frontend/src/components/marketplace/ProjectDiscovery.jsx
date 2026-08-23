@@ -1,17 +1,11 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Filter,
-  DollarSign,
-  Clock,
   CheckCircle2,
-  Sparkles,
-  ArrowRight,
   Briefcase,
   SlidersHorizontal
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
-import { SmartMatchBadge } from '../common/SmartMatchBadge';
 import { calculateProjectMatch } from '../../utils/matchEngine';
 
 export const ProjectDiscovery = () => {

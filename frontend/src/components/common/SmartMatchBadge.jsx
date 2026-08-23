@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ChevronDown, ChevronUp, Check, Info } from 'lucide-react';
+import { Sparkles, ChevronDown, ChevronUp, Check } from 'lucide-react';
 
 export const SmartMatchBadge = ({
   score = 96,

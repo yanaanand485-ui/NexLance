@@ -3,11 +3,8 @@ import {
   ExternalLink,
   Code2,
   CheckCircle2,
-  Clock,
   Star,
-  ShieldCheck,
-  TrendingUp,
-  Award
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 

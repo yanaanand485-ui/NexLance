@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   ShieldCheck,
   CheckCircle2,
@@ -6,7 +6,6 @@ import {
   ArrowRight,
   ArrowLeft,
   Award,
-  Sparkles,
   Zap,
   Check,
   Play,
@@ -36,14 +35,24 @@ export const SkillVerification = () => {
   // Active assessment data
   const assessmentData = ASSESSMENTS[selectedSkillKey] || ASSESSMENTS.react;
 
+  const handleSubmitTest = useCallback(() => {
+    setIsTestActive(false);
+    // Calculate score based on actual answers
+    let correct = 0;
+    const questions = assessmentData.questions || [];
+    questions.forEach((q, idx) => {
+      if (selectedAnswers[idx] === q.correctAnswer) {
+        correct++;
+      }
+    });
+    const calculatedScore = questions.length > 0 ? Math.round((correct / questions.length) * 100) : 0;
+    setFinalScore(calculatedScore);
+    setShowResultModal(true);
+  }, [assessmentData, selectedAnswers]);
+
   // Countdown timer - only runs when isTestActive is true
   useEffect(() => {
     if (!isTestActive) return;
-
-    if (timeLeft <= 0) {
-      handleSubmitTest();
-      return;
-    }
 
     const timer = setInterval(() => {
       setTimeLeft(prev => {
@@ -57,7 +66,7 @@ export const SkillVerification = () => {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [isTestActive, timeLeft]);
+  }, [isTestActive, handleSubmitTest]);
 
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
@@ -104,20 +113,6 @@ export const SkillVerification = () => {
     if (currentQuestionIdx > 0) {
       setCurrentQuestionIdx(prev => prev - 1);
     }
-  };
-
-  const handleSubmitTest = () => {
-    setIsTestActive(false);
-    // Calculate score based on actual answers
-    let correct = 0;
-    assessmentData.questions.forEach((q, idx) => {
-      if (selectedAnswers[idx] === q.correctAnswer) {
-        correct++;
-      }
-    });
-    const calculatedScore = Math.round((correct / assessmentData.questions.length) * 100);
-    setFinalScore(calculatedScore);
-    setShowResultModal(true);
   };
 
   const handleAddToProfile = () => {

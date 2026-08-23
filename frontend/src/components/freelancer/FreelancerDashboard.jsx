@@ -2,24 +2,18 @@ import React, { useState } from 'react';
 import {
   TrendingUp,
   CheckCircle2,
-  Clock,
-  Briefcase,
   FileText,
-  Trophy,
-  ArrowRight,
-  ShieldCheck,
   Plus,
   Star,
-  ExternalLink,
   Sparkles,
   Edit3,
-  Check,
-  AlertCircle,
+  Trophy,
+  ShieldCheck,
+  Clock,
   HelpCircle
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
-import { VerifiedBadge } from '../common/VerifiedBadge';
 import { calculateProjectMatch } from '../../utils/matchEngine';
 
 export const FreelancerDashboard = () => {
@@ -31,8 +25,7 @@ export const FreelancerDashboard = () => {
     submitProposal,
     activeProjectsList,
     setIsSkillModalOpen,
-    setIsSkillModalOnboarding,
-    showToast
+    setIsSkillModalOnboarding
   } = useApp();
 
   // Active user's skills & profile
@@ -45,7 +38,6 @@ export const FreelancerDashboard = () => {
   const applications = freelancerProfile.applicationsCount || 0;
   const completedProjects = freelancerProfile.completedProjectsCount || 0;
   const verifiedSkills = freelancerProfile.verifiedSkills || [];
-  const profileSkills = freelancerProfile.skills || [];
 
   // Expanded project match breakdown modal / state
   const [activeBreakdownId, setActiveBreakdownId] = useState(null);

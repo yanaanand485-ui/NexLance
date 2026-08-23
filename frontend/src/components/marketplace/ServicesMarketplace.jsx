@@ -9,12 +9,7 @@ import {
   SlidersHorizontal,
   ArrowRight,
   Sparkles,
-  Zap,
-  Tag,
-  Filter,
-  Check,
   ChevronRight,
-  TrendingUp,
   Cpu,
   Globe,
   Smartphone,
@@ -25,7 +20,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
-import { CareerScoreBadge } from '../common/CareerScoreBadge';
 
 export const ServicesMarketplace = () => {
   const { navigateTo, setSelectedService, role, setIsAuthModalOpen, setAuthMode, setAuthRoleChoice } = useApp();

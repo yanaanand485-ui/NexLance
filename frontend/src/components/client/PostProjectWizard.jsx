@@ -3,18 +3,12 @@ import {
   PlusCircle,
   Sparkles,
   ArrowRight,
-  ArrowLeft,
-  CheckCircle2,
-  FileText,
-  DollarSign,
-  Calendar,
-  Layers,
-  Upload
+  ArrowLeft
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const PostProjectWizard = () => {
-  const { addNewProject, navigateTo } = useApp();
+  const { addNewProject } = useApp();
 
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({

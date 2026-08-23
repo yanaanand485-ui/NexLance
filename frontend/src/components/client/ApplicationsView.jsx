@@ -1,16 +1,4 @@
 import React, { useState } from 'react';
-import {
-  FileCheck2,
-  Filter,
-  Search,
-  Star,
-  CheckCircle2,
-  MessageSquare,
-  Send,
-  Sparkles,
-  ArrowRight,
-  TrendingUp
-} from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FREELANCERS } from '../../data/mockData';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
@@ -23,8 +11,7 @@ export const ApplicationsView = () => {
     toggleShortlist,
     shortlistedFreelancers,
     toggleComparison,
-    comparisonList,
-    showToast
+    comparisonList
   } = useApp();
 
   const [minScore, setMinScore] = useState(85);

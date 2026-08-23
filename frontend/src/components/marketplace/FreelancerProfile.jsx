@@ -1,17 +1,8 @@
 import React from 'react';
 import {
-  Star,
-  CheckCircle2,
-  Clock,
   ExternalLink,
   Code2,
-  Send,
-  ShieldCheck,
-  TrendingUp,
-  MapPin,
-  Calendar,
-  DollarSign,
-  Award
+  Send
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';

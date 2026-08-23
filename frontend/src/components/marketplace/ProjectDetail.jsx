@@ -1,16 +1,8 @@
 import React, { useState } from 'react';
 import {
-  Briefcase,
-  DollarSign,
-  Clock,
   CheckCircle2,
   Sparkles,
-  Send,
-  FileText,
-  User,
-  ShieldCheck,
-  Star,
-  ArrowRight
+  Send
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { PROJECTS } from '../../data/mockData';
@@ -26,8 +18,7 @@ export const ProjectDetail = () => {
     selectedProject,
     appliedProjectIds,
     submitProposal,
-    showToast,
-    navigateTo
+    showToast
   } = useApp();
 
   const project = selectedProject || PROJECTS[0];

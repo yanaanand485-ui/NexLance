@@ -1,14 +1,11 @@
 import React from 'react';
 import {
-  TrendingUp,
   CheckCircle2,
   Clock,
   MessageSquare,
   DollarSign,
   Award,
-  ShieldCheck,
-  Zap,
-  Info
+  ShieldCheck
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';

@@ -4,16 +4,7 @@ import {
   ChevronDown,
   LogOut,
   Menu,
-  X,
-  User,
-  Briefcase,
-  Layers,
-  ShieldCheck,
-  TrendingUp,
-  Sparkles,
-  Columns,
-  PlusCircle,
-  FolderGit2
+  X
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 

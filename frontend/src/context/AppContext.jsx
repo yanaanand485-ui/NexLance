@@ -1,147 +1,60 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import {
-  CURRENT_USER,
-  SARAH_FREELANCER,
-  PRIYA_FREELANCER,
   FREELANCERS,
   PROJECTS,
   SERVICES,
-  ASSESSMENTS,
-  NOTIFICATIONS,
   FREELANCER_NOTIFICATIONS,
   CLIENT_NOTIFICATIONS,
   CLIENT_DATA,
   NEW_FREELANCER
 } from '../data/mockData';
+import {
+  DEFAULT_USERS,
+  getStoredUsers,
+  saveStoredUsers,
+  getStoredActiveUser,
+  saveStoredActiveUser
+} from '../utils/storage';
 
-// Local Storage Keys
-const USERS_STORAGE_KEY = 'nexlance_registered_users';
-const SESSION_STORAGE_KEY = 'nexlance_active_user';
-
-// Default Demo Accounts for testing existing user login (Old accounts with rich history)
-export const DEFAULT_USERS = [
-  {
-    id: "fl-sarah-01",
-    name: "Sarah Jenkins",
-    email: "sarah@nexlance.dev",
-    password: "Password123",
-    role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
-    profile: SARAH_FREELANCER,
-    createdAt: "2024-01-10T00:00:00.000Z"
-  },
-  {
-    id: "fl-alex-01",
-    name: "Alex Rivera",
-    email: "alex@nexlance.dev",
-    password: "Password123",
-    role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    profile: CURRENT_USER,
-    createdAt: "2024-01-15T00:00:00.000Z"
-  },
-  {
-    id: "fl-priya-02",
-    name: "Priya Sharma",
-    email: "priya@nexlance.dev",
-    password: "Password123",
-    role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    profile: PRIYA_FREELANCER,
-    createdAt: "2024-02-05T00:00:00.000Z"
-  },
-  {
-    id: "cl-meridian-01",
-    name: "Sarah Jenkins",
-    email: "sarah@meridian.com",
-    password: "Password123",
-    role: "client",
-    companyName: "Meridian Retail Global",
-    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80",
-    profile: CLIENT_DATA,
-    createdAt: "2024-02-01T00:00:00.000Z"
-  }
-];
-
-// Helper functions for Local Storage
-export const getStoredUsers = () => {
-  try {
-    const saved = localStorage.getItem(USERS_STORAGE_KEY);
-    if (!saved) {
-      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
-      return DEFAULT_USERS;
-    }
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Ensure all DEFAULT_USERS are present (merge by email)
-      const existingEmails = new Set(parsed.map(u => u.email?.toLowerCase()));
-      const missingDefaults = DEFAULT_USERS.filter(d => !existingEmails.has(d.email?.toLowerCase()));
-      if (missingDefaults.length > 0) {
-        const merged = [...parsed, ...missingDefaults];
-        localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(merged));
-        return merged;
-      }
-      return parsed;
-    }
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
-    return DEFAULT_USERS;
-  } catch (err) {
-    console.error('Error reading registered users from localStorage:', err);
-    return DEFAULT_USERS;
-  }
-};
-
-export const saveStoredUsers = (users) => {
-  try {
-    localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users));
-  } catch (err) {
-    console.error('Error saving users to localStorage:', err);
-  }
-};
-
-export const getStoredActiveUser = () => {
-  try {
-    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : null;
-  } catch (err) {
-    console.error('Error reading active session from localStorage:', err);
-    return null;
-  }
-};
-
-export const saveStoredActiveUser = (user) => {
-  try {
-    if (user) {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
-    } else {
-      localStorage.removeItem(SESSION_STORAGE_KEY);
-    }
-  } catch (err) {
-    console.error('Error saving active session to localStorage:', err);
-  }
-};
-
-const AppContext = createContext();
+const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
-  // Navigation & Role State
-  const [role, setRole] = useState('public'); // 'public' | 'freelancer' | 'client'
-  const [currentView, setCurrentView] = useState('landing');
+  // 1. Core User & Session State
+  const [currentUserAccount, setCurrentUserAccount] = useState(() => getStoredActiveUser());
+  const [role, setRole] = useState(() => currentUserAccount?.role || 'public');
+  const [currentView, setCurrentView] = useState(() => {
+    if (currentUserAccount?.role === 'freelancer') return 'freelancer-dashboard';
+    if (currentUserAccount?.role === 'client') return 'client-dashboard';
+    return 'landing';
+  });
 
-  // Selected Data Entity for Details View
+  // 2. Profiles State
+  const [freelancerProfile, setFreelancerProfile] = useState(() => {
+    return currentUserAccount?.role === 'freelancer' && currentUserAccount.profile
+      ? currentUserAccount.profile
+      : NEW_FREELANCER;
+  });
+
+  const [clientProfile, setClientProfile] = useState(() => {
+    return currentUserAccount?.role === 'client' && currentUserAccount.profile
+      ? currentUserAccount.profile
+      : CLIENT_DATA;
+  });
+
+  // 3. Selected Entities for Details Views
   const [selectedFreelancer, setSelectedFreelancer] = useState(FREELANCERS[0]);
   const [selectedProject, setSelectedProject] = useState(PROJECTS[0]);
   const [selectedService, setSelectedService] = useState(SERVICES[0]);
 
-  // Comparison & Shortlist state
+  // 4. Comparison & Shortlist State
   const [comparisonList, setComparisonList] = useState([FREELANCERS[0], FREELANCERS[1], FREELANCERS[2]]);
   const [shortlistedFreelancers, setShortlistedFreelancers] = useState(["fl-alex-01", "fl-priya-02"]);
 
-  // Submitted Proposals & Applied Projects
+  // 5. Projects & Proposals State
   const [appliedProjectIds, setAppliedProjectIds] = useState([]);
   const [activeProjectsList, setActiveProjectsList] = useState(PROJECTS);
 
-  // Notifications State (Personalized for Freelancer vs Client)
+  // 6. Notifications State
   const [freelancerNotifications, setFreelancerNotifications] = useState(FREELANCER_NOTIFICATIONS);
   const [clientNotifications, setClientNotifications] = useState(CLIENT_NOTIFICATIONS);
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -158,7 +71,7 @@ export const AppProvider = ({ children }) => {
 
   const addNotification = (notif, targetRole = role) => {
     const newNotif = {
-      id: `notif-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+      id: `notif-${Date.now()}`,
       time: 'Just now',
       unread: true,
       ...notif
@@ -170,97 +83,33 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // Auth Modal State
+  // 7. Modals State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('signup'); // 'signup' (Get Started) | 'login'
-  const [authRoleChoice, setAuthRoleChoice] = useState('freelancer'); // 'freelancer' | 'client'
+  const [authMode, setAuthMode] = useState('signup');
+  const [authRoleChoice, setAuthRoleChoice] = useState('freelancer');
 
-  // Skill Selection & Customization Modal State
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isSkillModalOnboarding, setIsSkillModalOnboarding] = useState(false);
 
-  // User Profile State (Default is clean new user with 0 score)
-  const [freelancerProfile, setFreelancerProfile] = useState(NEW_FREELANCER);
-  const [clientProfile, setClientProfile] = useState(CLIENT_DATA);
-  const [currentUserAccount, setCurrentUserAccount] = useState(null);
-
-  // Assessment Simulator State
+  // 8. Assessment Simulator State
   const [activeAssessment, setActiveAssessment] = useState(null);
   const [assessmentResult, setAssessmentResult] = useState(null);
 
-  // Toast / Alert Notification
+  // 9. Toast Alerts State
   const [toastMessage, setToastMessage] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToastMessage({ message, type });
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4000);
   };
 
-  // Restore session from localStorage on initial mount
   useEffect(() => {
-    // Make sure user repository is seeded in localStorage
-    getStoredUsers();
+    if (!toastMessage) return;
+    const timer = setTimeout(() => setToastMessage(null), 4000);
+    return () => clearTimeout(timer);
+  }, [toastMessage]);
 
-    // Check if an active session exists
-    const activeSession = getStoredActiveUser();
-    if (activeSession && activeSession.role && activeSession.role !== 'public') {
-      setCurrentUserAccount(activeSession);
-      setRole(activeSession.role);
-
-      if (activeSession.role === 'freelancer') {
-        if (activeSession.profile) {
-          setFreelancerProfile(activeSession.profile);
-        } else {
-          setFreelancerProfile(prev => ({
-            ...prev,
-            name: activeSession.name,
-            email: activeSession.email,
-            avatar: activeSession.avatar || prev.avatar
-          }));
-        }
-        setCurrentView('freelancer-dashboard');
-      } else if (activeSession.role === 'client') {
-        if (activeSession.profile) {
-          setClientProfile(activeSession.profile);
-        } else {
-          setClientProfile(prev => ({
-            ...prev,
-            contactPerson: activeSession.name,
-            name: activeSession.companyName || `${activeSession.name} Enterprises`,
-            email: activeSession.email,
-            avatar: activeSession.avatar || prev.avatar
-          }));
-        }
-        setCurrentView('client-dashboard');
-      }
-    }
-  }, []);
-
-  // Helper Navigation Functions with Role Protection
+  // 10. Navigation Handler
   const navigateTo = (view, payload = null) => {
-    // Client-only views
-    const clientOnlyViews = ['client-dashboard', 'post-project', 'smart-match', 'comparison'];
-    // Freelancer-only views
-    const freelancerOnlyViews = ['freelancer-dashboard', 'skill-verification', 'career-score', 'proof-of-work', 'opportunities', 'new-freelancer'];
-
-    if (clientOnlyViews.includes(view) && role !== 'client') {
-      showToast('Access restricted. Please sign in with a Client account to access this area.', 'warning');
-      setAuthMode('login');
-      setAuthRoleChoice('client');
-      setIsAuthModalOpen(true);
-      return;
-    }
-
-    if (freelancerOnlyViews.includes(view) && role !== 'freelancer') {
-      showToast('Access restricted. Please sign in with a Freelancer account to access this area.', 'warning');
-      setAuthMode('login');
-      setAuthRoleChoice('freelancer');
-      setIsAuthModalOpen(true);
-      return;
-    }
-
     if (payload) {
       if (view === 'freelancer-profile') setSelectedFreelancer(payload);
       if (view === 'project-detail') setSelectedProject(payload);
@@ -270,628 +119,352 @@ export const AppProvider = ({ children }) => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Find Talent action:
-  // Requires Client login/signup before entering portal/marketplace
   const handleFindTalent = () => {
     if (role === 'client') {
       setCurrentView('client-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (role === 'freelancer') {
-      // Logged in as freelancer: cannot switch to client without logging in as client
-      showToast('You are logged in as a Freelancer. Please sign in with a Client account to hire talent.', 'warning');
-      setAuthMode('login');
-      setAuthRoleChoice('client');
-      setIsAuthModalOpen(true);
     } else {
-      // Unauthenticated visitor -> Open Auth Modal in Get Started (Signup) mode for Client
       setAuthMode('signup');
       setAuthRoleChoice('client');
       setIsAuthModalOpen(true);
-      showToast('Please sign in or create a Client account to hire verified talent.', 'info');
+      showToast('Sign in or create a Client account to hire verified talent.', 'info');
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // Find Work action:
-  // Requires Freelancer login/signup before entering portal/projects
   const handleFindWork = () => {
     if (role === 'freelancer') {
       setCurrentView('freelancer-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (role === 'client') {
-      // Logged in as client: cannot switch to freelancer without logging in as freelancer
-      showToast('You are logged in as a Client. Please sign in with a Freelancer account to find work.', 'warning');
-      setAuthMode('login');
-      setAuthRoleChoice('freelancer');
-      setIsAuthModalOpen(true);
     } else {
-      // Unauthenticated visitor -> Open Auth Modal in Get Started (Signup) mode for Freelancer
       setAuthMode('signup');
       setAuthRoleChoice('freelancer');
       setIsAuthModalOpen(true);
-      showToast('Please sign in or create a Freelancer account to verify skills and get projects.', 'info');
+      showToast('Sign in or create a Freelancer account to verify skills and get projects.', 'info');
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  // ==========================================
-  // LOCAL STORAGE AUTH: REGISTER NEW USER ("Get Started")
-  // ==========================================
-  const registerUser = ({ name, email, password, role: chosenRole, companyName }) => {
-    const cleanEmail = email ? email.trim().toLowerCase() : '';
-    const cleanName = name ? name.trim() : '';
-    const userRole = chosenRole || 'freelancer';
+  // 11. Auth Actions (Register, Login, Switch Role, Logout)
+  const registerUser = ({ name, email, password, role: userRole = 'freelancer', companyName }) => {
+    const cleanEmail = email?.trim().toLowerCase() || '';
+    const cleanName = name?.trim() || '';
 
-    // Required fields check
     if (!cleanName || !cleanEmail || !password) {
-      return {
-        success: false,
-        reason: 'MISSING_FIELDS',
-        message: 'Please fill in all required fields (Full Name, Email, and Password).'
-      };
-    }
-
-    // Password constraints validation
-    if (password.length < 6) {
-      return {
-        success: false,
-        reason: 'PASSWORD_TOO_SHORT',
-        message: 'Password must be at least 6 characters long.'
-      };
-    }
-
-    if (!/[A-Z]/.test(password)) {
-      return {
-        success: false,
-        reason: 'PASSWORD_NO_UPPERCASE',
-        message: 'Password must contain at least one capital letter (A-Z).'
-      };
-    }
-
-    if (!/[0-9]/.test(password)) {
-      return {
-        success: false,
-        reason: 'PASSWORD_NO_NUMBER',
-        message: 'Password must contain at least one number (0-9).'
-      };
+      return { success: false, message: 'Please fill in all required fields (Name, Email, Password).' };
     }
 
     const users = getStoredUsers();
-
-    // Check if user already exists for this role
-    const existing = users.find(u => u.email.toLowerCase() === cleanEmail && u.role === userRole);
-    if (existing) {
-      return {
-        success: false,
-        reason: 'ALREADY_EXISTS',
-        message: `A ${userRole === 'client' ? 'Client' : 'Freelancer'} account with this email (${cleanEmail}) already exists. Please log in.`
-      };
+    if (users.some(u => u.email.toLowerCase() === cleanEmail && u.role === userRole)) {
+      return { success: false, message: `An account with this email (${cleanEmail}) already exists. Please log in.` };
     }
 
-    // Build specialized profile for the new user
-    let userProfile;
-    let avatarUrl;
+    const avatarUrl = userRole === 'freelancer'
+      ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'
+      : 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80';
 
-    if (userRole === 'freelancer') {
-      avatarUrl = `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80`;
-      userProfile = {
-        ...NEW_FREELANCER,
-        id: `fl-${Date.now()}`,
-        name: cleanName,
-        email: cleanEmail,
-        role: "Full-Stack Developer",
-        avatar: avatarUrl,
-        careerScore: 0, // NEW USERS START WITH 0 CAREER SCORE
-        isNew: true,
-        earnedTotal: "$0",
-        rating: 0,
-        totalReviews: 0,
-        activeProjectsCount: 0,
-        completedProjectsCount: 0,
-        applicationsCount: 0,
-        clientSatisfactionRate: 0,
-        onTimeDeliveryRate: 0,
-        codeQualityRate: 0,
-        communicationRate: 0,
-        budgetAdherenceRate: 0,
-        completionRate: 0,
-        scoreHistory: [
-          { month: "May", score: 0 },
-          { month: "Jun", score: 0 },
-          { month: "Jul", score: 0 },
-          { month: "Aug", score: 0 },
-          { month: "Sep", score: 0 },
-          { month: "Oct", score: 0 }
-        ],
-        verifiedSkills: [
-          { id: "react", name: "React", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-          { id: "javascript", name: "JavaScript (ES6+)", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-          { id: "typescript", name: "TypeScript", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-          { id: "nodejs", name: "Node.js", score: null, percentile: null, status: "unverified", note: "Assessment available" }
-        ],
-        proofOfWork: []
-      };
-      setFreelancerProfile(userProfile);
-    } else {
-      const compName = companyName?.trim() || `${cleanName} Ventures`;
-      avatarUrl = `https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80`;
-      userProfile = {
-        ...CLIENT_DATA,
-        id: `cl-${Date.now()}`,
-        contactPerson: cleanName,
-        name: compName,
-        email: cleanEmail,
-        avatar: avatarUrl,
-        activeProjects: 0,
-        hiringProjects: 0,
-        applicationsReceived: 0,
-        smartMatchesFound: 15
-      };
-      setClientProfile(userProfile);
-    }
+    const newProfile = userRole === 'freelancer'
+      ? { ...NEW_FREELANCER, id: `fl-${Date.now()}`, name: cleanName, email: cleanEmail, avatar: avatarUrl }
+      : { ...CLIENT_DATA, id: `cl-${Date.now()}`, contactPerson: cleanName, name: companyName || `${cleanName} Enterprises`, email: cleanEmail, avatar: avatarUrl };
 
     const newUser = {
       id: `user-${Date.now()}`,
       name: cleanName,
       email: cleanEmail,
-      password: password,
+      password,
       role: userRole,
-      companyName: userRole === 'client' ? (companyName?.trim() || `${cleanName} Ventures`) : '',
       avatar: avatarUrl,
-      profile: userProfile,
-      createdAt: new Date().toISOString()
+      profile: newProfile
     };
 
-    const updatedUsers = [...users, newUser];
-    saveStoredUsers(updatedUsers);
+    saveStoredUsers([...users, newUser]);
     saveStoredActiveUser(newUser);
     setCurrentUserAccount(newUser);
-
     setRole(userRole);
+
     if (userRole === 'freelancer') {
+      setFreelancerProfile(newProfile);
       setCurrentView('freelancer-dashboard');
-      showToast(`Account created successfully! Welcome to NexLance, ${cleanName}.`, 'success');
-      // Launch Skill Selection Onboarding Wizard right away!
+      showToast(`Welcome to NexLance, ${cleanName}!`, 'success');
       setTimeout(() => {
         setIsSkillModalOnboarding(true);
         setIsSkillModalOpen(true);
       }, 400);
     } else {
+      setClientProfile(newProfile);
       setCurrentView('client-dashboard');
-      showToast(`Client account created successfully! Welcome, ${cleanName}.`, 'success');
+      showToast(`Welcome to NexLance, ${cleanName}!`, 'success');
     }
 
     return { success: true, user: newUser };
   };
 
-  // ==========================================
-  // LOCAL STORAGE AUTH: LOGIN EXISTING USER ("Log In")
-  // ==========================================
   const loginUser = ({ email, password, role: targetRole }) => {
-    const cleanEmail = email ? email.trim().toLowerCase() : '';
-
+    const cleanEmail = email?.trim().toLowerCase() || '';
     if (!cleanEmail || !password) {
-      return {
-        success: false,
-        reason: 'MISSING_FIELDS',
-        message: 'Please enter both your email address and password.'
-      };
+      return { success: false, message: 'Please enter both email and password.' };
     }
 
     const users = getStoredUsers();
+    let foundUser = users.find(u => u.email.toLowerCase() === cleanEmail && (!targetRole || u.role === targetRole));
     
-    // Find user matching email and target role (if specified)
-    let foundUser;
-    if (targetRole) {
-      foundUser = users.find(u => u.email.toLowerCase() === cleanEmail && u.role === targetRole);
-      if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
-        foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah') && u.role === targetRole);
-      }
-    } else {
-      foundUser = users.find(u => u.email.toLowerCase() === cleanEmail);
-      if (!foundUser && (cleanEmail === 'sarag@nexlance.dev' || cleanEmail === 'sarag@meridian.com')) {
-        foundUser = users.find(u => u.email.toLowerCase().startsWith('sarah'));
-      }
+    // Friendly demo email fallback
+    if (!foundUser && cleanEmail.includes('sarah')) {
+      foundUser = users.find(u => u.email.toLowerCase().includes('sarah'));
     }
 
-    // If user does not exist in localStorage
     if (!foundUser) {
-      // Check if they exist with the OTHER role
-      const otherUser = users.find(u => u.email.toLowerCase() === cleanEmail);
-      if (otherUser && targetRole && otherUser.role !== targetRole) {
-        const otherRoleName = otherUser.role === 'freelancer' ? 'Freelancer' : 'Client';
-        const targetRoleName = targetRole === 'client' ? 'Client' : 'Freelancer';
-        return {
-          success: false,
-          reason: 'NOT_FOUND',
-          message: `No ${targetRoleName} account found for ${cleanEmail} (you currently have a ${otherRoleName} account). Please Get Started (Sign Up) as a ${targetRoleName} first.`
-        };
-      }
-
-      return {
-        success: false,
-        reason: 'NOT_FOUND',
-        message: `No account found with this email (${cleanEmail}). Please Get Started (Sign Up) first.`
-      };
+      return { success: false, message: `No account found for ${cleanEmail}. Please Sign Up first.` };
     }
 
-    // If password does not match
-    if (foundUser.password !== password && foundUser.password.toLowerCase() !== password.toLowerCase()) {
-      return {
-        success: false,
-        reason: 'WRONG_PASSWORD',
-        message: 'Incorrect password. Please verify your credentials and try again.'
-      };
+    if (foundUser.password !== password) {
+      return { success: false, message: 'Incorrect password. Please try again.' };
     }
 
-    // Valid credentials: save active session and restore state
     saveStoredActiveUser(foundUser);
     setCurrentUserAccount(foundUser);
     setRole(foundUser.role);
 
     if (foundUser.role === 'freelancer') {
-      if (foundUser.profile) {
-        setFreelancerProfile(foundUser.profile);
-      } else {
-        setFreelancerProfile(prev => ({
-          ...prev,
-          name: foundUser.name,
-          email: foundUser.email,
-          avatar: foundUser.avatar || prev.avatar
-        }));
-      }
+      if (foundUser.profile) setFreelancerProfile(foundUser.profile);
       setCurrentView('freelancer-dashboard');
-      showToast(`Welcome back, ${foundUser.name}! Logged in as Freelancer.`, 'success');
+      showToast(`Welcome back, ${foundUser.name}!`, 'success');
     } else {
-      if (foundUser.profile) {
-        setClientProfile(foundUser.profile);
-      } else {
-        setClientProfile(prev => ({
-          ...prev,
-          contactPerson: foundUser.name,
-          name: foundUser.companyName || `${foundUser.name} Enterprises`,
-          email: foundUser.email,
-          avatar: foundUser.avatar || prev.avatar
-        }));
-      }
+      if (foundUser.profile) setClientProfile(foundUser.profile);
       setCurrentView('client-dashboard');
-      showToast(`Welcome back, ${foundUser.name}! Logged in as Client.`, 'success');
+      showToast(`Welcome back, ${foundUser.name}!`, 'success');
     }
 
     return { success: true, user: foundUser };
   };
 
-  // Helper backward-compatible loginWithUser
-  const loginWithUser = ({ name, email, password, role: chosenRole, companyName }) => {
-    if (authMode === 'signup') {
-      return registerUser({ name, email, password, role: chosenRole, companyName });
-    } else {
-      return loginUser({ email, password, role: chosenRole });
-    }
-  };
-
-  // Login as specific role (Demo shortcut)
   const loginAs = (userRole) => {
     const users = getStoredUsers();
-    const demoUser = users.find(u => u.role === userRole) || (userRole === 'freelancer' ? DEFAULT_USERS[0] : DEFAULT_USERS[1]);
+    const demoUser = users.find(u => u.role === userRole) || (userRole === 'freelancer' ? DEFAULT_USERS[0] : DEFAULT_USERS[3]);
 
     if (demoUser) {
       saveStoredActiveUser(demoUser);
       setCurrentUserAccount(demoUser);
-    }
-    setRole(userRole);
-    if (userRole === 'freelancer') {
-      if (demoUser?.profile) setFreelancerProfile(demoUser.profile);
-      setCurrentView('freelancer-dashboard');
-      showToast(`Welcome back, ${demoUser?.name || freelancerProfile.name}!`, 'success');
-    } else if (userRole === 'client') {
-      if (demoUser?.profile) setClientProfile(demoUser.profile);
-      setCurrentView('client-dashboard');
-      showToast(`Welcome back, ${demoUser?.name || clientProfile.contactPerson}!`, 'success');
-    } else {
-      setCurrentView('landing');
+      setRole(userRole);
+      if (userRole === 'freelancer') {
+        if (demoUser.profile) setFreelancerProfile(demoUser.profile);
+        setCurrentView('freelancer-dashboard');
+      } else {
+        if (demoUser.profile) setClientProfile(demoUser.profile);
+        setCurrentView('client-dashboard');
+      }
+      showToast(`Logged in as ${demoUser.name}`, 'success');
     }
   };
 
-  // Log Out -> Clears session from localStorage and returns to clean Public site
   const logout = () => {
     saveStoredActiveUser(null);
     setCurrentUserAccount(null);
     setFreelancerProfile(NEW_FREELANCER);
     setRole('public');
     setCurrentView('landing');
-    showToast('Logged out successfully. Returned to public marketplace.', 'info');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('Logged out successfully.', 'info');
   };
 
-  // Switch Role with Authentication Verification & Guided Flow
   const switchRole = (newRole) => {
     if (newRole === 'public') {
       logout();
-      return;
-    }
-
-    if (newRole === 'client') {
-      if (!currentUserAccount || currentUserAccount.role !== 'client') {
-        const users = getStoredUsers();
-        const hasExistingClientAccount = currentUserAccount?.email
-          ? users.some(u => u.email.toLowerCase() === currentUserAccount.email.toLowerCase() && u.role === 'client')
-          : false;
-
-        if (hasExistingClientAccount) {
-          showToast('You are in Freelancer mode. Please log in with your Client account.', 'info');
-          setAuthMode('login');
-        } else {
-          showToast('To switch to Client profile, please first Sign Up (Get Started) as a Client, then log in.', 'warning');
-          setAuthMode('signup');
-        }
-        setAuthRoleChoice('client');
-        setIsAuthModalOpen(true);
-        return;
-      }
-      setRole('client');
-      setCurrentView('client-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (newRole === 'freelancer') {
-      if (!currentUserAccount || currentUserAccount.role !== 'freelancer') {
-        const users = getStoredUsers();
-        const hasExistingFreelancerAccount = currentUserAccount?.email
-          ? users.some(u => u.email.toLowerCase() === currentUserAccount.email.toLowerCase() && u.role === 'freelancer')
-          : false;
-
-        if (hasExistingFreelancerAccount) {
-          showToast('You are in Client mode. Please log in with your Freelancer account.', 'info');
-          setAuthMode('login');
-        } else {
-          showToast('To switch to Freelancer profile, please first Sign Up (Get Started) as a Freelancer, then log in.', 'warning');
-          setAuthMode('signup');
-        }
-        setAuthRoleChoice('freelancer');
-        setIsAuthModalOpen(true);
-        return;
-      }
-      setRole('freelancer');
-      setCurrentView('freelancer-dashboard');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
+    } else {
+      setAuthMode('login');
+      setAuthRoleChoice(newRole);
+      setIsAuthModalOpen(true);
+      showToast(`Please sign in with your ${newRole === 'client' ? 'Client' : 'Freelancer'} account.`, 'info');
     }
   };
 
-  // Toggle Shortlist
+  // 12. Actions (Shortlist, Comparison, Proposals, Projects)
   const toggleShortlist = (freelancerId) => {
-    if (shortlistedFreelancers.includes(freelancerId)) {
-      setShortlistedFreelancers(prev => prev.filter(id => id !== freelancerId));
-      showToast('Freelancer removed from shortlist', 'info');
-    } else {
-      setShortlistedFreelancers(prev => [...prev, freelancerId]);
-      showToast('Freelancer added to shortlist ⭐', 'success');
-    }
+    setShortlistedFreelancers(prev =>
+      prev.includes(freelancerId)
+        ? prev.filter(id => id !== freelancerId)
+        : [...prev, freelancerId]
+    );
+    showToast('Shortlist updated ⭐', 'success');
   };
 
-  // Toggle Comparison
   const toggleComparison = (freelancer) => {
-    const exists = comparisonList.some(item => item.id === freelancer.id);
-    if (exists) {
-      setComparisonList(prev => prev.filter(item => item.id !== freelancer.id));
-      showToast(`${freelancer.name} removed from comparison matrix`, 'info');
-    } else {
-      if (comparisonList.length >= 3) {
-        showToast('You can compare a maximum of 3 candidates at once. Deselect one to add another.', 'warning');
-        return;
+    setComparisonList(prev => {
+      const exists = prev.some(item => item.id === freelancer.id);
+      if (exists) {
+        showToast(`${freelancer.name} removed from comparison`, 'info');
+        return prev.filter(item => item.id !== freelancer.id);
       }
-      setComparisonList(prev => [...prev, freelancer]);
-      showToast(`${freelancer.name} added to comparison matrix`, 'success');
-    }
+      if (prev.length >= 3) {
+        showToast('You can compare a maximum of 3 candidates at once.', 'warning');
+        return prev;
+      }
+      showToast(`${freelancer.name} added to comparison`, 'success');
+      return [...prev, freelancer];
+    });
   };
 
-  // Apply to Project
-  const submitProposal = (projectId, proposalData) => {
+  const submitProposal = (projectId) => {
     setAppliedProjectIds(prev => [...prev, projectId]);
     addNotification({
       category: 'Proposals & Offers',
       title: 'Proposal Submitted Successfully',
-      description: 'Your verified proposal and match score benchmark have been delivered to the client.',
+      description: 'Your verified proposal has been delivered to the client.',
       action: 'view-projects'
     }, 'freelancer');
-    showToast('Proposal submitted successfully! Client has been notified.', 'success');
+    showToast('Proposal submitted successfully!', 'success');
   };
 
-  // Add new project (Client action)
   const addNewProject = (projectData) => {
     const newProj = {
       id: `proj-${Date.now()}`,
-      badge: "Newly Posted",
+      badge: 'Newly Posted',
       client: {
         name: clientProfile.name,
         avatar: clientProfile.avatar,
         rating: 5.0,
-        spent: "$18,000+",
+        spent: '$18,000+',
         verifiedPayment: true,
-        country: "United States"
+        country: 'United States'
       },
       matchScore: 95,
       applicantsCount: 0,
-      postedAgo: "Just now",
-      status: "Open",
+      postedAgo: 'Just now',
+      status: 'Open',
       ...projectData
     };
     setActiveProjectsList(prev => [newProj, ...prev]);
-    addNotification({
-      category: 'Smart Match',
-      title: `Smart Match started for "${projectData.title || 'New Project'}"`,
-      description: 'AI Smart Match engine is shortlisting top verified candidates based on required skills.',
-      action: 'view-smart-match'
-    }, 'client');
-    showToast('Project posted successfully! Smart Match engine is finding candidates.', 'success');
+    showToast('Project posted successfully!', 'success');
     navigateTo('smart-match');
   };
 
-  // Complete Assessment
+  // 13. Skill Assessment & Profile Updating
   const completeAssessment = (score, skillName) => {
-    // Add or update skill in freelancer profile
-    const updatedSkills = (freelancerProfile.verifiedSkills || []).map(skill => {
-      if (skill.name.toLowerCase().includes(skillName.toLowerCase()) || skill.id === skillName.toLowerCase()) {
-        return {
-          ...skill,
-          score: score,
-          status: 'verified',
-          percentile: score >= 90 ? 'Top 5% Global' : score >= 80 ? 'Top 15% Global' : 'Top 25% Global',
-          verifiedDate: 'Just Now'
-        };
-      }
-      return skill;
-    });
-
-    const currentScore = freelancerProfile.careerScore || 0;
-    const newCareerScore = currentScore === 0 
-      ? Math.round(score * 0.85) 
-      : Math.min(100, Math.max(currentScore, Math.round(currentScore + 2)));
-
-    const updatedProfile = {
-      ...freelancerProfile,
-      verifiedSkills: updatedSkills,
-      careerScore: newCareerScore,
-      codeQualityRate: Math.max(freelancerProfile.codeQualityRate || 0, Math.round(score * 0.95)),
-      scoreHistory: (freelancerProfile.scoreHistory || []).map((item, idx, arr) => 
-        idx === arr.length - 1 ? { ...item, score: newCareerScore } : item
-      )
-    };
-
-    setFreelancerProfile(updatedProfile);
-
-    // Also update in active session if logged in
-    const active = getStoredActiveUser();
-    if (active && active.role === 'freelancer') {
-      active.profile = updatedProfile;
-      saveStoredActiveUser(active);
-    }
-
-    addNotification({
-      category: 'Skill Verification',
-      title: `Skill Verified: ${skillName} (${score}/100) 🎉`,
-      description: `Official skill badge live on your profile. Career Score upgraded to ${newCareerScore}/100.`,
-      action: 'view-skills'
-    }, 'freelancer');
-
-    showToast(`Skill Verified! Score: ${score}/100. Career Score updated to ${newCareerScore}.`, 'success');
-  };
-
-  // Update Freelancer Skills, Role, and Experience
-  const updateFreelancerSkills = ({ role: newRole, skills: newSkills, experienceLevel: newExp }) => {
     setFreelancerProfile(prev => {
-      const existingVerified = prev.verifiedSkills || [];
-      const updatedVerifiedSkills = (newSkills || []).map(skillName => {
-        const found = existingVerified.find(v => (v.name || v.id || '').toLowerCase() === skillName.toLowerCase());
-        if (found) return found;
-        return {
-          id: skillName.toLowerCase().replace(/[^a-z0-9]/g, ''),
-          name: skillName,
-          score: null,
-          percentile: null,
-          status: 'unverified',
-          note: 'Assessment available'
-        };
+      const updatedSkills = (prev.verifiedSkills || []).map(skill => {
+        if (skill.name.toLowerCase().includes(skillName.toLowerCase()) || skill.id === skillName.toLowerCase()) {
+          return {
+            ...skill,
+            score,
+            status: 'verified',
+            percentile: score >= 90 ? 'Top 5% Global' : 'Top 15% Global',
+            verifiedDate: 'Just Now'
+          };
+        }
+        return skill;
       });
 
+      const newCareerScore = prev.careerScore === 0 ? Math.round(score * 0.85) : Math.min(100, prev.careerScore + 2);
       const updated = {
         ...prev,
-        role: newRole || prev.role || 'Full-Stack Developer',
-        skills: newSkills || prev.skills || [],
-        experienceLevel: newExp || prev.experienceLevel || 'Mid-Level',
-        verifiedSkills: updatedVerifiedSkills
+        verifiedSkills: updatedSkills,
+        careerScore: newCareerScore,
+        codeQualityRate: Math.max(prev.codeQualityRate || 0, Math.round(score * 0.95))
       };
 
-      // Also update active session & user store in localStorage
       const active = getStoredActiveUser();
       if (active && active.role === 'freelancer') {
         active.profile = updated;
         saveStoredActiveUser(active);
-
-        const users = getStoredUsers();
-        const updatedUsers = users.map(u => 
-          u.email.toLowerCase() === active.email.toLowerCase() && u.role === 'freelancer' 
-            ? { ...u, profile: updated } 
-            : u
-        );
-        saveStoredUsers(updatedUsers);
       }
-
       return updated;
     });
 
     addNotification({
-      category: 'Smart Match',
-      title: 'Skill Profile Updated 🎯',
-      description: 'Your project recommendation match scores have been recalculated dynamically based on your updated skills.',
-      action: 'view-projects'
+      category: 'Skill Verification',
+      title: `Skill Verified: ${skillName} (${score}/100) 🎉`,
+      description: `Skill badge is live on your profile.`,
+      action: 'view-skills'
     }, 'freelancer');
+
+    showToast(`Skill Verified! Score: ${score}/100`, 'success');
+  };
+
+  const updateFreelancerSkills = ({ role: newRole, skills: newSkills, experienceLevel: newExp }) => {
+    setFreelancerProfile(prev => {
+      const updated = {
+        ...prev,
+        role: newRole || prev.role,
+        skills: newSkills || prev.skills,
+        experienceLevel: newExp || prev.experienceLevel
+      };
+      const active = getStoredActiveUser();
+      if (active && active.role === 'freelancer') {
+        active.profile = updated;
+        saveStoredActiveUser(active);
+      }
+      return updated;
+    });
+    showToast('Skill profile updated successfully!', 'success');
+  };
+
+  const contextValue = {
+    role,
+    setRole,
+    switchRole,
+    handleFindTalent,
+    handleFindWork,
+    registerUser,
+    loginUser,
+    loginAs,
+    logout,
+    currentUserAccount,
+    currentView,
+    setCurrentView,
+    navigateTo,
+    freelancerProfile,
+    setFreelancerProfile,
+    clientProfile,
+    setClientProfile,
+    selectedFreelancer,
+    setSelectedFreelancer,
+    selectedProject,
+    setSelectedProject,
+    selectedService,
+    setSelectedService,
+    comparisonList,
+    setComparisonList,
+    toggleComparison,
+    shortlistedFreelancers,
+    toggleShortlist,
+    appliedProjectIds,
+    submitProposal,
+    activeProjectsList,
+    addNewProject,
+    notifications,
+    setNotifications,
+    addNotification,
+    isNotificationOpen,
+    setIsNotificationOpen,
+    isAuthModalOpen,
+    setIsAuthModalOpen,
+    authMode,
+    setAuthMode,
+    authRoleChoice,
+    setAuthRoleChoice,
+    isSkillModalOpen,
+    setIsSkillModalOpen,
+    isSkillModalOnboarding,
+    setIsSkillModalOnboarding,
+    updateFreelancerSkills,
+    activeAssessment,
+    setActiveAssessment,
+    assessmentResult,
+    setAssessmentResult,
+    completeAssessment,
+    toastMessage,
+    showToast
   };
 
   return (
-    <AppContext.Provider
-      value={{
-        role,
-        setRole,
-        switchRole,
-        handleFindTalent,
-        handleFindWork,
-        registerUser,
-        loginUser,
-        loginAs,
-        loginWithUser,
-        logout,
-        currentUserAccount,
-        currentView,
-        setCurrentView,
-        navigateTo,
-        freelancerProfile,
-        setFreelancerProfile,
-        clientProfile,
-        setClientProfile,
-        selectedFreelancer,
-        setSelectedFreelancer,
-        selectedProject,
-        setSelectedProject,
-        selectedService,
-        setSelectedService,
-        comparisonList,
-        setComparisonList,
-        toggleComparison,
-        shortlistedFreelancers,
-        toggleShortlist,
-        appliedProjectIds,
-        submitProposal,
-        activeProjectsList,
-        addNewProject,
-        notifications,
-        setNotifications,
-        addNotification,
-        isNotificationOpen,
-        setIsNotificationOpen,
-        isAuthModalOpen,
-        setIsAuthModalOpen,
-        authMode,
-        setAuthMode,
-        authRoleChoice,
-        setAuthRoleChoice,
-        isSkillModalOpen,
-        setIsSkillModalOpen,
-        isSkillModalOnboarding,
-        setIsSkillModalOnboarding,
-        updateFreelancerSkills,
-        activeAssessment,
-        setActiveAssessment,
-        assessmentResult,
-        setAssessmentResult,
-        completeAssessment,
-        toastMessage,
-        showToast
-      }}
-    >
+    <AppContext.Provider value={contextValue}>
       {children}
     </AppContext.Provider>
   );
 };
 
-export const useApp = () => useContext(AppContext);
+// eslint-disable-next-line react-refresh/only-export-components
+export const useApp = () => {
+  const context = useContext(AppContext);
+  if (!context) {
+    throw new Error('useApp must be used within an AppProvider');
+  }
+  return context;
+};

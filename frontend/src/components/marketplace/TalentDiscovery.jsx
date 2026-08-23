@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 import {
   Search,
-  Filter,
-  Star,
-  CheckCircle2,
-  TrendingUp,
-  ShieldCheck,
-  Send,
-  Eye,
   SlidersHorizontal,
   Sparkles
 } from 'lucide-react';
@@ -23,14 +16,13 @@ export const TalentDiscovery = () => {
     toggleShortlist,
     shortlistedFreelancers,
     toggleComparison,
-    comparisonList,
-    showToast
+    comparisonList
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkill, setSelectedSkill] = useState('all');
   const [minScore, setMinScore] = useState(80);
-  const [verifiedOnly, setVerifiedOnly] = useState(true);
+  const verifiedOnly = true;
 
   const skillsList = ['all', 'React', 'TypeScript', 'Node.js', 'Figma UI/UX', 'Kubernetes', 'Python', 'Flutter', 'PostgreSQL'];
 

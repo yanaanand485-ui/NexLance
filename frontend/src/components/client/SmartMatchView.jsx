@@ -1,17 +1,10 @@
 import React, { useState } from 'react';
 import {
   Sparkles,
-  CheckCircle2,
   Users,
   Layers,
   FileCheck2,
-  Columns,
-  Star,
   Send,
-  UserCheck,
-  Check,
-  TrendingUp,
-  ShieldCheck,
   ArrowRight
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';

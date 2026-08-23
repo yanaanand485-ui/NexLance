@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, CheckCircle2, Clock, ArrowRight, DollarSign, Send, ShieldCheck } from 'lucide-react';
+import { Sparkles, CheckCircle2 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { calculateProjectMatch } from '../../utils/matchEngine';
 

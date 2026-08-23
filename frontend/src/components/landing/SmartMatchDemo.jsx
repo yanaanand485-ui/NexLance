@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, CheckCircle2, ArrowRight, UserCheck, Shield, Clock, ThumbsUp, Send } from 'lucide-react';
+import { Sparkles, CheckCircle2, ArrowRight, Send } from 'lucide-react';
 import { FREELANCERS } from '../../data/mockData';
 import { useApp } from '../../context/AppContext';
-import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const SmartMatchDemo = () => {
@@ -90,7 +89,7 @@ export const SmartMatchDemo = () => {
 
         {/* Candidate Selector Tabs */}
         <div style={{ display: 'flex', gap: '0.75rem', marginBottom: '1.5rem', overflowX: 'auto' }}>
-          {matchCandidates.map((m, idx) => (
+          {matchCandidates.map((m) => (
             <button
               key={m.id}
               onClick={() => setActiveTab(m.id)}

@@ -4,7 +4,7 @@ import { useApp } from '../../context/AppContext';
 import { HeroPhotoShowcase } from './HeroPhotoShowcase';
 
 export const HeroSection = () => {
-  const { role, handleFindTalent, handleFindWork } = useApp();
+  const { handleFindTalent, handleFindWork } = useApp();
 
   return (
     <section className="hero-section">

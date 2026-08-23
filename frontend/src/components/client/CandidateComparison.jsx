@@ -3,21 +3,13 @@ import {
   Columns,
   CheckCircle2,
   Star,
-  Clock,
-  ShieldCheck,
   Send,
-  Trash2,
   Plus,
-  ArrowRight,
-  TrendingUp,
   Users,
   Check,
   X,
-  Bookmark,
-  ExternalLink,
   Sparkles,
-  RotateCcw,
-  Award
+  Bookmark
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';

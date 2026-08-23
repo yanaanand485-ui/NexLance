@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   X,
   Briefcase,
@@ -8,8 +8,6 @@ import {
   User,
   ArrowRight,
   Building2,
-  Sparkles,
-  ShieldCheck,
   AlertCircle,
   CheckCircle,
   Eye,
@@ -34,9 +32,9 @@ export const AuthModal = () => {
     currentUserAccount
   } = useApp();
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => currentUserAccount?.email || '');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState('');
+  const [fullName, setFullName] = useState(() => currentUserAccount?.name || '');
   const [companyName, setCompanyName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -47,28 +45,28 @@ export const AuthModal = () => {
   const hasMinLength = password.length >= 6;
   const hasCapital = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
-  const isPasswordValid = hasMinLength && hasCapital && hasNumber;
 
-  // Reset or clear errors when modal opens or mode changes
-  useEffect(() => {
+  const handleSwitchMode = (newMode) => {
+    setAuthMode(newMode);
     setErrorMessage('');
     setErrorReason('');
     setSuccessMessage('');
-  }, [isAuthModalOpen, authMode, authRoleChoice]);
+  };
 
-  // Reset password field and optionally pre-fill name/email when modal opens
-  useEffect(() => {
-    if (isAuthModalOpen) {
-      setPassword('');
-      setErrorMessage('');
-      setErrorReason('');
-      setSuccessMessage('');
-      if (currentUserAccount) {
-        if (!fullName) setFullName(currentUserAccount.name || '');
-        if (!email) setEmail(currentUserAccount.email || '');
-      }
-    }
-  }, [isAuthModalOpen]);
+  const handleSwitchRole = (newRole) => {
+    setAuthRoleChoice(newRole);
+    setErrorMessage('');
+    setErrorReason('');
+    setSuccessMessage('');
+  };
+
+  const handleClose = () => {
+    setIsAuthModalOpen(false);
+    setPassword('');
+    setErrorMessage('');
+    setErrorReason('');
+    setSuccessMessage('');
+  };
 
   if (!isAuthModalOpen) return null;
 
@@ -147,7 +145,7 @@ export const AuthModal = () => {
   };
 
   return (
-    <div className="modal-backdrop" onClick={() => setIsAuthModalOpen(false)}>
+    <div className="modal-backdrop" onClick={handleClose}>
       <div
         className="modal-card"
         style={{
@@ -200,7 +198,7 @@ export const AuthModal = () => {
           </div>
 
           <button
-            onClick={() => setIsAuthModalOpen(false)}
+            onClick={handleClose}
             style={{
               padding: '0.45rem',
               borderRadius: '50%',
@@ -231,7 +229,7 @@ export const AuthModal = () => {
         }}>
           <button
             type="button"
-            onClick={() => setAuthMode('signup')}
+            onClick={() => handleSwitchMode('signup')}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -255,7 +253,7 @@ export const AuthModal = () => {
 
           <button
             type="button"
-            onClick={() => setAuthMode('login')}
+            onClick={() => handleSwitchMode('login')}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -282,7 +280,7 @@ export const AuthModal = () => {
         <div style={{ display: 'flex', gap: '0.4rem', backgroundColor: '#F8FAFC', padding: '0.25rem', borderRadius: '10px', border: '1px solid #E2E8F0', marginBottom: '1.1rem' }}>
           <button
             type="button"
-            onClick={() => setAuthRoleChoice('client')}
+            onClick={() => handleSwitchRole('client')}
             style={{
               flex: 1,
               display: 'flex',
@@ -307,7 +305,7 @@ export const AuthModal = () => {
 
           <button
             type="button"
-            onClick={() => setAuthRoleChoice('freelancer')}
+            onClick={() => handleSwitchRole('freelancer')}
             style={{
               flex: 1,
               display: 'flex',

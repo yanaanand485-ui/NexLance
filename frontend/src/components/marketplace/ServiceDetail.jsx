@@ -1,31 +1,23 @@
 import React, { useState } from 'react';
 import {
-  Layers,
   Star,
   CheckCircle2,
   Clock,
   RotateCcw,
   ShieldCheck,
-  Send,
-  Sparkles,
-  ArrowRight,
   ArrowLeft,
   Lock,
   ChevronRight,
-  HelpCircle,
   Code,
-  FileCheck,
   Zap,
   MessageSquare,
   Check,
   ChevronDown,
-  ChevronUp,
-  AlertCircle
+  ChevronUp
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
-import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const ServiceDetail = () => {
   const {

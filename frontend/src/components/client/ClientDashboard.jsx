@@ -1,19 +1,15 @@
 import React from 'react';
 import {
   Briefcase,
-  Users,
   Sparkles,
   FileCheck2,
   PlusCircle,
-  TrendingUp,
   ArrowRight,
-  ShieldCheck,
   Columns,
   Search
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FREELANCERS } from '../../data/mockData';
-import { CareerScoreBadge } from '../common/CareerScoreBadge';
 import { VerifiedBadge } from '../common/VerifiedBadge';
 
 export const ClientDashboard = () => {
