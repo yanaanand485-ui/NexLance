@@ -5,7 +5,6 @@ import {
   CheckSquare,
   ShieldCheck,
   TrendingUp,
-  FolderGit2,
   Bell,
   Settings,
   PlusCircle,
@@ -38,7 +37,6 @@ export const Sidebar = () => {
     { id: 'applications', label: 'My Applications', icon: <CheckSquare size={18} /> },
     { id: 'skill-verification', label: 'Skill Verification', icon: <ShieldCheck size={18} /> },
     { id: 'career-score', label: 'Career Score', icon: <TrendingUp size={18} /> },
-    { id: 'proof-of-work', label: 'Proof of Work', icon: <FolderGit2 size={18} /> },
     { id: 'opportunities', label: 'Opportunities', icon: <Sparkles size={18} /> },
     { id: 'notifications', label: 'Notifications', icon: <Bell size={18} />, action: () => setIsNotificationOpen(true) },
     { id: 'settings', label: 'Settings', icon: <Settings size={18} /> }

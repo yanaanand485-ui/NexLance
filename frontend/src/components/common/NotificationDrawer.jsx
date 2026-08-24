@@ -103,8 +103,8 @@ export const NotificationDrawer = () => {
     else if (item.action === 'view-applications') navigateTo('applications');
     else if (item.action === 'view-projects') navigateTo('project-discovery');
     else if (item.action === 'view-talent') navigateTo('talent-discovery');
-    else if (item.action === 'view-active-contracts' || item.action === 'view-proof-of-work') {
-      navigateTo(role === 'client' ? 'client-dashboard' : 'proof-of-work');
+    else if (item.action === 'view-active-contracts') {
+      navigateTo(role === 'client' ? 'client-dashboard' : 'freelancer-dashboard');
     }
 
     setIsNotificationOpen(false);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShieldCheck, TrendingUp, FolderGit2, Sparkles, ArrowRight } from 'lucide-react';
+import { ShieldCheck, TrendingUp, Layers, Sparkles, ArrowRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const Differentiators = () => {
@@ -23,12 +23,12 @@ export const Differentiators = () => {
       badge: '91/100 Avg Top Tier'
     },
     {
-      id: 'proof-of-work',
-      title: 'Proof of Work',
-      icon: <FolderGit2 size={22} color="#1E40AF" />,
-      description: 'No more static portfolios. Direct links to live repositories, active production sites, and verified design files.',
-      action: 'proof-of-work',
-      badge: 'Live Repos & Demos'
+      id: 'services-marketplace',
+      title: 'Services Catalog',
+      icon: <Layers size={22} color="#1E40AF" />,
+      description: 'Fixed-price services with transparent deliverables, upfront pricing, and guaranteed delivery timelines.',
+      action: 'services-marketplace',
+      badge: 'Fixed-Price & Scope'
     },
     {
       id: 'smart-match',

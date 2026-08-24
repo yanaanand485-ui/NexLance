@@ -2346,7 +2346,7 @@ export const FREELANCER_NOTIFICATIONS = [
     description: "Meridian Retail Global deposited funds into platform smart escrow. Work is verified safe to start.",
     time: "2 days ago",
     unread: false,
-    action: "view-proof-of-work"
+    action: "view-career-score"
   }
 ];
 

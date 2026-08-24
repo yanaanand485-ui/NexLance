@@ -153,12 +153,6 @@ export const Navbar = () => {
               >
                 Career Score
               </span>
-              <span
-                onClick={() => navigateTo('proof-of-work')}
-                className={`nav-item ${currentView === 'proof-of-work' ? 'active' : ''}`}
-              >
-                Proof of Work
-              </span>
             </nav>
           ) : (
             /* Navigation Links for Client View */

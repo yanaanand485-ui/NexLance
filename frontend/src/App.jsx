@@ -21,7 +21,6 @@ import { ServiceDetail } from './components/marketplace/ServiceDetail';
 import { FreelancerDashboard } from './components/freelancer/FreelancerDashboard';
 import { SkillVerification } from './components/freelancer/SkillVerification';
 import { CareerScoreDetail } from './components/freelancer/CareerScoreDetail';
-import { ProofOfWork } from './components/freelancer/ProofOfWork';
 import { OpportunitiesFeed } from './components/freelancer/OpportunitiesFeed';
 import { NewFreelancerExperience } from './components/freelancer/NewFreelancerExperience';
 
@@ -90,8 +89,6 @@ const MainRouter = () => {
         return renderDashboardView(SkillVerification);
       case 'career-score':
         return renderDashboardView(CareerScoreDetail);
-      case 'proof-of-work':
-        return renderDashboardView(ProofOfWork);
       case 'opportunities':
         return renderDashboardView(OpportunitiesFeed);
       case 'new-freelancer':
