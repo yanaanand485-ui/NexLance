@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   Briefcase,
@@ -15,7 +15,8 @@ import {
   Zap,
   LogIn,
   UserPlus,
-  Check
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -40,17 +41,66 @@ export const AuthModal = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [transferNotice, setTransferNotice] = useState('');
+  const [pendingSignupTransfer, setPendingSignupTransfer] = useState(false);
 
   // Password Constraint Checks
   const hasMinLength = password.length >= 6;
   const hasCapital = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
 
+  // Helper to extract a formatted name from email (e.g. rohit.sharma@gmail.com -> Rohit Sharma)
+  const formatNameFromEmail = (rawEmail) => {
+    if (!rawEmail || !rawEmail.includes('@')) return '';
+    const namePart = rawEmail.split('@')[0];
+    return namePart
+      .replace(/[._\-+0-9]/g, ' ')
+      .split(' ')
+      .filter(Boolean)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+      .join(' ');
+  };
+
+  // useEffect 1: Automatically transfer credentials to "Get Started" (Sign Up) when a new user is detected on Login
+  useEffect(() => {
+    if (pendingSignupTransfer) {
+      // 1. Switch auth mode to 'signup' (Get Started)
+      setAuthMode('signup');
+
+      // 2. Auto-fill full name from email if not already provided
+      if (!fullName.trim() && email.trim()) {
+        const suggestedName = formatNameFromEmail(email);
+        if (suggestedName) {
+          setFullName(suggestedName);
+        }
+      }
+
+      // 3. Display informative banner explaining the automatic transfer
+      setTransferNotice(`No existing account found for "${email}". We've transferred your email & password to Get Started — please complete your name to create your account!`);
+      setErrorMessage('');
+      setErrorReason('');
+
+      // 4. Reset trigger flag
+      setPendingSignupTransfer(false);
+    }
+  }, [pendingSignupTransfer, email, fullName, setAuthMode]);
+
+  // useEffect 2: When user switches to 'signup' (Get Started) with email filled, suggest full name if empty
+  useEffect(() => {
+    if (authMode === 'signup' && email.trim() && !fullName.trim()) {
+      const suggestedName = formatNameFromEmail(email);
+      if (suggestedName) {
+        setFullName(suggestedName);
+      }
+    }
+  }, [authMode, email, fullName]);
+
   const handleSwitchMode = (newMode) => {
     setAuthMode(newMode);
     setErrorMessage('');
     setErrorReason('');
     setSuccessMessage('');
+    setTransferNotice('');
   };
 
   const handleSwitchRole = (newRole) => {
@@ -66,6 +116,8 @@ export const AuthModal = () => {
     setErrorMessage('');
     setErrorReason('');
     setSuccessMessage('');
+    setTransferNotice('');
+    setPendingSignupTransfer(false);
   };
 
   if (!isAuthModalOpen) return null;
@@ -78,6 +130,7 @@ export const AuthModal = () => {
     setErrorMessage('');
     setErrorReason('');
     setSuccessMessage('');
+    setTransferNotice('');
 
     if (authMode === 'signup') {
       // Validate password constraints first
@@ -124,8 +177,13 @@ export const AuthModal = () => {
       });
 
       if (!result.success) {
-        setErrorMessage(result.message);
-        setErrorReason(result.reason);
+        if (result.reason === 'USER_NOT_FOUND') {
+          // Trigger useEffect to transfer credentials to Get Started!
+          setPendingSignupTransfer(true);
+        } else {
+          setErrorMessage(result.message);
+          setErrorReason(result.reason);
+        }
       } else {
         setSuccessMessage('Credentials verified! Logging you in...');
         setTimeout(() => {
@@ -142,6 +200,7 @@ export const AuthModal = () => {
     setAuthRoleChoice(demoRole);
     setErrorMessage('');
     setErrorReason('');
+    setTransferNotice('');
   };
 
   return (
@@ -329,6 +388,31 @@ export const AuthModal = () => {
           </button>
         </div>
 
+        {/* Credentials Transferred / New User Notification */}
+        {transferNotice && authMode === 'signup' && (
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.65rem',
+            padding: '0.85rem 1rem',
+            borderRadius: '10px',
+            backgroundColor: '#EFF6FF',
+            border: '1px solid #BFDBFE',
+            color: '#1E40AF',
+            fontSize: '0.825rem',
+            marginBottom: '1rem',
+            lineHeight: 1.4
+          }}>
+            <Sparkles size={17} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
+            <div>
+              <div style={{ fontWeight: 800, color: '#1E40AF', marginBottom: '2px' }}>
+                ✨ Credentials Transferred to Get Started!
+              </div>
+              <div style={{ color: '#1E3A8A' }}>{transferNotice}</div>
+            </div>
+          </div>
+        )}
+
         {/* Error Alert Banner */}
         {errorMessage && (
           <div style={{
@@ -347,13 +431,12 @@ export const AuthModal = () => {
             <AlertCircle size={17} style={{ flexShrink: 0, marginTop: '2px' }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600 }}>{errorMessage}</div>
-              {errorReason === 'NOT_FOUND' && (
+              {(errorReason === 'NOT_FOUND' || errorReason === 'USER_NOT_FOUND') && (
                 <div style={{ marginTop: '0.45rem' }}>
                   <button
                     type="button"
                     onClick={() => {
-                      setAuthMode('signup');
-                      setErrorMessage('');
+                      setPendingSignupTransfer(true);
                     }}
                     style={{
                       display: 'inline-flex',
@@ -361,7 +444,7 @@ export const AuthModal = () => {
                       gap: '0.35rem',
                       padding: '0.35rem 0.75rem',
                       borderRadius: '6px',
-                      backgroundColor: '#DC2626',
+                      backgroundColor: isClient ? '#1E40AF' : '#059669',
                       color: '#FFFFFF',
                       fontSize: '0.75rem',
                       fontWeight: 700,
@@ -369,7 +452,7 @@ export const AuthModal = () => {
                       cursor: 'pointer'
                     }}
                   >
-                    <span>Click here to Get Started (Sign Up)</span>
+                    <span>Transfer to Get Started (Sign Up)</span>
                     <ArrowRight size={12} />
                   </button>
                 </div>

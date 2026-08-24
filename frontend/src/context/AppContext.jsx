@@ -322,7 +322,12 @@ export const AppProvider = ({ children }) => {
     }
 
     if (!foundUser) {
-      return { success: false, message: `No account found for "${email}". Please click "Get Started" to sign up.` };
+      return {
+        success: false,
+        message: `No account found for "${cleanEmail}". Transferring your credentials to Get Started...`,
+        reason: 'USER_NOT_FOUND',
+        unregisteredEmail: cleanEmail
+      };
     }
 
     // 4. Flexible Password Verification (supports exact, trimmed, case-insensitive, and standard demo passwords)
