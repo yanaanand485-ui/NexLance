@@ -629,8 +629,8 @@ export const SERVICES = [
     thumbnail: "/rag-pipeline.jpg",
     gallery: [
       "/rag-pipeline.jpg",
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80"
+      "/llm-finetuning.jpg",
+      "/ai-voice-agent.jpg"
     ],
     verifiedSkills: ["LangChain / RAG", "Python", "Vector DBs", "OpenAI"],
     techStack: ["LangChain", "LlamaIndex", "Pinecone / Qdrant", "OpenAI / Claude 3.5", "FastAPI", "Docker"],
@@ -711,10 +711,11 @@ export const SERVICES = [
     rawStartingPrice: 480,
     deliveryDays: 10,
     category: "AI & Machine Learning",
-    thumbnail: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=600&auto=format&fit=crop&q=80",
+    thumbnail: "/llm-finetuning.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80"
+      "/llm-finetuning.jpg",
+      "/rag-pipeline.jpg",
+      "/ai-voice-agent.jpg"
     ],
     verifiedSkills: ["Python", "PyTorch & ML", "LangChain / RAG"],
     techStack: ["PyTorch", "HuggingFace", "Unsloth / LoRA", "OpenAI Tool Calling", "FastAPI", "Celery"],
@@ -772,10 +773,11 @@ export const SERVICES = [
     rawStartingPrice: 460,
     deliveryDays: 8,
     category: "AI & Machine Learning",
-    thumbnail: "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=600&auto=format&fit=crop&q=80",
+    thumbnail: "/ai-voice-agent.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1589254065878-42c9da997008?w=800&auto=format&fit=crop&q=80",
-      "https://images.unsplash.com/photo-1677442136019-21780efad99a?w=800&auto=format&fit=crop&q=80"
+      "/ai-voice-agent.jpg",
+      "/llm-finetuning.jpg",
+      "/rag-pipeline.jpg"
     ],
     verifiedSkills: ["Python", "FastAPI", "LangChain / RAG"],
     techStack: ["LiveKit / WebRTC", "Whisper STT", "ElevenLabs / Deepgram", "OpenAI Realtime API", "Twilio / SIP", "Node.js"],
