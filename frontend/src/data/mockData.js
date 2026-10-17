@@ -4,7 +4,7 @@ export const SARAH_FREELANCER = {
   id: "fl-sarah-01",
   name: "Sarah Jenkins",
   role: "Principal Full-Stack & Cloud Architect",
-  avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+  avatar: "",
   banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
   location: "New York, NY (Remote)",
   timezone: "EST (UTC-5)",
@@ -40,9 +40,7 @@ export const SARAH_FREELANCER = {
   verifiedSkills: [
     { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
-    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
-    { id: "graphql", name: "GraphQL & REST APIs", score: 94, percentile: "Top 3% Global", status: "verified", verifiedDate: "Nov 2024", retakeDate: "Nov 2025" },
-    { id: "aws", name: "AWS Cloud & DevOps", score: 90, percentile: "Top 8% Global", status: "verified", verifiedDate: "Oct 2024", retakeDate: "Oct 2025" }
+    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" }
   ],
   proofOfWork: [
     {
@@ -175,9 +173,7 @@ export const CURRENT_USER = {
     { id: "react", name: "React", score: 91, percentile: "Top 5% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "javascript", name: "JavaScript (ES6+)", score: 87, percentile: "Top 15% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
     { id: "typescript", name: "TypeScript", score: 94, percentile: "Top 3% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
-    { id: "graphql", name: "GraphQL & REST APIs", score: 89, percentile: "Top 10% Global", status: "verified", verifiedDate: "Nov 2024", retakeDate: "Nov 2025" },
-    { id: "nodejs", name: "Node.js Microservices", score: 86, percentile: "Top 18% Global", status: "verified", verifiedDate: "Oct 2024", retakeDate: "Oct 2025" },
-    { id: "aws", name: "AWS Cloud & DevOps", score: null, percentile: null, status: "unverified", note: "Assessment available" }
+    { id: "nodejs", name: "Node.js Microservices", score: 86, percentile: "Top 18% Global", status: "verified", verifiedDate: "Oct 2024", retakeDate: "Oct 2025" }
   ],
   proofOfWork: [
     {
@@ -2426,7 +2422,7 @@ export const NEW_FREELANCER = {
   id: "fl-new-user",
   name: "New Freelancer",
   role: "Full-Stack Developer",
-  avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+  avatar: "",
   careerScore: 0,
   isNew: true,
   rating: 0,
@@ -2450,13 +2446,8 @@ export const NEW_FREELANCER = {
     { month: "Oct", score: 0 }
   ],
   experienceLevel: "Mid-Level",
-  skills: ["React", "JavaScript (ES6+)", "TypeScript", "Node.js"],
-  verifiedSkills: [
-    { id: "react", name: "React", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-    { id: "javascript", name: "JavaScript (ES6+)", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-    { id: "typescript", name: "TypeScript", score: null, percentile: null, status: "unverified", note: "Assessment available" },
-    { id: "nodejs", name: "Node.js", score: null, percentile: null, status: "unverified", note: "Assessment available" }
-  ],
+  skills: [],
+  verifiedSkills: [],
   proofOfWork: [],
   steps: [
     { id: 1, title: "Complete Profile & Bio", done: true },

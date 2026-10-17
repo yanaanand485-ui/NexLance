@@ -39,30 +39,6 @@ export const HeroSection = () => {
               Find Work
             </button>
           </div>
-
-          {/* Social Proof Avatar Stack */}
-          <div className="avatar-stack-container">
-            <div className="avatar-stack">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                alt="Freelancer"
-                className="avatar-stack-item"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&auto=format&fit=crop&q=80"
-                alt="Freelancer"
-                className="avatar-stack-item"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
-                alt="Freelancer"
-                className="avatar-stack-item"
-              />
-            </div>
-            <span className="avatar-stack-text">
-              Joined by <strong>10,000+</strong> top proven freelancers
-            </span>
-          </div>
         </div>
 
         {/* Right Column: Clean Photo & Visual Showcase for visitors without login */}

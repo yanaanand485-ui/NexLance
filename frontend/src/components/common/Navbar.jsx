@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import {
-  Bell,
   ChevronDown,
   LogOut,
   Menu,
-  X,
-  ArrowLeft
+  X
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
@@ -14,7 +12,6 @@ export const Navbar = () => {
     role,
     currentView,
     navigateTo,
-    goBack,
     goToDashboard,
     handleFindTalent,
     handleFindWork,
@@ -22,19 +19,16 @@ export const Navbar = () => {
     switchRole,
     freelancerProfile,
     clientProfile,
-    notifications,
-    setIsNotificationOpen,
     setIsAuthModalOpen,
     setAuthMode,
-    setAuthRoleChoice
+    setAuthRoleChoice,
+    showToast
   } = useApp();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
 
-  const unreadCount = notifications.filter(n => n.unread).length;
   const isPublic = role === 'public';
-  const isRootView = currentView === 'landing' || currentView === 'freelancer-dashboard' || currentView === 'client-dashboard';
 
   const handleAuthClick = (mode, chosenRole = 'freelancer') => {
     setAuthMode(mode);
@@ -46,7 +40,7 @@ export const Navbar = () => {
   return (
     <header className="navbar-wrapper">
       <div className="navbar">
-        {/* Left: Brand Logo & Back Button & Links */}
+        {/* Left: Brand Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <div
             onClick={() => navigateTo(role === 'freelancer' ? 'freelancer-dashboard' : role === 'client' ? 'client-dashboard' : 'landing')}
@@ -61,36 +55,8 @@ export const Navbar = () => {
             <span>NexLance</span>
           </div>
 
-          {/* Quick Back to Dashboard Button in Navbar (Visible when navigating subviews) */}
-          {!isRootView && (
-            <button
-              type="button"
-              onClick={() => goBack()}
-              className="nav-back-pill"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.4rem',
-                padding: '0.35rem 0.75rem',
-                borderRadius: '8px',
-                backgroundColor: '#EFF6FF',
-                border: '1px solid #BFDBFE',
-                color: '#1E40AF',
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap'
-              }}
-              title={isPublic ? 'Back to Home' : 'Back to Dashboard'}
-            >
-              <ArrowLeft size={14} />
-              <span>{isPublic ? 'Back' : 'Back to Dashboard'}</span>
-            </button>
-          )}
-
-          {/* Navigation Links for Public View */}
-          {isPublic ? (
+          {/* Navigation Links for Public Landing View Only (Dashboard navigation is in Sidebar) */}
+          {isPublic && (
             <nav className="nav-links">
               <span
                 onClick={handleFindTalent}
@@ -105,7 +71,11 @@ export const Navbar = () => {
                 Find Work
               </span>
               <span
-                onClick={() => navigateTo('services-marketplace')}
+                onClick={() => {
+                  showToast('Please Get Started first to explore all services.', 'info');
+                  setAuthMode('signup');
+                  setIsAuthModalOpen(true);
+                }}
                 className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
               >
                 Services
@@ -118,74 +88,6 @@ export const Navbar = () => {
                 className={`nav-item ${currentView === 'landing' ? 'active' : ''}`}
               >
                 How It Works
-              </span>
-            </nav>
-          ) : role === 'freelancer' ? (
-            /* Navigation Links for Freelancer View */
-            <nav className="nav-links">
-              <span
-                onClick={() => navigateTo('freelancer-dashboard')}
-                className={`nav-item ${currentView === 'freelancer-dashboard' ? 'active' : ''}`}
-              >
-                Dashboard
-              </span>
-              <span
-                onClick={() => navigateTo('project-discovery')}
-                className={`nav-item ${currentView === 'project-discovery' ? 'active' : ''}`}
-              >
-                Find Projects
-              </span>
-              <span
-                onClick={() => navigateTo('services-marketplace')}
-                className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
-              >
-                Services Catalog
-              </span>
-              <span
-                onClick={() => navigateTo('skill-verification')}
-                className={`nav-item ${currentView === 'skill-verification' ? 'active' : ''}`}
-              >
-                Skill Verification
-              </span>
-              <span
-                onClick={() => navigateTo('career-score')}
-                className={`nav-item ${currentView === 'career-score' ? 'active' : ''}`}
-              >
-                Career Score
-              </span>
-            </nav>
-          ) : (
-            /* Navigation Links for Client View */
-            <nav className="nav-links">
-              <span
-                onClick={() => navigateTo('client-dashboard')}
-                className={`nav-item ${currentView === 'client-dashboard' ? 'active' : ''}`}
-              >
-                Dashboard
-              </span>
-              <span
-                onClick={() => navigateTo('services-marketplace')}
-                className={`nav-item ${currentView === 'services-marketplace' || currentView === 'service-detail' ? 'active' : ''}`}
-              >
-                Services
-              </span>
-              <span
-                onClick={() => navigateTo('post-project')}
-                className={`nav-item ${currentView === 'post-project' ? 'active' : ''}`}
-              >
-                Post Project
-              </span>
-              <span
-                onClick={() => navigateTo('comparison')}
-                className={`nav-item ${currentView === 'comparison' ? 'active' : ''}`}
-              >
-                Candidate Comparison
-              </span>
-              <span
-                onClick={() => navigateTo('applications')}
-                className={`nav-item ${currentView === 'applications' ? 'active' : ''}`}
-              >
-                Applications
               </span>
             </nav>
           )}
@@ -210,50 +112,8 @@ export const Navbar = () => {
               </button>
             </div>
           ) : (
-            /* Authenticated User Actions */
+            /* Authenticated User Actions (Only User Profile Dropdown, no notification bell) */
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
-              {/* Notification Bell */}
-              <button
-                onClick={() => setIsNotificationOpen(true)}
-                style={{
-                  position: 'relative',
-                  width: '38px',
-                  height: '38px',
-                  borderRadius: '8px',
-                  border: '1px solid #E2E8F0',
-                  backgroundColor: '#FFFFFF',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: '#475569',
-                  cursor: 'pointer'
-                }}
-                title="Notifications"
-              >
-                <Bell size={18} />
-                {unreadCount > 0 && (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      top: '-4px',
-                      right: '-4px',
-                      width: '18px',
-                      height: '18px',
-                      borderRadius: '50%',
-                      backgroundColor: '#1E40AF',
-                      color: '#FFFFFF',
-                      fontSize: '0.675rem',
-                      fontWeight: 700,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-
               {/* User Profile Dropdown */}
               <div style={{ position: 'relative' }}>
                 <button
@@ -269,11 +129,30 @@ export const Navbar = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  <img
-                    src={role === 'freelancer' ? freelancerProfile.avatar : clientProfile.avatar}
-                    alt="Profile"
-                    style={{ width: '30px', height: '30px', borderRadius: '6px', objectFit: 'cover' }}
-                  />
+                  {(role === 'freelancer' ? freelancerProfile?.avatar : clientProfile?.avatar) ? (
+                    <img
+                      src={role === 'freelancer' ? freelancerProfile.avatar : clientProfile.avatar}
+                      alt="Profile"
+                      style={{ width: '30px', height: '30px', borderRadius: '6px', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '6px',
+                        backgroundColor: '#1E40AF',
+                        color: '#FFFFFF',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontWeight: 700,
+                        fontSize: '0.85rem'
+                      }}
+                    >
+                      {(role === 'freelancer' ? freelancerProfile?.name : clientProfile?.name)?.charAt(0)?.toUpperCase() || 'U'}
+                    </div>
+                  )}
                   <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
                     <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A' }}>
                       {role === 'freelancer' ? freelancerProfile.name : clientProfile.name}

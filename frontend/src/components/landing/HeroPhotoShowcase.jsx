@@ -1,17 +1,7 @@
-import React, { useState } from 'react';
-import { ShieldCheck, Sparkles, Star, CheckCircle2, ArrowRight, Lock, Award, Briefcase } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
+import React from 'react';
+import { ShieldCheck, Sparkles, Star, Lock } from 'lucide-react';
 
 export const HeroPhotoShowcase = () => {
-  const { setIsAuthModalOpen, setAuthMode, setAuthRoleChoice } = useApp();
-  const [activeTab, setActiveTab] = useState('talent'); // 'talent' | 'freelancer'
-
-  const openRegister = (chosenRole) => {
-    setAuthMode('signup');
-    setAuthRoleChoice(chosenRole);
-    setIsAuthModalOpen(true);
-  };
-
   return (
     <div className="hero-photo-card">
       {/* Photo Frame Container */}
@@ -60,7 +50,7 @@ export const HeroPhotoShowcase = () => {
             </div>
             <span className="badge-rating-text">4.9 / 5.0</span>
           </div>
-          <div className="badge-sub-dark">Trusted by 10,000+ companies & experts</div>
+          <div className="badge-sub-dark">Top Rated Industry Experts</div>
         </div>
 
         {/* Floating Glass Badge: Bottom Right - Fast Matching */}
@@ -75,60 +65,7 @@ export const HeroPhotoShowcase = () => {
           </div>
         </div>
       </div>
-
-      {/* Guest Welcome & Quick Onboarding Strip */}
-      <div className="photo-card-footer">
-        <div className="photo-footer-tabs">
-          <button
-            onClick={() => setActiveTab('talent')}
-            className={`photo-tab-btn ${activeTab === 'talent' ? 'active' : ''}`}
-          >
-            <Briefcase size={14} /> Hire Verified Talent
-          </button>
-          <button
-            onClick={() => setActiveTab('freelancer')}
-            className={`photo-tab-btn ${activeTab === 'freelancer' ? 'active' : ''}`}
-          >
-            <Award size={14} /> Work as a Freelancer
-          </button>
-        </div>
-
-        <div className="photo-footer-content">
-          {activeTab === 'talent' ? (
-            <div className="photo-tab-info">
-              <div className="tab-info-text">
-                <p className="tab-lead">Post your project for free & get verified candidate matches.</p>
-                <div className="tab-perks">
-                  <span><CheckCircle2 size={13} color="#059669" /> Zero upfront fee</span>
-                  <span><CheckCircle2 size={13} color="#059669" /> Vetted code proof</span>
-                </div>
-              </div>
-              <button
-                onClick={() => openRegister('client')}
-                className="btn btn-primary btn-sm photo-cta-btn"
-              >
-                Get Started <ArrowRight size={14} />
-              </button>
-            </div>
-          ) : (
-            <div className="photo-tab-info">
-              <div className="tab-info-text">
-                <p className="tab-lead">Prove your skills with tests & win high-paying client contracts.</p>
-                <div className="tab-perks">
-                  <span><CheckCircle2 size={13} color="#2563EB" /> Free skill assessment</span>
-                  <span><CheckCircle2 size={13} color="#2563EB" /> Guaranteed payment</span>
-                </div>
-              </div>
-              <button
-                onClick={() => openRegister('freelancer')}
-                className="btn btn-primary btn-sm photo-cta-btn"
-              >
-                Join as Talent <ArrowRight size={14} />
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 };
+

@@ -1,7 +1,5 @@
 import {
-  CURRENT_USER,
   SARAH_FREELANCER,
-  PRIYA_FREELANCER,
   CLIENT_DATA
 } from '../data/mockData';
 
@@ -9,7 +7,7 @@ import {
 const USERS_STORAGE_KEY = 'nexlance_registered_users';
 const SESSION_STORAGE_KEY = 'nexlance_active_user';
 
-// Default Demo Accounts for testing existing user login
+// Default Demo Accounts for testing existing user login (Only Sarah Jenkins for Freelancer)
 export const DEFAULT_USERS = [
   {
     id: "fl-sarah-01",
@@ -17,29 +15,9 @@ export const DEFAULT_USERS = [
     email: "sarah@nexlance.dev",
     password: "Password123",
     role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+    avatar: "",
     profile: SARAH_FREELANCER,
     createdAt: "2024-01-10T00:00:00.000Z"
-  },
-  {
-    id: "fl-alex-01",
-    name: "Alex Rivera",
-    email: "alex@nexlance.dev",
-    password: "Password123",
-    role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
-    profile: CURRENT_USER,
-    createdAt: "2024-01-15T00:00:00.000Z"
-  },
-  {
-    id: "fl-priya-02",
-    name: "Priya Sharma",
-    email: "priya@nexlance.dev",
-    password: "Password123",
-    role: "freelancer",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=200&auto=format&fit=crop&q=80",
-    profile: PRIYA_FREELANCER,
-    createdAt: "2024-02-05T00:00:00.000Z"
   },
   {
     id: "cl-meridian-01",
@@ -48,7 +26,7 @@ export const DEFAULT_USERS = [
     password: "Password123",
     role: "client",
     companyName: "Meridian Retail Global",
-    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80",
+    avatar: "",
     profile: CLIENT_DATA,
     createdAt: "2024-02-01T00:00:00.000Z"
   },
@@ -59,7 +37,7 @@ export const DEFAULT_USERS = [
     password: "Password123",
     role: "client",
     companyName: "NexLance Enterprise Client",
-    avatar: "https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&auto=format&fit=crop&q=80",
+    avatar: "",
     profile: CLIENT_DATA,
     createdAt: "2024-02-10T00:00:00.000Z"
   },
@@ -70,7 +48,7 @@ export const DEFAULT_USERS = [
     password: "Password123",
     role: "client",
     companyName: "Meridian Retail Global",
-    avatar: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80",
+    avatar: "",
     profile: CLIENT_DATA,
     createdAt: "2024-02-12T00:00:00.000Z"
   }
@@ -86,12 +64,21 @@ export const getStoredUsers = () => {
     }
     const parsed = JSON.parse(saved);
     if (Array.isArray(parsed) && parsed.length > 0) {
+      // Filter out removed demo accounts (alex, priya) and clear photos
+      const sanitized = parsed
+        .filter(u => u.email !== 'alex@nexlance.dev' && u.email !== 'priya@nexlance.dev')
+        .map(u => ({
+          ...u,
+          avatar: "",
+          profile: u.profile ? { ...u.profile, avatar: "" } : u.profile
+        }));
+
       // Ensure all DEFAULT_USERS are present (merge by email & role)
-      const existingKeys = new Set(parsed.map(u => `${u.email?.toLowerCase()}_${u.role}`));
+      const existingKeys = new Set(sanitized.map(u => `${u.email?.toLowerCase()}_${u.role}`));
       const missingDefaults = DEFAULT_USERS.filter(d => !existingKeys.has(`${d.email?.toLowerCase()}_${d.role}`));
       
       // Also ensure standard default accounts have their password refreshed if needed
-      const updatedParsed = parsed.map(user => {
+      const updatedParsed = sanitized.map(user => {
         const defaultMatch = DEFAULT_USERS.find(d => d.email?.toLowerCase() === user.email?.toLowerCase() && d.role === user.role);
         if (defaultMatch && !user.password) {
           return { ...user, password: defaultMatch.password };
@@ -99,7 +86,7 @@ export const getStoredUsers = () => {
         return user;
       });
 
-      if (missingDefaults.length > 0) {
+      if (missingDefaults.length > 0 || sanitized.length !== parsed.length) {
         const merged = [...updatedParsed, ...missingDefaults];
         localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(merged));
         return merged;
@@ -125,7 +112,17 @@ export const saveStoredUsers = (users) => {
 export const getStoredActiveUser = () => {
   try {
     const saved = localStorage.getItem(SESSION_STORAGE_KEY);
-    return saved ? JSON.parse(saved) : null;
+    if (!saved) return null;
+    const parsed = JSON.parse(saved);
+    if (parsed?.email === 'alex@nexlance.dev' || parsed?.email === 'priya@nexlance.dev') {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+      return null;
+    }
+    if (parsed) {
+      parsed.avatar = "";
+      if (parsed.profile) parsed.profile.avatar = "";
+    }
+    return parsed;
   } catch (err) {
     console.error('Error reading active session from localStorage:', err);
     return null;

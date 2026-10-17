@@ -22,6 +22,9 @@ export const BackToDashboardButton = ({
   const { role, goBack, goToDashboard, navigateTo } = useApp();
 
   const isPublic = role === 'public';
+  if (!isPublic) {
+    return null;
+  }
   const defaultLabel = isPublic ? 'Back to Home' : 'Back to Dashboard';
   const buttonLabel = label || defaultLabel;
 

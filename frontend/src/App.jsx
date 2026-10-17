@@ -74,8 +74,14 @@ const MainRouter = () => {
       case 'project-discovery':
         return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
       case 'services-marketplace':
+        if (role === 'freelancer') {
+          return renderDashboardView(FreelancerDashboard);
+        }
         return role === 'client' ? renderDashboardView(ServicesMarketplace) : <ServicesMarketplace />;
       case 'service-detail':
+        if (role === 'freelancer') {
+          return renderDashboardView(FreelancerDashboard);
+        }
         return role === 'client' ? renderDashboardView(ServiceDetail) : <ServiceDetail />;
       case 'freelancer-profile':
         return role === 'client' ? renderDashboardView(FreelancerProfile) : <FreelancerProfile />;

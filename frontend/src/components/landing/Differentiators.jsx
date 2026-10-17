@@ -3,7 +3,17 @@ import { ShieldCheck, TrendingUp, Layers, Sparkles, ArrowRight } from 'lucide-re
 import { useApp } from '../../context/AppContext';
 
 export const Differentiators = () => {
-  const { navigateTo } = useApp();
+  const { role, navigateTo, showToast, setIsAuthModalOpen, setAuthMode } = useApp();
+
+  const handleCardClick = (action) => {
+    if (role === 'public' && action === 'services-marketplace') {
+      showToast('Please Get Started first to explore all services.', 'info');
+      setAuthMode('signup');
+      setIsAuthModalOpen(true);
+      return;
+    }
+    navigateTo(action);
+  };
 
   const cards = [
     {
@@ -54,7 +64,7 @@ export const Differentiators = () => {
           <div
             key={card.id}
             className="diff-card card-hover"
-            onClick={() => navigateTo(card.action)}
+            onClick={() => handleCardClick(card.action)}
             style={{ cursor: 'pointer' }}
           >
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>

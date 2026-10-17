@@ -1318,45 +1318,48 @@
 
 .dashboard-main {
   flex: 1;
-  padding: 2rem 2.5rem;
-  max-width: 1240px;
+  padding: 2.5rem 3rem 4rem;
+  max-width: 1260px;
+  margin: 0 auto;
   overflow-y: auto;
 }
 
 .dashboard-header {
-  margin-bottom: 2rem;
+  margin-bottom: 2.75rem;
 }
 
 .dashboard-title {
-  font-size: 1.85rem;
+  font-size: 2.1rem;
   font-weight: 800;
   color: var(--slate-900);
   letter-spacing: -0.03em;
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.5rem;
 }
 
 .dashboard-subtitle {
-  font-size: 0.95rem;
+  font-size: 1rem;
   color: var(--slate-600);
+  line-height: 1.55;
 }
 
-/* 4-Stat Metric Row */
+/* 3-Stat Metric Row */
 .stats-summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1.25rem;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.75rem;
+  margin-bottom: 2.75rem;
 }
 
 .stat-card {
   background-color: #ffffff;
   border: 1px solid var(--slate-200);
-  border-radius: var(--radius-lg);
-  padding: 1.35rem;
+  border-radius: 14px;
+  padding: 1.6rem 1.75rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 140px;
+  min-height: 155px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
   transition: all var(--transition-normal);
 }
 
@@ -1366,7 +1369,7 @@
 }
 
 .stat-card-label {
-  font-size: 0.725rem;
+  font-size: 0.775rem;
   font-weight: 700;
   color: var(--slate-500);
   text-transform: uppercase;
@@ -1413,23 +1416,25 @@
 /* Performance Section Grid */
 .performance-grid {
   display: grid;
-  grid-template-columns: 1.45fr 0.95fr;
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  grid-template-columns: 1.35fr 1.05fr;
+  gap: 2rem;
+  margin-bottom: 2.75rem;
 }
 
 .performance-card {
   background-color: #ffffff;
   border: 1px solid var(--slate-200);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  border-radius: 14px;
+  padding: 1.85rem 2rem;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
 }
 
 .verified-skills-card {
   background-color: #ffffff;
   border: 1px solid var(--slate-200);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
+  border-radius: 14px;
+  padding: 1.85rem 2rem;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.02);
 }
 
 .skills-pill-wrap {

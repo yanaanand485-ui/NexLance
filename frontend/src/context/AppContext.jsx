@@ -248,13 +248,11 @@ export const AppProvider = ({ children }) => {
       return { success: false, message: `An account with this email (${cleanEmail}) already exists. Please log in.` };
     }
 
-    const avatarUrl = userRole === 'freelancer'
-      ? 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80'
-      : 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&auto=format&fit=crop&q=80';
+    const avatarUrl = "";
 
     const newProfile = userRole === 'freelancer'
-      ? { ...NEW_FREELANCER, id: `fl-${Date.now()}`, name: cleanName, email: cleanEmail, avatar: avatarUrl }
-      : { ...CLIENT_DATA, id: `cl-${Date.now()}`, contactPerson: cleanName, name: companyName || `${cleanName} Enterprises`, email: cleanEmail, avatar: avatarUrl };
+      ? { ...NEW_FREELANCER, id: `fl-${Date.now()}`, name: cleanName, email: cleanEmail, avatar: "", skills: [], verifiedSkills: [] }
+      : { ...CLIENT_DATA, id: `cl-${Date.now()}`, contactPerson: cleanName, name: companyName || `${cleanName} Enterprises`, email: cleanEmail, avatar: "" };
 
     const newUser = {
       id: `user-${Date.now()}`,
@@ -262,7 +260,7 @@ export const AppProvider = ({ children }) => {
       email: cleanEmail,
       password,
       role: userRole,
-      avatar: avatarUrl,
+      avatar: "",
       profile: newProfile
     };
 
@@ -314,10 +312,6 @@ export const AppProvider = ({ children }) => {
         foundUser = users.find(u => u.role === 'freelancer' && u.email.includes('sarah')) || DEFAULT_USERS[0];
       } else if (cleanEmail.includes('client')) {
         foundUser = users.find(u => u.role === 'client') || DEFAULT_USERS.find(u => u.role === 'client');
-      } else if (cleanEmail.includes('alex')) {
-        foundUser = users.find(u => u.email.includes('alex')) || DEFAULT_USERS[1];
-      } else if (cleanEmail.includes('priya')) {
-        foundUser = users.find(u => u.email.includes('priya')) || DEFAULT_USERS[2];
       }
     }
 
@@ -483,25 +477,45 @@ export const AppProvider = ({ children }) => {
   // 13. Skill Assessment & Profile Updating
   const completeAssessment = (score, skillName) => {
     setFreelancerProfile(prev => {
-      const updatedSkills = (prev.verifiedSkills || []).map(skill => {
-        if (skill.name.toLowerCase().includes(skillName.toLowerCase()) || skill.id === skillName.toLowerCase()) {
-          return {
-            ...skill,
+      const existing = prev?.verifiedSkills || [];
+      const index = existing.findIndex(s =>
+        (s.name && s.name.toLowerCase().includes(skillName.toLowerCase())) ||
+        (s.id && s.id.toLowerCase() === skillName.toLowerCase())
+      );
+
+      let updatedSkills;
+      if (index >= 0) {
+        updatedSkills = existing.map((skill, i) => i === index ? {
+          ...skill,
+          score,
+          status: 'verified',
+          percentile: score >= 90 ? 'Top 5% Global' : 'Top 15% Global',
+          verifiedDate: 'Just Now'
+        } : skill);
+      } else {
+        updatedSkills = [
+          ...existing,
+          {
+            id: skillName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+            name: skillName,
             score,
             status: 'verified',
             percentile: score >= 90 ? 'Top 5% Global' : 'Top 15% Global',
             verifiedDate: 'Just Now'
-          };
-        }
-        return skill;
-      });
+          }
+        ];
+      }
 
-      const newCareerScore = prev.careerScore === 0 ? Math.round(score * 0.85) : Math.min(100, prev.careerScore + 2);
+      const currentSkills = prev?.skills || [];
+      const updatedSkillsList = currentSkills.includes(skillName) ? currentSkills : [...currentSkills, skillName];
+
+      const newCareerScore = (!prev?.careerScore || prev.careerScore === 0) ? Math.round(score * 0.85) : Math.min(100, prev.careerScore + 2);
       const updated = {
         ...prev,
+        skills: updatedSkillsList,
         verifiedSkills: updatedSkills,
         careerScore: newCareerScore,
-        codeQualityRate: Math.max(prev.codeQualityRate || 0, Math.round(score * 0.95))
+        codeQualityRate: Math.max(prev?.codeQualityRate || 0, Math.round(score * 0.95))
       };
 
       const active = getStoredActiveUser();
@@ -514,7 +528,7 @@ export const AppProvider = ({ children }) => {
 
     addNotification({
       category: 'Skill Verification',
-      title: `Skill Verified: ${skillName} (${score}/100) 🎉`,
+      title: `Skill Verified: ${skillName} (${score}/100)`,
       description: `Skill badge is live on your profile.`,
       action: 'view-skills'
     }, 'freelancer');
