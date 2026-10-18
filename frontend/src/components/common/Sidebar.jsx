@@ -1,16 +1,4 @@
-import {
-  LayoutDashboard,
-  Briefcase,
-  ShieldCheck,
-  TrendingUp,
-  PlusCircle,
-  Users,
-  Sparkles,
-  Columns,
-  Layers,
-  FileCheck2,
-  LogOut
-} from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 export const Sidebar = () => {
@@ -35,10 +23,10 @@ export const Sidebar = () => {
   ];
 
   const clientNav = [
-    { id: 'client-dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { id: 'client-find-talent', label: 'Find Talent', icon: <Users size={18} /> },
-    { id: 'client-my-projects', label: 'My Projects', icon: <Briefcase size={18} /> },
-    { id: 'client-explore-services', label: 'Explore Services', icon: <Layers size={18} /> }
+    { id: 'client-dashboard', label: 'Dashboard' },
+    { id: 'client-find-talent', label: 'Find Talent' },
+    { id: 'client-my-projects', label: 'My Projects' },
+    { id: 'client-explore-services', label: 'Explore Services' }
   ];
 
   const navItems = isFreelancer ? freelancerNav : clientNav;
@@ -54,25 +42,7 @@ export const Sidebar = () => {
               alt="Avatar"
               className="sidebar-avatar"
             />
-          ) : (
-            <div
-              style={{
-                width: '52px',
-                height: '52px',
-                borderRadius: '50%',
-                backgroundColor: '#1E40AF',
-                color: '#FFFFFF',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '1.25rem',
-                fontWeight: 700,
-                margin: '0 auto 0.75rem auto'
-              }}
-            >
-              {(isFreelancer ? freelancerProfile?.name : clientProfile?.name)?.charAt(0)?.toUpperCase() || 'U'}
-            </div>
-          )}
+          ) : null}
           <h3 className="sidebar-user-name">
             {isFreelancer ? freelancerProfile.name : clientProfile.name}
           </h3>

@@ -113,18 +113,13 @@ export const FreelancerProfile = () => {
                 <Send size={15} /> Hire / Contact {freelancer.name.split(' ')[0]}
               </button>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
-                <button
-                  onClick={() => toggleShortlist(freelancer.id)}
-                  className={`btn ${isShortlisted ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-                >
-                  {isShortlisted ? 'Shortlisted ⭐' : 'Shortlist'}
-                </button>
+              <div>
                 <button
                   onClick={() => toggleComparison(freelancer)}
                   className={`btn ${isCompared ? 'btn-primary' : 'btn-outline'} btn-sm`}
+                  style={{ width: '100%' }}
                 >
-                  {isCompared ? 'Comparing' : 'Compare'}
+                  {isCompared ? 'Comparing' : 'Compare Candidate'}
                 </button>
               </div>
             </div>

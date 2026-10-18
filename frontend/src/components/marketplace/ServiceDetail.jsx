@@ -559,7 +559,7 @@ export const ServiceDetail = () => {
                   } else if (role === 'freelancer') {
                     showToast('Please switch to a Client account to contact freelancers.', 'warning');
                   } else {
-                    navigateTo('post-project');
+                    navigateTo('client-my-projects');
                   }
                 }}
                 className="btn btn-secondary"

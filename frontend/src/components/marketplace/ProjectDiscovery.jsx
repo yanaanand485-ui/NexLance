@@ -175,7 +175,7 @@ export const ProjectDiscovery = () => {
             </div>
 
             <div style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem' }}>
-              <strong>Budget:</strong> {proj.budget} &bull; <strong>Timeline:</strong> {proj.deadline} &bull; <strong>Client:</strong> {proj.client.name}
+              <strong>Budget:</strong> {proj.budget} &bull; <strong>Timeline:</strong> {proj.deadline}
             </div>
 
             <button

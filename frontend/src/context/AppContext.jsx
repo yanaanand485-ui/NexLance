@@ -461,7 +461,7 @@ export const AppProvider = ({ children }) => {
     };
     setActiveProjectsList(prev => [newProj, ...prev]);
     showToast('Project posted successfully!', 'success');
-    navigateTo('comparison');
+    navigateTo('client-my-projects');
   };
 
   // 13. Skill Assessment & Profile Updating

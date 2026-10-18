@@ -230,12 +230,6 @@ export const TalentDiscovery = () => {
                     View Profile & Work
                   </button>
                   <button
-                    onClick={() => toggleShortlist(freelancer.id)}
-                    className={`btn ${isShortlisted ? 'btn-primary' : 'btn-secondary'} btn-sm`}
-                  >
-                    {isShortlisted ? 'Shortlisted ⭐' : 'Shortlist'}
-                  </button>
-                  <button
                     onClick={() => toggleComparison(freelancer)}
                     className={`btn ${isCompared ? 'btn-primary' : 'btn-outline'} btn-sm`}
                   >

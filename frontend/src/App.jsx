@@ -5,8 +5,6 @@ import { Footer } from './components/common/Footer';
 import { Sidebar } from './components/common/Sidebar';
 import { AuthModal } from './components/common/AuthModal';
 import { SkillSelectionModal } from './components/common/SkillSelectionModal';
-import { Toast } from './components/common/Toast';
-
 // Pages & Views
 import { LandingPage } from './pages/LandingPage';
 import { TalentDiscovery } from './components/marketplace/TalentDiscovery';
@@ -21,8 +19,6 @@ import { FreelancerServices } from './components/freelancer/FreelancerServices';
 import { ServiceModal } from './components/freelancer/ServiceModal';
 import { SkillVerification } from './components/freelancer/SkillVerification';
 import { CareerScoreDetail } from './components/freelancer/CareerScoreDetail';
-import { OpportunitiesFeed } from './components/freelancer/OpportunitiesFeed';
-import { NewFreelancerExperience } from './components/freelancer/NewFreelancerExperience';
 
 // Client Platform (All imported directly from ./components/client/)
 import { ClientDashboard } from './components/client/ClientDashboard';
@@ -97,11 +93,6 @@ const MainRouter = () => {
         return renderDashboardView(SkillVerification);
       case 'career-score':
         return renderDashboardView(CareerScoreDetail);
-      case 'opportunities':
-        return renderDashboardView(OpportunitiesFeed);
-      case 'new-freelancer':
-        return renderDashboardView(NewFreelancerExperience);
-
       // Client Views (Dashboard, Find Talent, My Projects, Explore Services)
       case 'client-dashboard':
         return renderDashboardView(ClientDashboard);
@@ -111,11 +102,6 @@ const MainRouter = () => {
         return renderDashboardView(MyProjects);
       case 'client-explore-services':
         return renderDashboardView(ExploreServices);
-      case 'post-project':
-      case 'applications':
-        return renderDashboardView(MyProjects);
-      case 'comparison':
-        return renderDashboardView(FindTalent);
 
       default:
         return <LandingPage />;
@@ -138,7 +124,6 @@ const MainRouter = () => {
         isOnboarding={isSkillModalOnboarding}
       />
       <ServiceModal />
-      <Toast />
     </div>
   );
 };

@@ -1,24 +1,11 @@
 import React, { useState } from 'react';
-import {
-  Briefcase,
-  PlusCircle,
-  Clock,
-  DollarSign,
-  Users,
-  CheckCircle2,
-  X,
-  FileText,
-  Calendar
-} from 'lucide-react';
+import { X } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { FREELANCERS } from '../../data/mockData';
-import { StatusBadge, CareerScoreBadge, VerifiedSkillBadge } from './ClientBadge';
+import { CareerScoreBadge, VerifiedSkillBadge } from './ClientBadge';
 
 export const MyProjects = () => {
-  const { activeProjectsList, addNewProject, showToast, shortlistedFreelancers, toggleShortlist } = useApp();
-
-  // Active filter tab
-  const [filterTab, setFilterTab] = useState('All');
+  const { activeProjectsList, addNewProject, showToast } = useApp();
 
   // Modals state
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
@@ -35,14 +22,7 @@ export const MyProjects = () => {
     skills: 'React, TypeScript'
   });
 
-  // Filter projects by tab
-  const filteredProjects = activeProjectsList.filter((proj) => {
-    if (filterTab === 'All') return true;
-    if (filterTab === 'Open') return !proj.status || proj.status === 'Open' || proj.status === 'Hiring';
-    if (filterTab === 'In Progress') return proj.status === 'In Progress' || proj.status === 'Active';
-    if (filterTab === 'Completed') return proj.status === 'Completed';
-    return true;
-  });
+  const filteredProjects = activeProjectsList;
 
   // Handle post new project submit
   const handleCreateProject = (e) => {
@@ -101,34 +81,15 @@ export const MyProjects = () => {
           onClick={() => setIsPostModalOpen(true)}
           className="btn btn-primary"
         >
-          <PlusCircle size={16} /> Post a New Project
+          Post a New Project
         </button>
       </div>
 
-      {/* 2. Filter Tabs */}
-      <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', borderBottom: '1px solid #E2E8F0', paddingBottom: '0.5rem' }}>
-        {['All', 'Open', 'In Progress', 'Completed'].map((tab) => {
-          const isSelected = filterTab === tab;
-          return (
-            <button
-              key={tab}
-              onClick={() => setFilterTab(tab)}
-              style={{
-                padding: '0.5rem 1rem',
-                border: 'none',
-                background: 'none',
-                borderBottom: isSelected ? '2px solid #1E40AF' : '2px solid transparent',
-                color: isSelected ? '#1E40AF' : '#64748B',
-                fontWeight: isSelected ? 700 : 500,
-                fontSize: '0.9rem',
-                cursor: 'pointer',
-                transition: 'all 0.15s ease'
-              }}
-            >
-              {tab} Projects
-            </button>
-          );
-        })}
+      {/* 2. Projects Counter */}
+      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600 }}>
+          Showing {filteredProjects.length} Projects
+        </span>
       </div>
 
       {/* 3. Projects List */}
@@ -143,8 +104,7 @@ export const MyProjects = () => {
               textAlign: 'center'
             }}
           >
-            <Briefcase size={36} color="#94A3B8" style={{ margin: '0 auto 1rem' }} />
-            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A' }}>No projects found in this tab</h3>
+            <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.5rem' }}>No projects found in this tab</h3>
             <p style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1.25rem' }}>
               Post a project to start receiving proposals from verified freelancers.
             </p>
@@ -152,7 +112,7 @@ export const MyProjects = () => {
               onClick={() => setIsPostModalOpen(true)}
               className="btn btn-primary btn-sm"
             >
-              <PlusCircle size={15} /> Post Your First Project
+              Post Your First Project
             </button>
           </div>
         ) : (
@@ -169,7 +129,6 @@ export const MyProjects = () => {
                     <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
                       {project.title}
                     </h2>
-                    <StatusBadge status={project.status || 'Open'} />
                   </div>
                   <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
                     Category: <strong>{project.category || 'Web Development'}</strong> • Posted {project.postedAgo || 'Recently'}
@@ -181,7 +140,7 @@ export const MyProjects = () => {
                     onClick={() => setActiveProjectApplicants(project)}
                     className="btn btn-primary btn-sm"
                   >
-                    <Users size={14} /> View Applicants ({project.applicantsCount || 14})
+                    View Applicants
                   </button>
                 </div>
               </div>
@@ -225,13 +184,11 @@ export const MyProjects = () => {
                   flexWrap: 'wrap'
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <DollarSign size={15} color="#16A34A" />
-                  <span>Budget: <strong>{project.budget}</strong> ({project.budgetType || 'Fixed Price'})</span>
+                <div>
+                  Budget: <strong>{project.budget}</strong> ({project.budgetType || 'Fixed Price'})
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <Clock size={15} color="#2563EB" />
-                  <span>Timeline: <strong>{project.deadline || '3 weeks'}</strong></span>
+                <div>
+                  Timeline: <strong>{project.deadline || '3 weeks'}</strong>
                 </div>
               </div>
             </div>
@@ -507,18 +464,11 @@ export const MyProjects = () => {
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.6rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <img
-                        src={applicant.avatar}
-                        alt={applicant.name}
-                        style={{ width: '44px', height: '44px', borderRadius: '10px', objectFit: 'cover' }}
-                      />
-                      <div>
-                        <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                          {applicant.name}
-                        </h4>
-                        <span style={{ fontSize: '0.75rem', color: '#64748B' }}>{applicant.title}</span>
-                      </div>
+                    <div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+                        {applicant.name}
+                      </h4>
+                      <span style={{ fontSize: '0.75rem', color: '#64748B' }}>{applicant.title}</span>
                     </div>
 
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -541,14 +491,6 @@ export const MyProjects = () => {
                     </div>
 
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button
-                        onClick={() => {
-                          toggleShortlist(applicant.id);
-                        }}
-                        className="btn btn-secondary btn-sm"
-                      >
-                        {shortlistedFreelancers.includes(applicant.id) ? 'Shortlisted ★' : 'Shortlist'}
-                      </button>
                       <button
                         onClick={() => {
                           showToast(`Hired ${applicant.name} for this project!`, 'success');

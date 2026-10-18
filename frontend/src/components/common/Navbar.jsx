@@ -150,24 +150,7 @@ export const Navbar = () => {
                     alt="Profile"
                     style={{ width: '30px', height: '30px', borderRadius: '6px', objectFit: 'cover' }}
                   />
-                ) : (
-                  <div
-                    style={{
-                      width: '30px',
-                      height: '30px',
-                      borderRadius: '6px',
-                      backgroundColor: '#1E40AF',
-                      color: '#FFFFFF',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontWeight: 700,
-                      fontSize: '0.85rem'
-                    }}
-                  >
-                    {profile?.name?.charAt(0)?.toUpperCase() || 'U'}
-                  </div>
-                )}
+                ) : null}
                 <div style={{ textAlign: 'left', lineHeight: 1.2 }}>
                   <div style={{ fontSize: '0.85rem', fontWeight: 700, color: '#0F172A' }}>
                     {profile?.name}
