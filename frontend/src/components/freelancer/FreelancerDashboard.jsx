@@ -33,7 +33,17 @@ export const FreelancerDashboard = () => {
   const clientSatisfaction = isSarah ? 97 : 0;
   const onTimeDelivery = isSarah ? 98 : 0;
   const codeQuality = isSarah ? 99 : 0;
-  const verifiedSkills = (freelancerProfile.verifiedSkills || []).filter(s => {
+  const sarahSkills = [
+    { id: 'react', name: 'React', score: 95, status: 'verified' },
+    { id: 'typescript', name: 'TypeScript', score: 96, status: 'verified' },
+    { id: 'nodejs', name: 'Node.js', score: 92, status: 'verified' },
+    { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, status: 'verified' }
+  ];
+
+  const verifiedSkills = (isSarah
+    ? sarahSkills
+    : (freelancerProfile.verifiedSkills || [])
+  ).filter(s => {
     const key = (s.name || s.id || '').toLowerCase();
     return !key.includes('graphql') && !key.includes('aws') && !key.includes('devops');
   });
@@ -172,8 +182,13 @@ export const FreelancerDashboard = () => {
             </button>
           </div>
 
-          <div style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem' }}>
-            <span>{freelancerProfile.role || 'Full-Stack Developer'}</span> &bull; <span>{freelancerProfile.experienceLevel || 'Mid-Level'}</span>
+          <div style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem', minHeight: '1.25rem' }}>
+            {freelancerProfile.role ? (
+              <span>
+                {freelancerProfile.role}
+                {freelancerProfile.experienceLevel ? ` • ${freelancerProfile.experienceLevel}` : ''}
+              </span>
+            ) : null}
           </div>
 
           {/* Simple Skills List */}

@@ -25,12 +25,12 @@ const ROLES = [
 export const SkillSelectionModal = ({ isOpen, onClose }) => {
   const { freelancerProfile, updateFreelancerSkills, showToast } = useApp();
 
-  const [selectedRole, setSelectedRole] = useState(freelancerProfile?.role || 'Full-Stack Developer');
+  const [selectedRole, setSelectedRole] = useState(freelancerProfile?.role || '');
   const [selectedSkills, setSelectedSkills] = useState(freelancerProfile?.skills || []);
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedRole(freelancerProfile?.role || 'Full-Stack Developer');
+      setSelectedRole(freelancerProfile?.role || '');
       setSelectedSkills(freelancerProfile?.skills || []);
     }
   }, [isOpen, freelancerProfile]);
@@ -46,6 +46,10 @@ export const SkillSelectionModal = ({ isOpen, onClose }) => {
   };
 
   const handleSave = () => {
+    if (!selectedRole) {
+      showToast('Please select a role.', 'warning');
+      return;
+    }
     if (selectedSkills.length === 0) {
       showToast('Please select at least 1 skill.', 'warning');
       return;
@@ -80,6 +84,7 @@ export const SkillSelectionModal = ({ isOpen, onClose }) => {
             onChange={e => setSelectedRole(e.target.value)}
             style={{ width: '100%', padding: '0.55rem 0.75rem', borderRadius: '6px', border: '1px solid #CBD5E1', fontSize: '0.9rem', outline: 'none' }}
           >
+            <option value="">Select your role...</option>
             {ROLES.map(r => (
               <option key={r} value={r}>{r}</option>
             ))}

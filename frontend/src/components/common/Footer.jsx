@@ -38,10 +38,10 @@ export const Footer = () => {
               Platform
             </h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0.75rem', padding: 0, margin: 0 }}>
-              <li><a onClick={() => navigateTo('talent-discovery')} style={{ fontSize: '0.875rem', color: '#64748B', cursor: 'pointer' }}>Find Talent</a></li>
-              <li><a onClick={() => navigateTo('project-discovery')} style={{ fontSize: '0.875rem', color: '#64748B', cursor: 'pointer' }}>Find Work</a></li>
-              <li><a onClick={() => navigateTo('services-marketplace')} style={{ fontSize: '0.875rem', color: '#64748B', cursor: 'pointer' }}>Services Marketplace</a></li>
-              <li><a onClick={() => navigateTo('skill-verification')} style={{ fontSize: '0.875rem', color: '#64748B', cursor: 'pointer' }}>Skill Verification</a></li>
+              <li><span style={{ fontSize: '0.875rem', color: '#64748B' }}>Find Talent</span></li>
+              <li><span style={{ fontSize: '0.875rem', color: '#64748B' }}>Find Work</span></li>
+              <li><span style={{ fontSize: '0.875rem', color: '#64748B' }}>Services Marketplace</span></li>
+              <li><span style={{ fontSize: '0.875rem', color: '#64748B' }}>Skill Verification</span></li>
             </ul>
           </div>
 

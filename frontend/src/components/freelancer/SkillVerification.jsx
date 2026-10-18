@@ -29,15 +29,16 @@ export const SkillVerification = () => {
   // Check if current user is Sarah Jenkins (demo user) or a new user
   const isSarah = freelancerProfile?.email === 'sarah@nexlance.dev' || freelancerProfile?.id === 'fl-sarah-01';
 
-  // For Sarah Jenkins, show demo verified skills; for any new user, show only their actual verified skills (empty initially)
+  // For Sarah Jenkins, show demo verified skills including JavaScript (ES6+); for new users, show their actual verified skills
+  const sarahVerifiedSkills = [
+    { id: 'react', name: 'React', score: 95, percentile: 'Top 2% Global', status: 'verified' },
+    { id: 'typescript', name: 'TypeScript', score: 96, percentile: 'Top 1% Global', status: 'verified' },
+    { id: 'nodejs', name: 'Node.js', score: 92, percentile: 'Top 5% Global', status: 'verified' },
+    { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, percentile: 'Top 2% Global', status: 'verified' }
+  ];
+
   const rawSkillsList = isSarah
-    ? ((freelancerProfile?.verifiedSkills && freelancerProfile.verifiedSkills.length > 0)
-        ? freelancerProfile.verifiedSkills
-        : [
-            { id: 'react', name: 'React', score: 95, percentile: 'Top 2% Global', status: 'verified' },
-            { id: 'typescript', name: 'TypeScript', score: 96, percentile: 'Top 1% Global', status: 'verified' },
-            { id: 'nodejs', name: 'Node.js', score: 92, percentile: 'Top 5% Global', status: 'verified' }
-          ])
+    ? sarahVerifiedSkills
     : (freelancerProfile?.verifiedSkills || []);
 
   const verifiedSkillsList = rawSkillsList.filter(s => {
@@ -264,7 +265,7 @@ export const SkillVerification = () => {
                         <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
                           Verified ({matchingSkill.score}/100)
                         </span>
-                      ) : (
+                      ) : !isSarah ? (
                         <button
                           type="button"
                           onClick={() => handleStartAssessment(track)}
@@ -273,6 +274,10 @@ export const SkillVerification = () => {
                         >
                           Take Assessment
                         </button>
+                      ) : (
+                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
+                          Verified (95/100)
+                        </span>
                       )}
                     </div>
                   </div>

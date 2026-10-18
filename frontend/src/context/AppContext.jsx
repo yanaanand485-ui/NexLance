@@ -404,13 +404,12 @@ export const AppProvider = ({ children }) => {
   };
 
   const switchRole = (newRole) => {
-    if (newRole === 'public') {
-      logout();
-    } else {
+    logout();
+    if (newRole !== 'public') {
       setAuthMode('login');
       setAuthRoleChoice(newRole);
       setIsAuthModalOpen(true);
-      showToast(`Please sign in with your ${newRole === 'client' ? 'Client' : 'Freelancer'} account.`, 'info');
+      showToast(`Logged out from existing account. Please sign in with your ${newRole === 'client' ? 'Client' : 'Freelancer'} account.`, 'info');
     }
   };
 

@@ -186,24 +186,39 @@ export const Navbar = () => {
                         {role === 'freelancer' ? freelancerProfile.name : clientProfile.name}
                       </div>
                       <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '2px' }}>
-                        {role === 'freelancer'
-                          ? `Career Score: ${freelancerProfile.careerScore || 0}/100`
-                          : clientProfile.contactPerson}
+                        {role === 'freelancer' ? (freelancerProfile.role || 'Freelancer Account') : (clientProfile.contactPerson || 'Client Account')}
                       </div>
                     </div>
 
+                    {/* Log Out button to log out of existing account first */}
                     <div
-                      onClick={() => navigateTo(role === 'freelancer' ? 'freelancer-profile' : 'client-dashboard')}
-                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', color: '#334155', cursor: 'pointer', borderRadius: '6px', marginTop: '0.25rem' }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#F8FAFC'}
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        logout();
+                      }}
+                      style={{
+                        padding: '0.5rem 0.75rem',
+                        fontSize: '0.85rem',
+                        color: '#DC2626',
+                        cursor: 'pointer',
+                        borderRadius: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        marginTop: '0.25rem'
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
                       onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      {role === 'freelancer' ? 'View Public Profile' : 'Client Overview'}
+                      <LogOut size={14} /> Log Out
                     </div>
 
-                    {/* Switch role option inside dropdown */}
+                    {/* Switch role option: logs out existing account first, then allows user to switch */}
                     <div
-                      onClick={() => switchRole(role === 'freelancer' ? 'client' : 'freelancer')}
+                      onClick={() => {
+                        setIsProfileMenuOpen(false);
+                        switchRole(role === 'freelancer' ? 'client' : 'freelancer');
+                      }}
                       style={{
                         padding: '0.5rem 0.75rem',
                         fontSize: '0.85rem',
@@ -213,21 +228,14 @@ export const Navbar = () => {
                         borderRadius: '6px',
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between'
+                        justifyContent: 'space-between',
+                        borderTop: '1px solid #F1F5F9',
+                        marginTop: '0.25rem'
                       }}
                       onMouseEnter={e => e.currentTarget.style.backgroundColor = '#EFF6FF'}
                       onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
                       <span>⇄ Switch to {role === 'freelancer' ? 'Client' : 'Freelancer'} Account</span>
-                    </div>
-
-                    <div
-                      onClick={logout}
-                      style={{ padding: '0.5rem 0.75rem', fontSize: '0.85rem', color: '#DC2626', cursor: 'pointer', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '0.4rem', borderTop: '1px solid #F1F5F9', marginTop: '0.25rem' }}
-                      onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
-                      onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      <LogOut size={14} /> Log Out to Public Site
                     </div>
                   </div>
                 )}

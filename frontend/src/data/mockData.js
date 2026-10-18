@@ -40,7 +40,8 @@ export const SARAH_FREELANCER = {
   verifiedSkills: [
     { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
-    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" }
+    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
+    { id: "javascript", name: "JavaScript (ES6+)", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" }
   ],
   proofOfWork: [
     {
@@ -2421,7 +2422,7 @@ export const CLIENT_DATA = {
 export const NEW_FREELANCER = {
   id: "fl-new-user",
   name: "New Freelancer",
-  role: "Full-Stack Developer",
+  role: "",
   avatar: "",
   careerScore: 0,
   isNew: true,
@@ -2445,7 +2446,7 @@ export const NEW_FREELANCER = {
     { month: "Sep", score: 0 },
     { month: "Oct", score: 0 }
   ],
-  experienceLevel: "Mid-Level",
+  experienceLevel: "",
   skills: [],
   verifiedSkills: [],
   proofOfWork: [],

@@ -77,11 +77,24 @@ export const getStoredUsers = () => {
       const existingKeys = new Set(sanitized.map(u => `${u.email?.toLowerCase()}_${u.role}`));
       const missingDefaults = DEFAULT_USERS.filter(d => !existingKeys.has(`${d.email?.toLowerCase()}_${d.role}`));
       
-      // Also ensure standard default accounts have their password refreshed if needed
+      // Also ensure standard default accounts have their password and profile refreshed if needed
       const updatedParsed = sanitized.map(user => {
         const defaultMatch = DEFAULT_USERS.find(d => d.email?.toLowerCase() === user.email?.toLowerCase() && d.role === user.role);
-        if (defaultMatch && !user.password) {
-          return { ...user, password: defaultMatch.password };
+        if (defaultMatch) {
+          if (user.id === 'fl-sarah-01' || user.email === 'sarah@nexlance.dev') {
+            return {
+              ...user,
+              password: defaultMatch.password,
+              profile: {
+                ...user.profile,
+                ...SARAH_FREELANCER,
+                verifiedSkills: SARAH_FREELANCER.verifiedSkills
+              }
+            };
+          }
+          if (!user.password) {
+            return { ...user, password: defaultMatch.password };
+          }
         }
         return user;
       });
@@ -120,7 +133,12 @@ export const getStoredActiveUser = () => {
     }
     if (parsed) {
       parsed.avatar = "";
-      if (parsed.profile) parsed.profile.avatar = "";
+      if (parsed.profile) {
+        parsed.profile.avatar = "";
+        if (parsed.id === 'fl-sarah-01' || parsed.email === 'sarah@nexlance.dev') {
+          parsed.profile.verifiedSkills = SARAH_FREELANCER.verifiedSkills;
+        }
+      }
     }
     return parsed;
   } catch (err) {
