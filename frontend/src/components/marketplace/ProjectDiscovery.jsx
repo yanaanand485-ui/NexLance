@@ -8,7 +8,8 @@ export const ProjectDiscovery = () => {
     setSelectedProject,
     role,
     freelancerProfile,
-    setIsSkillModalOpen
+    setIsSkillModalOpen,
+    setIsSkillModalOnboarding
   } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,13 +34,50 @@ export const ProjectDiscovery = () => {
   return (
     <main style={{ maxWidth: '960px', margin: '0 auto', padding: '2rem 1.5rem 4rem', width: '100%' }}>
       {/* Header */}
-      <div style={{ marginBottom: '1.5rem' }}>
-        <h1 style={{ fontSize: '1.85rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>
-          Find Projects
-        </h1>
-        <p style={{ fontSize: '0.95rem', color: '#64748B' }}>
-          Browse available client projects matching your skills.
-        </p>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div>
+          <h1 style={{ fontSize: '1.85rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>
+            Find Projects
+          </h1>
+          <p style={{ fontSize: '0.95rem', color: '#64748B' }}>
+            Browse available client projects matching your skills.
+          </p>
+          {!hasNoSkills && role === 'freelancer' && freelancerProfile?.skills?.length > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.45rem', flexWrap: 'wrap', marginTop: '0.65rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#475569' }}>Your Skills:</span>
+              {freelancerProfile.skills.map(s => (
+                <span
+                  key={s}
+                  style={{
+                    fontSize: '0.75rem',
+                    fontWeight: 600,
+                    padding: '0.2rem 0.6rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#EFF6FF',
+                    color: '#1E40AF',
+                    border: '1px solid #BFDBFE'
+                  }}
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {!hasNoSkills && role === 'freelancer' && (
+          <button
+            type="button"
+            onClick={() => {
+              setIsSkillModalOnboarding(false);
+              setIsSkillModalOpen(true);
+            }}
+            className="btn btn-secondary btn-sm"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}
+          >
+            Edit Skills
+          </button>
+        )}
       </div>
 
       {hasNoSkills ? (
@@ -60,7 +98,10 @@ export const ProjectDiscovery = () => {
           </p>
           <button
             type="button"
-            onClick={() => setIsSkillModalOpen(true)}
+            onClick={() => {
+              setIsSkillModalOnboarding(false);
+              setIsSkillModalOpen(true);
+            }}
             className="btn btn-primary btn-sm"
           >
             Add Skills

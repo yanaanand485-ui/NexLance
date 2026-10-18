@@ -22,7 +22,7 @@ const ROLES = [
   'UI/UX Designer'
 ];
 
-export const SkillSelectionModal = ({ isOpen, onClose }) => {
+export const SkillSelectionModal = ({ isOpen, onClose, isOnboarding }) => {
   const { freelancerProfile, updateFreelancerSkills, showToast } = useApp();
 
   const [selectedRole, setSelectedRole] = useState(freelancerProfile?.role || '');
@@ -59,7 +59,6 @@ export const SkillSelectionModal = ({ isOpen, onClose }) => {
       skills: selectedSkills,
       experienceLevel: freelancerProfile?.experienceLevel || 'Mid-Level'
     });
-    showToast('Skills updated successfully!', 'success');
     if (onClose) onClose();
   };
 
@@ -71,7 +70,7 @@ export const SkillSelectionModal = ({ isOpen, onClose }) => {
         onClick={e => e.stopPropagation()}
       >
         <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: '#0F172A', marginBottom: '1rem' }}>
-          Edit Skills & Role
+          {isOnboarding ? 'Select Your Primary Skills & Role' : 'Edit Skills & Role'}
         </h2>
 
         {/* Role Select */}

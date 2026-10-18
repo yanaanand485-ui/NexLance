@@ -3,8 +3,6 @@ import {
   FREELANCERS,
   PROJECTS,
   SERVICES,
-  FREELANCER_NOTIFICATIONS,
-  CLIENT_NOTIFICATIONS,
   CLIENT_DATA,
   NEW_FREELANCER
 } from '../data/mockData';
@@ -54,34 +52,8 @@ export const AppProvider = ({ children }) => {
   const [appliedProjectIds, setAppliedProjectIds] = useState([]);
   const [activeProjectsList, setActiveProjectsList] = useState(PROJECTS);
 
-  // 6. Notifications State
-  const [freelancerNotifications, setFreelancerNotifications] = useState(FREELANCER_NOTIFICATIONS);
-  const [clientNotifications, setClientNotifications] = useState(CLIENT_NOTIFICATIONS);
-  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
-
-  const notifications = role === 'client' ? clientNotifications : freelancerNotifications;
-
-  const setNotifications = (updater) => {
-    if (role === 'client') {
-      setClientNotifications(typeof updater === 'function' ? updater : () => updater);
-    } else {
-      setFreelancerNotifications(typeof updater === 'function' ? updater : () => updater);
-    }
-  };
-
-  const addNotification = (notif, targetRole = role) => {
-    const newNotif = {
-      id: `notif-${Date.now()}`,
-      time: 'Just now',
-      unread: true,
-      ...notif
-    };
-    if (targetRole === 'client') {
-      setClientNotifications(prev => [newNotif, ...prev]);
-    } else {
-      setFreelancerNotifications(prev => [newNotif, ...prev]);
-    }
-  };
+  // Notification no-op helper (Notification feature removed)
+  const addNotification = () => {};
 
   // 7. Modals State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -362,6 +334,8 @@ export const AppProvider = ({ children }) => {
 
     if (foundUser.role === 'freelancer') {
       if (foundUser.profile) setFreelancerProfile(foundUser.profile);
+      setIsSkillModalOpen(false);
+      setIsSkillModalOnboarding(false);
       navigateTo('freelancer-dashboard');
       showToast(`Welcome back, ${foundUser.name}!`, 'success');
     } else {
@@ -383,6 +357,8 @@ export const AppProvider = ({ children }) => {
       setRole(userRole);
       if (userRole === 'freelancer') {
         if (demoUser.profile) setFreelancerProfile(demoUser.profile);
+        setIsSkillModalOpen(false);
+        setIsSkillModalOnboarding(false);
         setCurrentView('freelancer-dashboard');
       } else {
         if (demoUser.profile) setClientProfile(demoUser.profile);
@@ -396,6 +372,8 @@ export const AppProvider = ({ children }) => {
     saveStoredActiveUser(null);
     setCurrentUserAccount(null);
     setFreelancerProfile(NEW_FREELANCER);
+    setIsSkillModalOpen(false);
+    setIsSkillModalOnboarding(false);
     setRole('public');
     setCurrentView('landing');
     setViewHistory(['landing']);
@@ -517,11 +495,7 @@ export const AppProvider = ({ children }) => {
         codeQualityRate: Math.max(prev?.codeQualityRate || 0, Math.round(score * 0.95))
       };
 
-      const active = getStoredActiveUser();
-      if (active && active.role === 'freelancer') {
-        active.profile = updated;
-        saveStoredActiveUser(active);
-      }
+      syncStoredUserProfile(updated);
       return updated;
     });
 
@@ -535,6 +509,39 @@ export const AppProvider = ({ children }) => {
     showToast(`Skill Verified! Score: ${score}/100`, 'success');
   };
 
+  // Helper to persist updated freelancer profile to both active session & registered users storage
+  const syncStoredUserProfile = (updatedProfile) => {
+    const active = getStoredActiveUser();
+    if (active && active.role === 'freelancer') {
+      active.profile = updatedProfile;
+      saveStoredActiveUser(active);
+    }
+    setCurrentUserAccount(prev => (prev ? { ...prev, profile: updatedProfile } : prev));
+
+    try {
+      const users = getStoredUsers();
+      const targetId = active?.id || currentUserAccount?.id;
+      const targetEmail = active?.email || currentUserAccount?.email;
+      const targetRole = active?.role || currentUserAccount?.role || 'freelancer';
+
+      const updatedUsers = users.map(u => {
+        const isMatch =
+          (targetId && u.id === targetId) ||
+          (targetEmail && u.email?.toLowerCase() === targetEmail.toLowerCase() && u.role === targetRole);
+        if (isMatch) {
+          return {
+            ...u,
+            profile: updatedProfile
+          };
+        }
+        return u;
+      });
+      saveStoredUsers(updatedUsers);
+    } catch (err) {
+      console.error('Failed to sync updated profile to localStorage:', err);
+    }
+  };
+
   const updateFreelancerSkills = ({ role: newRole, skills: newSkills, experienceLevel: newExp }) => {
     setFreelancerProfile(prev => {
       const updated = {
@@ -543,11 +550,7 @@ export const AppProvider = ({ children }) => {
         skills: newSkills || prev.skills,
         experienceLevel: newExp || prev.experienceLevel
       };
-      const active = getStoredActiveUser();
-      if (active && active.role === 'freelancer') {
-        active.profile = updated;
-        saveStoredActiveUser(active);
-      }
+      syncStoredUserProfile(updated);
       return updated;
     });
     showToast('Skill profile updated successfully!', 'success');
@@ -589,11 +592,7 @@ export const AppProvider = ({ children }) => {
     submitProposal,
     activeProjectsList,
     addNewProject,
-    notifications,
-    setNotifications,
     addNotification,
-    isNotificationOpen,
-    setIsNotificationOpen,
     isAuthModalOpen,
     setIsAuthModalOpen,
     authMode,

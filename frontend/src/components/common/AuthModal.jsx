@@ -1,24 +1,47 @@
 import React, { useState, useEffect } from 'react';
 import {
-  X,
-  Briefcase,
-  UserCheck,
-  Lock,
-  Mail,
-  User,
-  ArrowRight,
-  Building2,
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Zap,
-  LogIn,
-  UserPlus,
-  Check,
-  Sparkles
+  X, Briefcase, UserCheck, Lock, Mail, User,
+  ArrowRight, Building2, AlertCircle, CheckCircle,
+  Eye, EyeOff, Zap, LogIn, UserPlus, Check, Sparkles
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+
+// Helper: Convert email (e.g. rohit.sharma@gmail.com) into a readable name ("Rohit Sharma")
+const formatNameFromEmail = (rawEmail) => {
+  if (!rawEmail || !rawEmail.includes('@')) return '';
+  return rawEmail
+    .split('@')[0]
+    .replace(/[._\-+0-9]/g, ' ')
+    .split(' ')
+    .filter(Boolean)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+};
+
+// Beginner-friendly reusable Input Field with icon support
+const InputField = ({ label, labelRight, icon: Icon, rightElement, ...props }) => (
+  <div>
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>{label}</label>
+      {labelRight}
+    </div>
+    <div style={{ position: 'relative' }}>
+      {Icon && <Icon size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />}
+      <input
+        style={{
+          width: '100%',
+          padding: rightElement ? '0.65rem 2.5rem 0.65rem 2.4rem' : '0.65rem 1rem 0.65rem 2.4rem',
+          borderRadius: '8px',
+          border: '1px solid #CBD5E1',
+          fontSize: '0.875rem',
+          outline: 'none'
+        }}
+        {...props}
+      />
+      {rightElement}
+    </div>
+  </div>
+);
 
 export const AuthModal = () => {
   const {
@@ -33,107 +56,90 @@ export const AuthModal = () => {
     currentUserAccount
   } = useApp();
 
+  // Form State
   const [email, setEmail] = useState(() => currentUserAccount?.email || '');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState(() => currentUserAccount?.name || '');
   const [companyName, setCompanyName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
+  // Status & Feedback State
   const [errorMessage, setErrorMessage] = useState('');
   const [errorReason, setErrorReason] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [transferNotice, setTransferNotice] = useState('');
   const [pendingSignupTransfer, setPendingSignupTransfer] = useState(false);
 
-  // Password Constraint Checks
+  // Helpers & Derived State
+  const isClient = authRoleChoice === 'client';
+  const themeColor = isClient ? '#1E40AF' : '#059669';
+  const themeBg = isClient ? '#EFF6FF' : '#ECFDF5';
+  const themeBorder = isClient ? '#BFDBFE' : '#A7F3D0';
+
+  // Password Validation Rules
   const hasMinLength = password.length >= 6;
   const hasCapital = /[A-Z]/.test(password);
   const hasNumber = /[0-9]/.test(password);
 
-  // Helper to extract a formatted name from email (e.g. rohit.sharma@gmail.com -> Rohit Sharma)
-  const formatNameFromEmail = (rawEmail) => {
-    if (!rawEmail || !rawEmail.includes('@')) return '';
-    const namePart = rawEmail.split('@')[0];
-    return namePart
-      .replace(/[._\-+0-9]/g, ' ')
-      .split(' ')
-      .filter(Boolean)
-      .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
-      .join(' ');
-  };
-
-  // useEffect 1: Automatically transfer credentials to "Get Started" (Sign Up) when a new user is detected on Login
-  useEffect(() => {
-    if (pendingSignupTransfer) {
-      // 1. Switch auth mode to 'signup' (Get Started)
-      setAuthMode('signup');
-
-      // 2. Auto-fill full name from email if not already provided
-      if (!fullName.trim() && email.trim()) {
-        const suggestedName = formatNameFromEmail(email);
-        if (suggestedName) {
-          setFullName(suggestedName);
-        }
-      }
-
-      // 3. Display informative banner explaining the automatic transfer
-      setTransferNotice(`No existing account found for "${email}". We've transferred your email & password to Get Started — please complete your name to create your account!`);
-      setErrorMessage('');
-      setErrorReason('');
-
-      // 4. Reset trigger flag
-      setPendingSignupTransfer(false);
-    }
-  }, [pendingSignupTransfer, email, fullName, setAuthMode]);
-
-  // useEffect 2: When user switches to 'signup' (Get Started) with email filled, suggest full name if empty
-  useEffect(() => {
-    if (authMode === 'signup' && email.trim() && !fullName.trim()) {
-      const suggestedName = formatNameFromEmail(email);
-      if (suggestedName) {
-        setFullName(suggestedName);
-      }
-    }
-  }, [authMode, email, fullName]);
-
-  const handleSwitchMode = (newMode) => {
-    setAuthMode(newMode);
+  const resetAlerts = () => {
     setErrorMessage('');
     setErrorReason('');
     setSuccessMessage('');
     setTransferNotice('');
   };
 
-  const handleSwitchRole = (newRole) => {
-    setAuthRoleChoice(newRole);
-    setErrorMessage('');
-    setErrorReason('');
-    setSuccessMessage('');
+  // Effect 1: Auto-transfer credentials to Sign Up if account doesn't exist
+  useEffect(() => {
+    if (pendingSignupTransfer) {
+      setAuthMode('signup');
+      if (!fullName.trim() && email.trim()) {
+        const suggested = formatNameFromEmail(email);
+        if (suggested) setFullName(suggested);
+      }
+      setTransferNotice(`No existing account found for "${email}". We've transferred your email & password to Get Started — please complete your name to create your account!`);
+      setErrorMessage('');
+      setErrorReason('');
+      setPendingSignupTransfer(false);
+    }
+  }, [pendingSignupTransfer, email, fullName, setAuthMode]);
+
+  // Effect 2: Suggest name when switching to Sign Up with email already entered
+  useEffect(() => {
+    if (authMode === 'signup' && email.trim() && !fullName.trim()) {
+      const suggested = formatNameFromEmail(email);
+      if (suggested) setFullName(suggested);
+    }
+  }, [authMode, email, fullName]);
+
+  const handleSwitchMode = (mode) => {
+    setAuthMode(mode);
+    resetAlerts();
+  };
+
+  const handleSwitchRole = (role) => {
+    setAuthRoleChoice(role);
+    resetAlerts();
   };
 
   const handleClose = () => {
     setIsAuthModalOpen(false);
     setPassword('');
-    setErrorMessage('');
-    setErrorReason('');
-    setSuccessMessage('');
-    setTransferNotice('');
+    resetAlerts();
     setPendingSignupTransfer(false);
   };
 
-  if (!isAuthModalOpen) return null;
-
-  const isClient = authRoleChoice === 'client';
-  const isFreelancer = authRoleChoice === 'freelancer';
+  const handleFillDemo = (demoEmail, demoPassword, demoRole) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setAuthRoleChoice(demoRole);
+    resetAlerts();
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setErrorMessage('');
-    setErrorReason('');
-    setSuccessMessage('');
-    setTransferNotice('');
+    resetAlerts();
 
     if (authMode === 'signup') {
-      // Validate password constraints first
       if (!hasMinLength) {
         setErrorMessage('Password must be at least 6 characters long.');
         setErrorReason('PASSWORD_TOO_SHORT');
@@ -150,11 +156,10 @@ export const AuthModal = () => {
         return;
       }
 
-      // Sign Up / Get Started Flow
       const result = registerUser({
         name: fullName.trim(),
         email: email.trim(),
-        password: password,
+        password,
         role: authRoleChoice,
         companyName: companyName.trim()
       });
@@ -164,21 +169,17 @@ export const AuthModal = () => {
         setErrorReason(result.reason);
       } else {
         setSuccessMessage('Account created successfully! Redirecting...');
-        setTimeout(() => {
-          setIsAuthModalOpen(false);
-        }, 500);
+        setTimeout(() => setIsAuthModalOpen(false), 500);
       }
     } else {
-      // Log In Flow
       const result = loginUser({
         email: email.trim(),
-        password: password,
+        password,
         role: authRoleChoice
       });
 
       if (!result.success) {
         if (result.reason === 'USER_NOT_FOUND') {
-          // Trigger useEffect to transfer credentials to Get Started!
           setPendingSignupTransfer(true);
         } else {
           setErrorMessage(result.message);
@@ -186,22 +187,22 @@ export const AuthModal = () => {
         }
       } else {
         setSuccessMessage('Credentials verified! Logging you in...');
-        setTimeout(() => {
-          setIsAuthModalOpen(false);
-        }, 500);
+        setTimeout(() => setIsAuthModalOpen(false), 500);
       }
     }
   };
 
-  // Quick Demo Auto-Filler for testing existing users
-  const handleFillDemo = (demoEmail, demoPassword, demoRole) => {
-    setEmail(demoEmail);
-    setPassword(demoPassword);
-    setAuthRoleChoice(demoRole);
-    setErrorMessage('');
-    setErrorReason('');
-    setTransferNotice('');
-  };
+  if (!isAuthModalOpen) return null;
+
+  // Demo accounts data
+  const demoAccounts = isClient
+    ? [
+        { label: '🏢 Sarah Jenkins (Meridian Retail):', email: 'sarah@meridian.com' },
+        { label: '💼 Enterprise Client:', email: 'client@nexlance.dev' }
+      ]
+    : [
+        { label: '🌟 Sarah Jenkins (React Architect · Score 95):', email: 'sarah@nexlance.dev' }
+      ];
 
   return (
     <div className="modal-backdrop" onClick={handleClose}>
@@ -217,7 +218,7 @@ export const AuthModal = () => {
         }}
         onClick={e => e.stopPropagation()}
       >
-        {/* Modal Header */}
+        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.2rem' }}>
           <div>
             <div style={{
@@ -226,11 +227,11 @@ export const AuthModal = () => {
               gap: '0.45rem',
               fontSize: '0.725rem',
               fontWeight: 800,
-              color: isClient ? '#1E40AF' : '#059669',
-              backgroundColor: isClient ? '#EFF6FF' : '#ECFDF5',
+              color: themeColor,
+              backgroundColor: themeBg,
               padding: '0.25rem 0.75rem',
               borderRadius: '9999px',
-              border: `1px solid ${isClient ? '#BFDBFE' : '#A7F3D0'}`,
+              border: `1px solid ${themeBorder}`,
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
               marginBottom: '0.4rem'
@@ -248,11 +249,11 @@ export const AuthModal = () => {
             <p style={{ fontSize: '0.825rem', color: '#64748B', marginTop: '0.3rem' }}>
               {authMode === 'signup'
                 ? (isClient
-                  ? 'Create a free client account to post projects and hire verified talent.'
-                  : 'Create a free freelancer account to verify skills and get high-paying projects.')
+                    ? 'Create a free client account to post projects and hire verified talent.'
+                    : 'Create a free freelancer account to verify skills and get high-paying projects.')
                 : (isClient
-                  ? 'Sign in to access your client dashboard and candidate matches.'
-                  : 'Sign in to access your career score, skills, and projects.')}
+                    ? 'Sign in to access your client dashboard and candidate matches.'
+                    : 'Sign in to access your career score, skills, and projects.')}
             </p>
           </div>
 
@@ -267,8 +268,7 @@ export const AuthModal = () => {
               border: 'none',
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              transition: 'background-color 0.2s'
+              justifyContent: 'center'
             }}
             aria-label="Close modal"
           >
@@ -276,158 +276,91 @@ export const AuthModal = () => {
           </button>
         </div>
 
-        {/* Single Main Switch: Get Started vs Log In */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: '1fr 1fr',
-          backgroundColor: '#F1F5F9',
-          padding: '0.25rem',
-          borderRadius: '12px',
-          gap: '0.25rem',
-          marginBottom: '1.1rem'
-        }}>
-          <button
-            type="button"
-            onClick={() => handleSwitchMode('signup')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.45rem',
-              padding: '0.55rem 0.5rem',
-              borderRadius: '9px',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              backgroundColor: authMode === 'signup' ? '#FFFFFF' : 'transparent',
-              color: authMode === 'signup' ? '#0F172A' : '#64748B',
-              boxShadow: authMode === 'signup' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none'
-            }}
-          >
-            <UserPlus size={15} color={authMode === 'signup' ? (isClient ? '#1E40AF' : '#059669') : '#64748B'} />
-            <span>Get Started</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSwitchMode('login')}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.45rem',
-              padding: '0.55rem 0.5rem',
-              borderRadius: '9px',
-              fontSize: '0.85rem',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              backgroundColor: authMode === 'login' ? '#FFFFFF' : 'transparent',
-              color: authMode === 'login' ? '#0F172A' : '#64748B',
-              boxShadow: authMode === 'login' ? '0 2px 6px rgba(0,0,0,0.08)' : 'none'
-            }}
-          >
-            <LogIn size={15} color={authMode === 'login' ? (isClient ? '#1E40AF' : '#059669') : '#64748B'} />
-            <span>Log In</span>
-          </button>
+        {/* Mode Switch: Get Started vs Log In */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', backgroundColor: '#F1F5F9', padding: '0.25rem', borderRadius: '12px', gap: '0.25rem', marginBottom: '1.1rem' }}>
+          {[
+            { id: 'signup', label: 'Get Started', icon: UserPlus },
+            { id: 'login', label: 'Log In', icon: LogIn }
+          ].map(({ id, label, icon: TabIcon }) => {
+            const active = authMode === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => handleSwitchMode(id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.45rem',
+                  padding: '0.55rem 0.5rem',
+                  borderRadius: '9px',
+                  fontSize: '0.85rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: active ? '#FFFFFF' : 'transparent',
+                  color: active ? '#0F172A' : '#64748B',
+                  boxShadow: active ? '0 2px 6px rgba(0,0,0,0.08)' : 'none'
+                }}
+              >
+                <TabIcon size={15} color={active ? themeColor : '#64748B'} />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Role Selector */}
+        {/* Role Selector: Client vs Freelancer */}
         <div style={{ display: 'flex', gap: '0.4rem', backgroundColor: '#F8FAFC', padding: '0.25rem', borderRadius: '10px', border: '1px solid #E2E8F0', marginBottom: '1.1rem' }}>
-          <button
-            type="button"
-            onClick={() => handleSwitchRole('client')}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-              padding: '0.45rem',
-              borderRadius: '7px',
-              fontSize: '0.785rem',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              backgroundColor: isClient ? '#1E40AF' : 'transparent',
-              color: isClient ? '#FFFFFF' : '#64748B',
-              boxShadow: isClient ? '0 2px 6px rgba(30, 64, 175, 0.25)' : 'none'
-            }}
-          >
-            <Briefcase size={13} />
-            <span>I want to Hire (Client)</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleSwitchRole('freelancer')}
-            style={{
-              flex: 1,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '0.4rem',
-              padding: '0.45rem',
-              borderRadius: '7px',
-              fontSize: '0.785rem',
-              fontWeight: 700,
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-              backgroundColor: isFreelancer ? '#059669' : 'transparent',
-              color: isFreelancer ? '#FFFFFF' : '#64748B',
-              boxShadow: isFreelancer ? '0 2px 6px rgba(5, 150, 105, 0.25)' : 'none'
-            }}
-          >
-            <UserCheck size={13} />
-            <span>I want to Work (Freelancer)</span>
-          </button>
+          {[
+            { id: 'client', label: 'I want to Hire (Client)', icon: Briefcase, color: '#1E40AF', shadow: 'rgba(30, 64, 175, 0.25)' },
+            { id: 'freelancer', label: 'I want to Work (Freelancer)', icon: UserCheck, color: '#059669', shadow: 'rgba(5, 150, 105, 0.25)' }
+          ].map(({ id, label, icon: RoleIcon, color, shadow }) => {
+            const active = authRoleChoice === id;
+            return (
+              <button
+                key={id}
+                type="button"
+                onClick={() => handleSwitchRole(id)}
+                style={{
+                  flex: 1,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '0.4rem',
+                  padding: '0.45rem',
+                  borderRadius: '7px',
+                  fontSize: '0.785rem',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  backgroundColor: active ? color : 'transparent',
+                  color: active ? '#FFFFFF' : '#64748B',
+                  boxShadow: active ? `0 2px 6px ${shadow}` : 'none'
+                }}
+              >
+                <RoleIcon size={13} />
+                <span>{label}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Credentials Transferred / New User Notification */}
+        {/* Transfer Notice Banner */}
         {transferNotice && authMode === 'signup' && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.65rem',
-            padding: '0.85rem 1rem',
-            borderRadius: '10px',
-            backgroundColor: '#EFF6FF',
-            border: '1px solid #BFDBFE',
-            color: '#1E40AF',
-            fontSize: '0.825rem',
-            marginBottom: '1rem',
-            lineHeight: 1.4
-          }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#EFF6FF', border: '1px solid #BFDBFE', color: '#1E40AF', fontSize: '0.825rem', marginBottom: '1rem', lineHeight: 1.4 }}>
             <Sparkles size={17} color="#2563EB" style={{ flexShrink: 0, marginTop: '2px' }} />
             <div>
-              <div style={{ fontWeight: 800, color: '#1E40AF', marginBottom: '2px' }}>
-                ✨ Credentials Transferred to Get Started!
-              </div>
+              <div style={{ fontWeight: 800, color: '#1E40AF', marginBottom: '2px' }}>✨ Credentials Transferred to Get Started!</div>
               <div style={{ color: '#1E3A8A' }}>{transferNotice}</div>
             </div>
           </div>
         )}
 
-        {/* Error Alert Banner */}
+        {/* Error Banner */}
         {errorMessage && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            gap: '0.65rem',
-            padding: '0.85rem 1rem',
-            borderRadius: '10px',
-            backgroundColor: '#FEF2F2',
-            border: '1px solid #FECACA',
-            color: '#B91C1C',
-            fontSize: '0.825rem',
-            marginBottom: '1rem',
-            lineHeight: 1.4
-          }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem', padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#FEF2F2', border: '1px solid #FECACA', color: '#B91C1C', fontSize: '0.825rem', marginBottom: '1rem', lineHeight: 1.4 }}>
             <AlertCircle size={17} style={{ flexShrink: 0, marginTop: '2px' }} />
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600 }}>{errorMessage}</div>
@@ -435,22 +368,8 @@ export const AuthModal = () => {
                 <div style={{ marginTop: '0.45rem' }}>
                   <button
                     type="button"
-                    onClick={() => {
-                      setPendingSignupTransfer(true);
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '6px',
-                      backgroundColor: isClient ? '#1E40AF' : '#059669',
-                      color: '#FFFFFF',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      border: 'none',
-                      cursor: 'pointer'
-                    }}
+                    onClick={() => setPendingSignupTransfer(true)}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem', borderRadius: '6px', backgroundColor: themeColor, color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 700, border: 'none', cursor: 'pointer' }}
                   >
                     <span>Transfer to Get Started (Sign Up)</span>
                     <ArrowRight size={12} />
@@ -461,23 +380,8 @@ export const AuthModal = () => {
                 <div style={{ marginTop: '0.45rem' }}>
                   <button
                     type="button"
-                    onClick={() => {
-                      setAuthMode('login');
-                      setErrorMessage('');
-                    }}
-                    style={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: '0.35rem',
-                      padding: '0.35rem 0.75rem',
-                      borderRadius: '6px',
-                      backgroundColor: '#DC2626',
-                      color: '#FFFFFF',
-                      fontSize: '0.75rem',
-                      fontWeight: 700,
-                      border: 'none',
-                      cursor: 'pointer'
-                    }}
+                    onClick={() => { setAuthMode('login'); setErrorMessage(''); }}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35rem', padding: '0.35rem 0.75rem', borderRadius: '6px', backgroundColor: '#DC2626', color: '#FFFFFF', fontSize: '0.75rem', fontWeight: 700, border: 'none', cursor: 'pointer' }}
                   >
                     <span>Click here to Log In</span>
                     <ArrowRight size={12} />
@@ -488,193 +392,103 @@ export const AuthModal = () => {
           </div>
         )}
 
-        {/* Success Alert Banner */}
+        {/* Success Banner */}
         {successMessage && (
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.65rem',
-            padding: '0.85rem 1rem',
-            borderRadius: '10px',
-            backgroundColor: '#ECFDF5',
-            border: '1px solid #A7F3D0',
-            color: '#047857',
-            fontSize: '0.825rem',
-            marginBottom: '1rem',
-            fontWeight: 600
-          }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', padding: '0.85rem 1rem', borderRadius: '10px', backgroundColor: '#ECFDF5', border: '1px solid #A7F3D0', color: '#047857', fontSize: '0.825rem', marginBottom: '1rem', fontWeight: 600 }}>
             <CheckCircle size={17} style={{ flexShrink: 0 }} />
             <span>{successMessage}</span>
           </div>
         )}
 
-        {/* Main Auth Form */}
+        {/* Auth Form */}
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
           {/* Full Name (Sign Up only) */}
           {authMode === 'signup' && (
-            <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-                {isClient ? 'Contact Person / Full Name *' : 'Full Name *'}
-              </label>
-              <div style={{ position: 'relative' }}>
-                <User size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-                <input
-                  type="text"
-                  required
-                  value={fullName}
-                  onChange={e => setFullName(e.target.value)}
-                  placeholder={isClient ? "e.g. Vikram Sharma" : "e.g. Rahul Verma"}
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 1rem 0.65rem 2.4rem',
-                    borderRadius: '8px',
-                    border: '1px solid #CBD5E1',
-                    fontSize: '0.875rem',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-            </div>
+            <InputField
+              label={isClient ? 'Contact Person / Full Name *' : 'Full Name *'}
+              icon={User}
+              type="text"
+              required
+              value={fullName}
+              onChange={e => setFullName(e.target.value)}
+              placeholder={isClient ? 'e.g. Vikram Sharma' : 'e.g. Rahul Verma'}
+            />
           )}
 
           {/* Company Name (Sign Up & Client only) */}
           {authMode === 'signup' && isClient && (
-            <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-                Company / Organization Name
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Building2 size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-                <input
-                  type="text"
-                  value={companyName}
-                  onChange={e => setCompanyName(e.target.value)}
-                  placeholder="e.g. NexaTech Innovations"
-                  style={{
-                    width: '100%',
-                    padding: '0.65rem 1rem 0.65rem 2.4rem',
-                    borderRadius: '8px',
-                    border: '1px solid #CBD5E1',
-                    fontSize: '0.875rem',
-                    outline: 'none'
-                  }}
-                />
-              </div>
-            </div>
+            <InputField
+              label="Company / Organization Name"
+              icon={Building2}
+              type="text"
+              value={companyName}
+              onChange={e => setCompanyName(e.target.value)}
+              placeholder="e.g. NexaTech Innovations"
+            />
           )}
 
           {/* Email Address */}
-          <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#334155', marginBottom: '0.25rem' }}>
-              {isClient ? 'Business Email Address *' : 'Email Address *'}
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Mail size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-              <input
-                type="email"
-                required
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder={isClient ? "client@company.com" : "freelancer@example.com"}
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 1rem 0.65rem 2.4rem',
-                  borderRadius: '8px',
-                  border: '1px solid #CBD5E1',
-                  fontSize: '0.875rem',
-                  outline: 'none'
-                }}
-              />
-            </div>
-          </div>
+          <InputField
+            label={isClient ? 'Business Email Address *' : 'Email Address *'}
+            icon={Mail}
+            type="email"
+            required
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder={isClient ? 'client@company.com' : 'freelancer@example.com'}
+          />
 
-          {/* Password */}
+          {/* Password with Requirements */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.25rem' }}>
-              <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>
-                Password *
-              </label>
-              {authMode === 'login' && (
-                <span
-                  onClick={() => alert('For demo testing, use the pre-saved demo accounts or click "Get Started" to create a new password.')}
-                  style={{ fontSize: '0.75rem', color: isClient ? '#1E40AF' : '#059669', fontWeight: 600, cursor: 'pointer' }}
+            <InputField
+              label="Password *"
+              labelRight={
+                authMode === 'login' && (
+                  <span
+                    onClick={() => alert('For demo testing, use the pre-saved demo accounts or click "Get Started" to create a new password.')}
+                    style={{ fontSize: '0.75rem', color: themeColor, fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    Forgot?
+                  </span>
+                )
+              }
+              icon={Lock}
+              type={showPassword ? 'text' : 'password'}
+              required
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              placeholder={authMode === 'signup' ? 'Create a strong password' : 'Enter your password'}
+              rightElement={
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '10px', top: '10px', background: 'none', border: 'none', cursor: 'pointer', color: '#94A3B8', padding: '2px', display: 'flex', alignItems: 'center' }}
+                  title={showPassword ? 'Hide password' : 'Show password'}
                 >
-                  Forgot?
-                </span>
-              )}
-            </div>
-            <div style={{ position: 'relative' }}>
-              <Lock size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />
-              <input
-                type={showPassword ? "text" : "password"}
-                required
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder={authMode === 'signup' ? "Create a strong password" : "Enter your password"}
-                style={{
-                  width: '100%',
-                  padding: '0.65rem 2.5rem 0.65rem 2.4rem',
-                  borderRadius: '8px',
-                  border: '1px solid #CBD5E1',
-                  fontSize: '0.875rem',
-                  outline: 'none'
-                }}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '10px',
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#94A3B8',
-                  padding: '2px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-                title={showPassword ? "Hide password" : "Show password"}
-              >
-                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-              </button>
-            </div>
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              }
+            />
 
-            {/* Password Constraints Checklist for Sign Up */}
+            {/* Password Constraints Checklist */}
             {authMode === 'signup' && (
-              <div style={{
-                marginTop: '0.45rem',
-                padding: '0.45rem 0.65rem',
-                backgroundColor: '#F8FAFC',
-                borderRadius: '8px',
-                border: '1px solid #E2E8F0',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '0.25rem',
-                fontSize: '0.725rem'
-              }}>
-                <div style={{ fontWeight: 700, color: '#475569', marginBottom: '1px' }}>
-                  Password Requirements:
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: hasMinLength ? '#059669' : '#64748B', fontWeight: hasMinLength ? 600 : 400 }}>
-                  <Check size={13} color={hasMinLength ? '#059669' : '#CBD5E1'} strokeWidth={hasMinLength ? 3 : 2} />
-                  <span>At least 6 characters</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: hasCapital ? '#059669' : '#64748B', fontWeight: hasCapital ? 600 : 400 }}>
-                  <Check size={13} color={hasCapital ? '#059669' : '#CBD5E1'} strokeWidth={hasCapital ? 3 : 2} />
-                  <span>At least 1 uppercase / capital letter (A-Z)</span>
-                </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: hasNumber ? '#059669' : '#64748B', fontWeight: hasNumber ? 600 : 400 }}>
-                  <Check size={13} color={hasNumber ? '#059669' : '#CBD5E1'} strokeWidth={hasNumber ? 3 : 2} />
-                  <span>At least 1 number (0-9)</span>
-                </div>
+              <div style={{ marginTop: '0.45rem', padding: '0.45rem 0.65rem', backgroundColor: '#F8FAFC', borderRadius: '8px', border: '1px solid #E2E8F0', display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.725rem' }}>
+                <div style={{ fontWeight: 700, color: '#475569', marginBottom: '1px' }}>Password Requirements:</div>
+                {[
+                  { label: 'At least 6 characters', valid: hasMinLength },
+                  { label: 'At least 1 uppercase / capital letter (A-Z)', valid: hasCapital },
+                  { label: 'At least 1 number (0-9)', valid: hasNumber }
+                ].map((req, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', color: req.valid ? '#059669' : '#64748B', fontWeight: req.valid ? 600 : 400 }}>
+                    <Check size={13} color={req.valid ? '#059669' : '#CBD5E1'} strokeWidth={req.valid ? 3 : 2} />
+                    <span>{req.label}</span>
+                  </div>
+                ))}
               </div>
             )}
           </div>
 
-          {/* Submit CTA Button */}
+          {/* Submit Button */}
           <button
             type="submit"
             className="btn btn-primary"
@@ -684,13 +498,13 @@ export const AuthModal = () => {
               marginTop: '0.3rem',
               fontSize: '0.925rem',
               fontWeight: 700,
-              backgroundColor: isClient ? '#1E40AF' : '#059669',
-              borderColor: isClient ? '#1E40AF' : '#059669',
+              backgroundColor: themeColor,
+              borderColor: themeColor,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.5rem',
-              boxShadow: isClient ? '0 4px 12px rgba(30, 64, 175, 0.25)' : '0 4px 12px rgba(5, 150, 105, 0.25)'
+              boxShadow: `0 4px 12px ${isClient ? 'rgba(30, 64, 175, 0.25)' : 'rgba(5, 150, 105, 0.25)'}`
             }}
           >
             {authMode === 'signup' ? (
@@ -706,81 +520,23 @@ export const AuthModal = () => {
             )}
           </button>
 
-          {/* Quick Demo Test Fillers (Available on Log In tab) */}
+          {/* Demo Log In Shortcuts */}
           {authMode === 'login' && (
-            <div style={{
-              marginTop: '0.5rem',
-              padding: '0.7rem',
-              borderRadius: '10px',
-              backgroundColor: '#F8FAFC',
-              border: '1px dashed #CBD5E1'
-            }}>
+            <div style={{ marginTop: '0.5rem', padding: '0.7rem', borderRadius: '10px', backgroundColor: '#F8FAFC', border: '1px dashed #CBD5E1' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', fontSize: '0.725rem', fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   <Zap size={13} color="#F59E0B" />
                   <span>One-Click {isClient ? 'Client' : 'Freelancer'} Credentials:</span>
                 </div>
-                <span style={{ fontSize: '0.7rem', color: isClient ? '#1E40AF' : '#059669', fontWeight: 700 }}>
-                  pass: Password123
-                </span>
+                <span style={{ fontSize: '0.7rem', color: themeColor, fontWeight: 700 }}>pass: Password123</span>
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
-                {isClient ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => handleFillDemo('sarah@meridian.com', 'Password123', 'client')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.4rem 0.6rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #E2E8F0',
-                        fontSize: '0.75rem',
-                        color: '#0F172A',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = '#1E40AF'}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                    >
-                      <div>
-                        <span style={{ fontWeight: 700, color: '#1E40AF' }}>🏢 Sarah Jenkins (Meridian Retail):</span> sarah@meridian.com
-                      </div>
-                      <span style={{ color: '#1E40AF', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
-                    </button>
 
-                    <button
-                      type="button"
-                      onClick={() => handleFillDemo('client@nexlance.dev', 'Password123', 'client')}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                        padding: '0.4rem 0.6rem',
-                        borderRadius: '6px',
-                        backgroundColor: '#FFFFFF',
-                        border: '1px solid #E2E8F0',
-                        fontSize: '0.75rem',
-                        color: '#0F172A',
-                        cursor: 'pointer',
-                        textAlign: 'left'
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = '#1E40AF'}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
-                    >
-                      <div>
-                        <span style={{ fontWeight: 700, color: '#1E40AF' }}>💼 Enterprise Client:</span> client@nexlance.dev
-                      </div>
-                      <span style={{ color: '#1E40AF', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
-                    </button>
-                  </>
-                ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                {demoAccounts.map((account, index) => (
                   <button
+                    key={index}
                     type="button"
-                    onClick={() => handleFillDemo('sarah@nexlance.dev', 'Password123', 'freelancer')}
+                    onClick={() => handleFillDemo(account.email, 'Password123', authRoleChoice)}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
@@ -794,28 +550,27 @@ export const AuthModal = () => {
                       cursor: 'pointer',
                       textAlign: 'left'
                     }}
-                    onMouseEnter={e => e.currentTarget.style.borderColor = '#059669'}
-                    onMouseLeave={e => e.currentTarget.style.borderColor = '#E2E8F0'}
                   >
                     <div>
-                      <span style={{ fontWeight: 700, color: '#059669' }}>🌟 Sarah Jenkins (React Architect · Score 95):</span> sarah@nexlance.dev
+                      <span style={{ fontWeight: 700, color: themeColor }}>{account.label} </span>
+                      <span>{account.email}</span>
                     </div>
-                    <span style={{ color: '#059669', fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
+                    <span style={{ color: themeColor, fontWeight: 600, fontSize: '0.7rem' }}>Use Login ➔</span>
                   </button>
-                )}
+                ))}
               </div>
             </div>
           )}
 
-          {/* Mode Switch Helper Link */}
+          {/* Switch Mode Footer Link */}
           <div style={{ textAlign: 'center', marginTop: '0.3rem', fontSize: '0.825rem', color: '#64748B' }}>
             {authMode === 'login' ? (
               <>
                 Don't have an account?{' '}
                 <button
                   type="button"
-                  onClick={() => setAuthMode('signup')}
-                  style={{ fontWeight: 700, color: isClient ? '#1E40AF' : '#059669', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={() => handleSwitchMode('signup')}
+                  style={{ fontWeight: 700, color: themeColor, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
                 >
                   Get Started (Create Account)
                 </button>
@@ -825,8 +580,8 @@ export const AuthModal = () => {
                 Already have an account?{' '}
                 <button
                   type="button"
-                  onClick={() => setAuthMode('login')}
-                  style={{ fontWeight: 700, color: isClient ? '#1E40AF' : '#059669', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
+                  onClick={() => handleSwitchMode('login')}
+                  style={{ fontWeight: 700, color: themeColor, background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}
                 >
                   Log In directly
                 </button>

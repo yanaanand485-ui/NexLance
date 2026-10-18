@@ -3,7 +3,6 @@ import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
 import { Sidebar } from './components/common/Sidebar';
-import { NotificationDrawer } from './components/common/NotificationDrawer';
 import { AuthModal } from './components/common/AuthModal';
 import { SkillSelectionModal } from './components/common/SkillSelectionModal';
 import { Toast } from './components/common/Toast';
@@ -129,7 +128,6 @@ const MainRouter = () => {
         {renderContent()}
       </div>
       {showFooter && <Footer />}
-      <NotificationDrawer />
       <AuthModal />
       <SkillSelectionModal
         isOpen={isSkillModalOpen}
