@@ -28,6 +28,7 @@ export const Sidebar = () => {
 
   const freelancerNav = [
     { id: 'freelancer-dashboard', label: 'Dashboard' },
+    { id: 'freelancer-services', label: 'My Services' },
     { id: 'project-discovery', label: 'Find Projects' },
     { id: 'skill-verification', label: 'Skill Verification' },
     { id: 'career-score', label: 'Career Score' }

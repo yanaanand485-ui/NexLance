@@ -21,7 +21,7 @@ const QUESTIONS = {
 };
 
 export const SkillVerification = () => {
-  const { freelancerProfile, completeAssessment, showToast } = useApp();
+  const { freelancerProfile, completeAssessment, showToast, setIsSkillModalOpen } = useApp();
 
   const [activeTrack, setActiveTrack] = useState(null);
   const [selectedAnswers, setSelectedAnswers] = useState({});
@@ -37,13 +37,30 @@ export const SkillVerification = () => {
     { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, percentile: 'Top 2% Global', status: 'verified' }
   ];
 
-  const rawSkillsList = isSarah
-    ? sarahVerifiedSkills
-    : (freelancerProfile?.verifiedSkills || []);
+  const getRawSkillsList = () => {
+    if (freelancerProfile?.verifiedSkills && freelancerProfile.verifiedSkills.length > 0) {
+      return freelancerProfile.verifiedSkills;
+    }
+    if (freelancerProfile?.skills && freelancerProfile.skills.length > 0) {
+      return freelancerProfile.skills.map(name => ({
+        id: name.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+        name,
+        score: null,
+        status: 'pending'
+      }));
+    }
+    if (isSarah) {
+      return sarahVerifiedSkills;
+    }
+    return [];
+  };
 
+  const rawSkillsList = getRawSkillsList();
+
+  const ASSESSMENT_CENTER_KEYS = ['react', 'typescript', 'node', 'javascript'];
   const verifiedSkillsList = rawSkillsList.filter(s => {
     const key = (s.name || s.id || '').toLowerCase();
-    return !key.includes('graphql') && !key.includes('aws') && !key.includes('devops');
+    return ASSESSMENT_CENTER_KEYS.some(k => key.includes(k));
   });
 
   const assessmentTracks = [
@@ -80,6 +97,21 @@ export const SkillVerification = () => {
       passingScore: '75%'
     }
   ];
+
+  // Sirf wahi assessment tracks dikhenge jo user ne apne profile me add kiye hain
+  const userAssessmentTracks = assessmentTracks.filter(track =>
+    verifiedSkillsList.some(skill => {
+      const skillName = (skill.name || '').toLowerCase();
+      const trackName = track.name.toLowerCase();
+      const trackId = track.id.toLowerCase();
+      return (
+        skillName === trackName ||
+        skillName.includes(trackId) ||
+        (trackId === 'nodejs' && skillName.includes('node')) ||
+        (trackId === 'javascript' && skillName.includes('javascript'))
+      );
+    })
+  );
 
   const handleStartAssessment = (track) => {
     setActiveTrack(track);
@@ -133,9 +165,19 @@ export const SkillVerification = () => {
             <h2 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0F172A' }}>
               Your Skill Portfolio
             </h2>
-            <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF' }}>
-              {verifiedSkillsList.filter(s => s.status === 'verified').length} Verified
-            </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF' }}>
+                {verifiedSkillsList.filter(s => s.status === 'verified').length} Verified
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsSkillModalOpen(true)}
+                className="btn btn-secondary btn-sm"
+                style={{ fontSize: '0.75rem', padding: '0.2rem 0.5rem' }}
+              >
+                Edit Skills
+              </button>
+            </div>
           </div>
 
           {/* Skill items list */}
@@ -189,11 +231,19 @@ export const SkillVerification = () => {
                 }}
               >
                 <p style={{ margin: 0, fontWeight: 700, color: '#0F172A', fontSize: '0.95rem' }}>
-                  No Skills Verified Yet
+                  No Skills Added Yet
                 </p>
-                <p style={{ margin: '0.4rem 0 0 0', fontSize: '0.85rem', color: '#64748B', lineHeight: 1.5 }}>
-                  Take an assessment on the right to test and verify your skills.
+                <p style={{ margin: '0.4rem 0 0.8rem 0', fontSize: '0.85rem', color: '#64748B', lineHeight: 1.5 }}>
+                  Add skills to your profile to take their assessments and get verified.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setIsSkillModalOpen(true)}
+                  className="btn btn-primary btn-sm"
+                  style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
+                >
+                  + Add Skills
+                </button>
               </div>
             )}
           </div>
@@ -206,7 +256,7 @@ export const SkillVerification = () => {
               Assessment Center
             </h2>
             <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
-              Available Tracks
+              {userAssessmentTracks.length} Available Tracks
             </span>
           </div>
 
@@ -228,61 +278,88 @@ export const SkillVerification = () => {
 
             {/* Tracks List */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              {assessmentTracks.map(track => {
-                const matchingSkill = verifiedSkillsList.find(s =>
-                  s.status === 'verified' &&
-                  s.score &&
-                  (s.id === track.id || (s.name && s.name.toLowerCase().includes(track.id)))
-                );
+              {userAssessmentTracks.length > 0 ? (
+                userAssessmentTracks.map(track => {
+                  const matchingSkill = verifiedSkillsList.find(s =>
+                    s.status === 'verified' &&
+                    s.score &&
+                    (s.id === track.id || (s.name && s.name.toLowerCase().includes(track.id)))
+                  );
 
-                return (
-                  <div
-                    key={track.id}
-                    style={{
-                      border: '1px solid #F1F5F9',
-                      backgroundColor: '#F8FAFC',
-                      borderRadius: '6px',
-                      padding: '0.75rem 1rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      flexWrap: 'wrap',
-                      gap: '0.5rem'
-                    }}
-                  >
-                    <div>
-                      <strong style={{ fontSize: '0.9rem', color: '#0F172A' }}>{track.name}</strong>
-                      <span style={{ fontSize: '0.75rem', color: '#64748B', marginLeft: '0.5rem' }}>
-                        ({track.level})
-                      </span>
-                      <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
-                        {track.questionsCount} Questions &bull; {track.duration} &bull; Pass: {track.passingScore}
+                  return (
+                    <div
+                      key={track.id}
+                      style={{
+                        border: '1px solid #F1F5F9',
+                        backgroundColor: '#F8FAFC',
+                        borderRadius: '6px',
+                        padding: '0.75rem 1rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        flexWrap: 'wrap',
+                        gap: '0.5rem'
+                      }}
+                    >
+                      <div>
+                        <strong style={{ fontSize: '0.9rem', color: '#0F172A' }}>{track.name}</strong>
+                        <span style={{ fontSize: '0.75rem', color: '#64748B', marginLeft: '0.5rem' }}>
+                          ({track.level})
+                        </span>
+                        <div style={{ fontSize: '0.75rem', color: '#64748B', marginTop: '0.2rem' }}>
+                          {track.questionsCount} Questions &bull; {track.duration} &bull; Pass: {track.passingScore}
+                        </div>
+                      </div>
+
+                      <div>
+                        {matchingSkill ? (
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
+                            Verified ({matchingSkill.score}/100)
+                          </span>
+                        ) : !isSarah ? (
+                          <button
+                            type="button"
+                            onClick={() => handleStartAssessment(track)}
+                            className="btn btn-primary btn-sm"
+                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.75rem' }}
+                          >
+                            Take Assessment
+                          </button>
+                        ) : (
+                          <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
+                            Verified (95/100)
+                          </span>
+                        )}
                       </div>
                     </div>
-
-                    <div>
-                      {matchingSkill ? (
-                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
-                          Verified ({matchingSkill.score}/100)
-                        </span>
-                      ) : !isSarah ? (
-                        <button
-                          type="button"
-                          onClick={() => handleStartAssessment(track)}
-                          className="btn btn-primary btn-sm"
-                          style={{ fontSize: '0.8rem', padding: '0.3rem 0.75rem' }}
-                        >
-                          Take Assessment
-                        </button>
-                      ) : (
-                        <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.3rem 0.6rem', borderRadius: '4px' }}>
-                          Verified (95/100)
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div
+                  style={{
+                    backgroundColor: '#F8FAFC',
+                    border: '1px dashed #CBD5E1',
+                    borderRadius: '6px',
+                    padding: '1.5rem',
+                    textAlign: 'center'
+                  }}
+                >
+                  <p style={{ margin: '0 0 0.4rem', fontWeight: 600, color: '#0F172A', fontSize: '0.9rem' }}>
+                    No assessments available
+                  </p>
+                  <p style={{ margin: '0 0 1rem', fontSize: '0.8rem', color: '#64748B' }}>
+                    Aapne jo skills add kiye honge sirf unhi ki assessment yahan dikhegi. Pehle skills add karein.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setIsSkillModalOpen(true)}
+                    className="btn btn-primary btn-sm"
+                    style={{ fontSize: '0.8rem', padding: '0.35rem 0.85rem' }}
+                  >
+                    + Add Skills
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>

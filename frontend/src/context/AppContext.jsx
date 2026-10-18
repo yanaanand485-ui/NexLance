@@ -4,7 +4,8 @@ import {
   PROJECTS,
   SERVICES,
   CLIENT_DATA,
-  NEW_FREELANCER
+  NEW_FREELANCER,
+  SARAH_FREELANCER
 } from '../data/mockData';
 import {
   DEFAULT_USERS,
@@ -28,9 +29,16 @@ export const AppProvider = ({ children }) => {
 
   // 2. Profiles State
   const [freelancerProfile, setFreelancerProfile] = useState(() => {
-    return currentUserAccount?.role === 'freelancer' && currentUserAccount.profile
+    const raw = currentUserAccount?.role === 'freelancer' && currentUserAccount.profile
       ? currentUserAccount.profile
       : NEW_FREELANCER;
+    const isSarah = raw?.email === 'sarah@nexlance.dev' || raw?.id === 'fl-sarah-01';
+    return {
+      ...raw,
+      services: (raw?.services && raw.services.length > 0)
+        ? raw.services
+        : (isSarah ? SARAH_FREELANCER.services : (NEW_FREELANCER.services || []))
+    };
   });
 
   const [clientProfile, setClientProfile] = useState(() => {
@@ -62,6 +70,11 @@ export const AppProvider = ({ children }) => {
 
   const [isSkillModalOpen, setIsSkillModalOpen] = useState(false);
   const [isSkillModalOnboarding, setIsSkillModalOnboarding] = useState(false);
+
+  // Freelancer Services Management Modal State
+  const [isServiceModalOpen, setIsServiceModalOpen] = useState(false);
+  const [serviceModalMode, setServiceModalMode] = useState('add'); // 'add' | 'edit'
+  const [selectedServiceToEdit, setSelectedServiceToEdit] = useState(null);
 
   // 8. Assessment Simulator State
   const [activeAssessment, setActiveAssessment] = useState(null);
@@ -223,7 +236,7 @@ export const AppProvider = ({ children }) => {
     const avatarUrl = "";
 
     const newProfile = userRole === 'freelancer'
-      ? { ...NEW_FREELANCER, id: `fl-${Date.now()}`, name: cleanName, email: cleanEmail, avatar: "", skills: [], verifiedSkills: [] }
+      ? { ...NEW_FREELANCER, id: `fl-${Date.now()}`, name: cleanName, email: cleanEmail, avatar: "", skills: [], verifiedSkills: [], services: [] }
       : { ...CLIENT_DATA, id: `cl-${Date.now()}`, contactPerson: cleanName, name: companyName || `${cleanName} Enterprises`, email: cleanEmail, avatar: "" };
 
     const newUser = {
@@ -544,16 +557,121 @@ export const AppProvider = ({ children }) => {
 
   const updateFreelancerSkills = ({ role: newRole, skills: newSkills, experienceLevel: newExp }) => {
     setFreelancerProfile(prev => {
+      const skillsArray = newSkills || prev?.skills || [];
+      const existingVerified = prev?.verifiedSkills || [];
+
+      // Map every selected skill to verifiedSkills:
+      // If already verified, keep existing score and status.
+      // If newly added, set status: 'pending', score: null so it appears immediately!
+      const updatedVerified = skillsArray.map(skillName => {
+        const found = existingVerified.find(s =>
+          (s.name && s.name.toLowerCase() === skillName.toLowerCase()) ||
+          (s.id && s.id.toLowerCase() === skillName.toLowerCase().replace(/[^a-z0-9]/g, '-'))
+        );
+        if (found) {
+          return found;
+        }
+        return {
+          id: skillName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+          name: skillName,
+          score: null,
+          status: 'pending'
+        };
+      });
+
       const updated = {
         ...prev,
-        role: newRole || prev.role,
-        skills: newSkills || prev.skills,
-        experienceLevel: newExp || prev.experienceLevel
+        role: newRole || prev?.role || 'Full-Stack Developer',
+        skills: skillsArray,
+        verifiedSkills: updatedVerified,
+        experienceLevel: newExp || prev?.experienceLevel || 'Mid-Level'
       };
       syncStoredUserProfile(updated);
       return updated;
     });
     showToast('Skill profile updated successfully!', 'success');
+  };
+
+  // Service Management Methods
+  const openAddServiceModal = () => {
+    setServiceModalMode('add');
+    setSelectedServiceToEdit(null);
+    setIsServiceModalOpen(true);
+  };
+
+  const openEditServiceModal = (service) => {
+    setServiceModalMode('edit');
+    setSelectedServiceToEdit(service);
+    setIsServiceModalOpen(true);
+  };
+
+  const closeServiceModal = () => {
+    setIsServiceModalOpen(false);
+    setSelectedServiceToEdit(null);
+  };
+
+  const addFreelancerService = (serviceData) => {
+    const newService = {
+      id: `srv-${Date.now()}`,
+      title: serviceData.title,
+      category: serviceData.category || 'Web Development',
+      price: serviceData.price || serviceData.startingPrice || '$300',
+      startingPrice: serviceData.price || serviceData.startingPrice || '$300',
+      deliveryTime: serviceData.deliveryTime || '5 Days',
+      deliveryDays: Number(serviceData.deliveryDays) || 5,
+      description: serviceData.description || serviceData.tagline || '',
+      tagline: serviceData.description || serviceData.tagline || '',
+      createdAt: new Date().toISOString()
+    };
+
+    setFreelancerProfile(prev => {
+      const updated = {
+        ...prev,
+        services: [newService, ...(prev?.services || [])]
+      };
+      syncStoredUserProfile(updated);
+      return updated;
+    });
+
+    showToast(`Service "${serviceData.title}" added!`, 'success');
+    return newService;
+  };
+
+  const updateFreelancerService = (serviceId, updatedData) => {
+    setFreelancerProfile(prev => {
+      const updatedServices = (prev?.services || []).map(srv => {
+        if (srv.id === serviceId) {
+          return {
+            ...srv,
+            ...updatedData,
+            price: updatedData.price || updatedData.startingPrice || srv.price,
+            startingPrice: updatedData.price || updatedData.startingPrice || srv.price,
+            deliveryTime: updatedData.deliveryTime || srv.deliveryTime,
+            description: updatedData.description || srv.description
+          };
+        }
+        return srv;
+      });
+
+      const updated = { ...prev, services: updatedServices };
+      syncStoredUserProfile(updated);
+      return updated;
+    });
+
+    showToast('Service updated successfully!', 'success');
+  };
+
+  const deleteFreelancerService = (serviceId) => {
+    setFreelancerProfile(prev => {
+      const updated = {
+        ...prev,
+        services: (prev?.services || []).filter(s => s.id !== serviceId)
+      };
+      syncStoredUserProfile(updated);
+      return updated;
+    });
+
+    showToast('Service deleted.', 'info');
   };
 
   const contextValue = {
@@ -604,6 +722,19 @@ export const AppProvider = ({ children }) => {
     isSkillModalOnboarding,
     setIsSkillModalOnboarding,
     updateFreelancerSkills,
+    // Services Management
+    isServiceModalOpen,
+    setIsServiceModalOpen,
+    serviceModalMode,
+    setServiceModalMode,
+    selectedServiceToEdit,
+    setSelectedServiceToEdit,
+    openAddServiceModal,
+    openEditServiceModal,
+    closeServiceModal,
+    addFreelancerService,
+    updateFreelancerService,
+    deleteFreelancerService,
     activeAssessment,
     setActiveAssessment,
     assessmentResult,

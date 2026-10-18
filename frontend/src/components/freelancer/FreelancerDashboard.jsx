@@ -8,7 +8,8 @@ import {
   Edit3,
   Trophy,
   ShieldCheck,
-  Clock
+  Clock,
+  Layers
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
@@ -18,7 +19,10 @@ export const FreelancerDashboard = () => {
     freelancerProfile,
     navigateTo,
     setIsSkillModalOpen,
-    setIsSkillModalOnboarding
+    setIsSkillModalOnboarding,
+    openAddServiceModal,
+    openEditServiceModal,
+    deleteFreelancerService
   } = useApp();
 
   // Check if current user is Sarah Jenkins or a new user
@@ -35,6 +39,7 @@ export const FreelancerDashboard = () => {
   const clientSatisfaction = isSarah ? 97 : (freelancerProfile?.clientSatisfaction || (completedProjects > 0 ? 100 : 0));
   const onTimeDelivery = isSarah ? 98 : (freelancerProfile?.onTimeDelivery || (completedProjects > 0 ? 100 : 0));
   const codeQuality = isSarah ? 99 : (freelancerProfile?.codeQualityRate || freelancerProfile?.codeQuality || (careerScore > 0 ? Math.round(careerScore * 0.98) : 0));
+  
   const sarahSkills = [
     { id: 'react', name: 'React', score: 95, status: 'verified' },
     { id: 'typescript', name: 'TypeScript', score: 96, status: 'verified' },
@@ -42,13 +47,21 @@ export const FreelancerDashboard = () => {
     { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, status: 'verified' }
   ];
 
-  const verifiedSkills = (isSarah
-    ? sarahSkills
-    : (freelancerProfile.verifiedSkills || [])
-  ).filter(s => {
+  // Only skills that have an Assessment Center track
+  const ASSESSMENT_CENTER_KEYS = ['react', 'typescript', 'node', 'javascript'];
+
+  const rawSkills = freelancerProfile?.verifiedSkills?.length > 0
+    ? freelancerProfile.verifiedSkills
+    : (freelancerProfile?.skills?.length > 0
+        ? freelancerProfile.skills.map(s => typeof s === 'string' ? { name: s, status: 'pending' } : s)
+        : (isSarah ? sarahSkills : []));
+
+  const skillsList = rawSkills.filter(s => {
     const key = (s.name || s.id || '').toLowerCase();
-    return !key.includes('graphql') && !key.includes('aws') && !key.includes('devops');
+    return ASSESSMENT_CENTER_KEYS.some(k => key.includes(k));
   });
+
+  const services = freelancerProfile?.services || [];
 
   return (
     <div className="dashboard-main" style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 2.5rem 4rem' }}>
@@ -190,39 +203,157 @@ export const FreelancerDashboard = () => {
           </div>
 
           {/* Simple Skills List */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem', marginTop: '0.5rem' }}>
-            {verifiedSkills.length > 0 ? (
-              verifiedSkills.map((skill) => {
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
+            {skillsList.length > 0 ? (
+              skillsList.map((skill) => {
                 const isVerified = skill.status === 'verified';
                 return (
                   <div
-                    key={skill.id || skill.name}
+                    key={skill.name || skill.id}
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      padding: '0.65rem 0.85rem',
+                      padding: '0.55rem 0.75rem',
                       borderRadius: '6px',
                       backgroundColor: '#F8FAFC',
                       border: '1px solid #E2E8F0'
                     }}
                   >
-                    <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#0F172A' }}>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A' }}>
                       {skill.name}
                     </span>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: isVerified ? '#1E40AF' : '#64748B' }}>
+                    <span
+                      style={{
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        padding: '0.15rem 0.5rem',
+                        borderRadius: '4px',
+                        backgroundColor: isVerified ? '#EFF6FF' : '#FEF3C7',
+                        color: isVerified ? '#1E40AF' : '#D97706',
+                        border: `1px solid ${isVerified ? '#BFDBFE' : '#FDE68A'}`
+                      }}
+                    >
                       {isVerified && skill.score ? `${skill.score}/100 Verified` : 'Pending'}
                     </span>
                   </div>
                 );
               })
             ) : (
-              <div style={{ fontSize: '0.85rem', color: '#64748B' }}>
+              <div style={{ fontSize: '0.85rem', color: '#64748B', padding: '0.5rem 0' }}>
                 No skills added yet. Click 'Edit Skills' to add skills.
               </div>
             )}
           </div>
         </div>
+      </div>
+
+      {/* Simple Services Section */}
+      <div style={{ marginTop: '2.5rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+              My Services
+            </h2>
+            <span style={{ fontSize: '0.75rem', color: '#64748B' }}>
+              ({services.length})
+            </span>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            {services.length > 0 && (
+              <button
+                type="button"
+                onClick={() => navigateTo('freelancer-services')}
+                className="btn btn-secondary btn-sm"
+              >
+                View All
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={openAddServiceModal}
+              className="btn btn-primary btn-sm"
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+            >
+              <Plus size={15} /> Add Service
+            </button>
+          </div>
+        </div>
+
+        {services.length > 0 ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
+            {services.map((service) => (
+              <div
+                key={service.id}
+                style={{
+                  backgroundColor: '#FFFFFF',
+                  borderRadius: '8px',
+                  border: '1px solid #E2E8F0',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#1E40AF', backgroundColor: '#EFF6FF', padding: '0.15rem 0.5rem', borderRadius: '4px' }}>
+                      {service.category || 'Web Development'}
+                    </span>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#64748B' }}>
+                      {service.deliveryTime || (service.deliveryDays ? `${service.deliveryDays} Days` : '5 Days')}
+                    </span>
+                  </div>
+
+                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.4rem 0' }}>
+                    {service.title}
+                  </h4>
+
+                  <p style={{ fontSize: '0.825rem', color: '#64748B', lineHeight: 1.4, margin: '0 0 0.75rem 0' }}>
+                    {service.description || service.tagline || 'Standard fixed deliverable package.'}
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #F1F5F9', paddingTop: '0.75rem' }}>
+                  <span style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A' }}>
+                    {service.price || service.startingPrice || '$300'}
+                  </span>
+                  <div style={{ display: 'flex', gap: '0.4rem' }}>
+                    <button
+                      type="button"
+                      onClick={() => openEditServiceModal(service)}
+                      className="btn btn-secondary btn-sm"
+                      style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => deleteFreelancerService(service.id)}
+                      style={{ background: 'none', border: 'none', color: '#EF4444', fontSize: '0.75rem', cursor: 'pointer', padding: '0.25rem 0.4rem' }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div style={{ padding: '2rem', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px dashed #CBD5E1', textAlign: 'center' }}>
+            <p style={{ fontSize: '0.9rem', color: '#64748B', margin: '0 0 1rem 0' }}>
+              No services added yet. Would you like to add a service to offer to clients?
+            </p>
+            <button
+              type="button"
+              onClick={openAddServiceModal}
+              className="btn btn-primary btn-sm"
+            >
+              + Add Your Service
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

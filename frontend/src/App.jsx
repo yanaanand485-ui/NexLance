@@ -16,8 +16,9 @@ import { FreelancerProfile } from './components/marketplace/FreelancerProfile';
 import { ProjectDetail } from './components/marketplace/ProjectDetail';
 import { ServiceDetail } from './components/marketplace/ServiceDetail';
 
-// Freelancer Platform
 import { FreelancerDashboard } from './components/freelancer/FreelancerDashboard';
+import { FreelancerServices } from './components/freelancer/FreelancerServices';
+import { ServiceModal } from './components/freelancer/ServiceModal';
 import { SkillVerification } from './components/freelancer/SkillVerification';
 import { CareerScoreDetail } from './components/freelancer/CareerScoreDetail';
 import { OpportunitiesFeed } from './components/freelancer/OpportunitiesFeed';
@@ -90,6 +91,8 @@ const MainRouter = () => {
       // Freelancer Views
       case 'freelancer-dashboard':
         return renderDashboardView(FreelancerDashboard);
+      case 'freelancer-services':
+        return renderDashboardView(FreelancerServices);
       case 'skill-verification':
         return renderDashboardView(SkillVerification);
       case 'career-score':
@@ -134,6 +137,7 @@ const MainRouter = () => {
         onClose={() => setIsSkillModalOpen(false)}
         isOnboarding={isSkillModalOnboarding}
       />
+      <ServiceModal />
       <Toast />
     </div>
   );

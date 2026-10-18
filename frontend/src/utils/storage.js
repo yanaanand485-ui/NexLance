@@ -86,9 +86,17 @@ export const getStoredUsers = () => {
               ...user,
               password: defaultMatch.password,
               profile: {
-                ...user.profile,
                 ...SARAH_FREELANCER,
-                verifiedSkills: SARAH_FREELANCER.verifiedSkills
+                ...user.profile,
+                verifiedSkills: (user.profile?.verifiedSkills && user.profile.verifiedSkills.length > 0)
+                  ? user.profile.verifiedSkills
+                  : SARAH_FREELANCER.verifiedSkills,
+                skills: (user.profile?.skills && user.profile.skills.length > 0)
+                  ? user.profile.skills
+                  : SARAH_FREELANCER.skills,
+                services: (user.profile?.services && user.profile.services.length > 0)
+                  ? user.profile.services
+                  : (SARAH_FREELANCER.services || [])
               }
             };
           }
@@ -136,7 +144,12 @@ export const getStoredActiveUser = () => {
       if (parsed.profile) {
         parsed.profile.avatar = "";
         if (parsed.id === 'fl-sarah-01' || parsed.email === 'sarah@nexlance.dev') {
-          parsed.profile.verifiedSkills = SARAH_FREELANCER.verifiedSkills;
+          if (!parsed.profile.verifiedSkills || parsed.profile.verifiedSkills.length === 0) {
+            parsed.profile.verifiedSkills = SARAH_FREELANCER.verifiedSkills;
+          }
+          if (!parsed.profile.services || parsed.profile.services.length === 0) {
+            parsed.profile.services = SARAH_FREELANCER.services;
+          }
         }
       }
     }

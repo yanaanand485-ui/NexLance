@@ -36,7 +36,7 @@ export const SARAH_FREELANCER = {
     { month: "Oct", score: 95 }
   ],
   experienceLevel: "Senior / Expert",
-  skills: ["React", "Next.js", "TypeScript", "Node.js", "GraphQL", "AWS", "Stripe", "Tailwind CSS"],
+  skills: ["React", "TypeScript", "Node.js", "JavaScript (ES6+)"],
   verifiedSkills: [
     { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
@@ -63,6 +63,38 @@ export const SARAH_FREELANCER = {
         { label: "Test Coverage", value: "98.5%" }
       ],
       description: "Architected a scalable Next.js 14 App Router platform with AWS Lambda edge SSR, multi-currency checkout, and sub-80ms faceted product search."
+    }
+  ],
+  services: [
+    {
+      id: "srv-sarah-01",
+      title: "Full-Stack Web Application (React & Node.js)",
+      category: "Web Development",
+      price: "₹45,000 ($550)",
+      startingPrice: "₹45,000 ($550)",
+      deliveryTime: "7 Days",
+      deliveryDays: 7,
+      description: "Complete full-stack web application with responsive UI, clean API, and secure authentication."
+    },
+    {
+      id: "srv-sarah-02",
+      title: "Backend API & Microservices",
+      category: "Backend Development",
+      price: "₹38,000 ($460)",
+      startingPrice: "₹38,000 ($460)",
+      deliveryTime: "5 Days",
+      deliveryDays: 5,
+      description: "High-performance REST / GraphQL APIs built with Node.js and PostgreSQL database."
+    },
+    {
+      id: "srv-sarah-03",
+      title: "Code Audit & Performance Optimization",
+      category: "Consulting",
+      price: "₹20,000 ($240)",
+      startingPrice: "₹20,000 ($240)",
+      deliveryTime: "3 Days",
+      deliveryDays: 3,
+      description: "Comprehensive code review, security check, and performance tuning for web apps."
     }
   ]
 };
@@ -2449,6 +2481,7 @@ export const NEW_FREELANCER = {
   experienceLevel: "",
   skills: [],
   verifiedSkills: [],
+  services: [],
   proofOfWork: [],
   steps: [
     { id: 1, title: "Complete Profile & Bio", done: true },

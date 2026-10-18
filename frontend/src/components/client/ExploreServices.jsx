@@ -12,13 +12,57 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
+import { getStoredUsers } from '../../utils/storage';
 
 export const ExploreServices = () => {
-  const { showToast } = useApp();
+  const { showToast, freelancerProfile } = useApp();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [activeService, setActiveService] = useState(null);
+
+  const allAvailableServices = React.useMemo(() => {
+    try {
+      const users = getStoredUsers();
+      const userServices = [];
+      users.forEach(u => {
+        if (u.role === 'freelancer' && Array.isArray(u.profile?.services)) {
+          u.profile.services.forEach(srv => {
+            if (srv.status !== 'Paused' && !SERVICES.some(s => s.id === srv.id)) {
+              userServices.push({
+                ...srv,
+                freelancer: srv.freelancer || {
+                  name: u.name,
+                  role: u.profile?.role || 'Full-Stack Developer',
+                  avatar: u.avatar || '',
+                  careerScore: u.profile?.careerScore || 0
+                }
+              });
+            }
+          });
+        }
+      });
+      // Also ensure current active freelancer's services are present
+      if (freelancerProfile?.services?.length > 0) {
+        freelancerProfile.services.forEach(srv => {
+          if (srv.status !== 'Paused' && !userServices.some(s => s.id === srv.id) && !SERVICES.some(s => s.id === srv.id)) {
+            userServices.unshift({
+              ...srv,
+              freelancer: srv.freelancer || {
+                name: freelancerProfile.name,
+                role: freelancerProfile.role,
+                avatar: freelancerProfile.avatar,
+                careerScore: freelancerProfile.careerScore
+              }
+            });
+          }
+        });
+      }
+      return [...userServices, ...SERVICES];
+    } catch (e) {
+      return SERVICES;
+    }
+  }, [freelancerProfile]);
 
   const categories = [
     { id: 'all', label: 'All Services' },
@@ -30,7 +74,7 @@ export const ExploreServices = () => {
   ];
 
   // Basic filter logic
-  const filteredServices = SERVICES.filter((service) => {
+  const filteredServices = allAvailableServices.filter((service) => {
     // 1. Category check
     if (selectedCategory !== 'all' && service.category !== selectedCategory) {
       return false;
