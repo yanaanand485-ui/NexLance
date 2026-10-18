@@ -214,7 +214,7 @@ export const AppProvider = ({ children }) => {
 
   const handleFindTalent = () => {
     if (role === 'client') {
-      navigateTo('client-dashboard');
+      navigateTo('client-find-talent');
     } else {
       setAuthMode('signup');
       setAuthRoleChoice('client');

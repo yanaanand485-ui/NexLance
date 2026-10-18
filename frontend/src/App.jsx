@@ -24,11 +24,11 @@ import { CareerScoreDetail } from './components/freelancer/CareerScoreDetail';
 import { OpportunitiesFeed } from './components/freelancer/OpportunitiesFeed';
 import { NewFreelancerExperience } from './components/freelancer/NewFreelancerExperience';
 
-// Client Platform
+// Client Platform (All imported directly from ./components/client/)
 import { ClientDashboard } from './components/client/ClientDashboard';
-import { CandidateComparison } from './components/client/CandidateComparison';
-import { PostProjectWizard } from './components/client/PostProjectWizard';
-import { ApplicationsView } from './components/client/ApplicationsView';
+import { FindTalent } from './components/client/FindTalent';
+import { MyProjects } from './components/client/MyProjects';
+import { ExploreServices } from './components/client/ExploreServices';
 
 import './styles/components.css';
 
@@ -70,21 +70,21 @@ const MainRouter = () => {
       case 'landing':
         return <LandingPage />;
       case 'talent-discovery':
-        return role === 'client' ? renderDashboardView(TalentDiscovery) : <TalentDiscovery />;
+        return role === 'client' ? renderDashboardView(FindTalent) : <TalentDiscovery />;
       case 'project-discovery':
         return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
       case 'services-marketplace':
         if (role === 'freelancer') {
           return renderDashboardView(FreelancerDashboard);
         }
-        return role === 'client' ? renderDashboardView(ServicesMarketplace) : <ServicesMarketplace />;
+        return role === 'client' ? renderDashboardView(ExploreServices) : <ServicesMarketplace />;
       case 'service-detail':
         if (role === 'freelancer') {
           return renderDashboardView(FreelancerDashboard);
         }
-        return role === 'client' ? renderDashboardView(ServiceDetail) : <ServiceDetail />;
+        return role === 'client' ? renderDashboardView(ExploreServices) : <ServiceDetail />;
       case 'freelancer-profile':
-        return role === 'client' ? renderDashboardView(FreelancerProfile) : <FreelancerProfile />;
+        return role === 'client' ? renderDashboardView(FindTalent) : <FreelancerProfile />;
       case 'project-detail':
         return role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />;
 
@@ -100,15 +100,20 @@ const MainRouter = () => {
       case 'new-freelancer':
         return renderDashboardView(NewFreelancerExperience);
 
-      // Client Views
+      // Client Views (Dashboard, Find Talent, My Projects, Explore Services)
       case 'client-dashboard':
         return renderDashboardView(ClientDashboard);
-      case 'comparison':
-        return renderDashboardView(CandidateComparison);
+      case 'client-find-talent':
+        return renderDashboardView(FindTalent);
+      case 'client-my-projects':
+        return renderDashboardView(MyProjects);
+      case 'client-explore-services':
+        return renderDashboardView(ExploreServices);
       case 'post-project':
-        return renderDashboardView(PostProjectWizard);
       case 'applications':
-        return renderDashboardView(ApplicationsView);
+        return renderDashboardView(MyProjects);
+      case 'comparison':
+        return renderDashboardView(FindTalent);
 
       default:
         return <LandingPage />;

@@ -35,12 +35,9 @@ export const Sidebar = () => {
 
   const clientNav = [
     { id: 'client-dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
-    { id: 'post-project', label: 'Post Project', icon: <PlusCircle size={18} /> },
-    { id: 'smart-match', label: 'Smart Match', icon: <Sparkles size={18} /> },
-    { id: 'comparison', label: 'Candidate Comparison', icon: <Columns size={18} /> },
-    { id: 'applications', label: 'Applications Received', icon: <FileCheck2 size={18} /> },
-    { id: 'talent-discovery', label: 'Find Freelancers', icon: <Users size={18} /> },
-    { id: 'services-marketplace', label: 'Discover Services', icon: <Layers size={18} /> }
+    { id: 'client-find-talent', label: 'Find Talent', icon: <Users size={18} /> },
+    { id: 'client-my-projects', label: 'My Projects', icon: <Briefcase size={18} /> },
+    { id: 'client-explore-services', label: 'Explore Services', icon: <Layers size={18} /> }
   ];
 
   const navItems = isFreelancer ? freelancerNav : clientNav;
@@ -86,7 +83,11 @@ export const Sidebar = () => {
         {/* Navigation List */}
         <ul className="sidebar-nav">
           {navItems.map((item) => {
-            const isActive = currentView === item.id;
+            const isActive =
+              currentView === item.id ||
+              (item.id === 'client-find-talent' && currentView === 'talent-discovery') ||
+              (item.id === 'client-explore-services' && currentView === 'services-marketplace') ||
+              (item.id === 'client-my-projects' && (currentView === 'post-project' || currentView === 'applications'));
             return (
               <li
                 key={item.id}
