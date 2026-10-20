@@ -131,7 +131,7 @@ export const MyProjects = () => {
                     </h2>
                   </div>
                   <span style={{ fontSize: '0.8rem', color: '#64748B' }}>
-                    Category: <strong>{project.category || 'Web Development'}</strong> • Posted {project.postedAgo || 'Recently'}
+                    Category: <strong>{project.category || 'Web Development'}</strong>
                   </span>
                 </div>
 

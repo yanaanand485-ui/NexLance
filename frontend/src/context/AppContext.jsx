@@ -12,7 +12,9 @@ import {
   getStoredUsers,
   saveStoredUsers,
   getStoredActiveUser,
-  saveStoredActiveUser
+  saveStoredActiveUser,
+  getStoredProjects,
+  saveStoredProjects
 } from '../utils/storage';
 
 const AppContext = createContext(null);
@@ -58,7 +60,7 @@ export const AppProvider = ({ children }) => {
 
   // 5. Projects & Proposals State
   const [appliedProjectIds, setAppliedProjectIds] = useState([]);
-  const [activeProjectsList, setActiveProjectsList] = useState(PROJECTS);
+  const [activeProjectsList, setActiveProjectsList] = useState(() => getStoredProjects());
 
   // Notification no-op helper (Notification feature removed)
   const addNotification = () => {};
@@ -257,7 +259,6 @@ export const AppProvider = ({ children }) => {
     if (userRole === 'freelancer') {
       setFreelancerProfile(newProfile);
       setCurrentView('freelancer-dashboard');
-      showToast(`Welcome to NexLance, ${cleanName}!`, 'success');
       setTimeout(() => {
         setIsSkillModalOnboarding(true);
         setIsSkillModalOpen(true);
@@ -265,7 +266,6 @@ export const AppProvider = ({ children }) => {
     } else {
       setClientProfile(newProfile);
       setCurrentView('client-dashboard');
-      showToast(`Welcome to NexLance, ${cleanName}!`, 'success');
     }
 
     return { success: true, user: newUser };
@@ -350,11 +350,9 @@ export const AppProvider = ({ children }) => {
       setIsSkillModalOpen(false);
       setIsSkillModalOnboarding(false);
       navigateTo('freelancer-dashboard');
-      showToast(`Welcome back, ${foundUser.name}!`, 'success');
     } else {
       if (foundUser.profile) setClientProfile(foundUser.profile);
       navigateTo('client-dashboard');
-      showToast(`Welcome back, ${foundUser.name}!`, 'success');
     }
 
     return { success: true, user: foundUser };
@@ -377,7 +375,6 @@ export const AppProvider = ({ children }) => {
         if (demoUser.profile) setClientProfile(demoUser.profile);
         setCurrentView('client-dashboard');
       }
-      showToast(`Logged in as ${demoUser.name}`, 'success');
     }
   };
 
@@ -446,8 +443,8 @@ export const AppProvider = ({ children }) => {
       id: `proj-${Date.now()}`,
       badge: 'Newly Posted',
       client: {
-        name: clientProfile.name,
-        avatar: clientProfile.avatar,
+        name: clientProfile.name || 'Client',
+        avatar: clientProfile.avatar || '',
         rating: 5.0,
         spent: '$18,000+',
         verifiedPayment: true,
@@ -459,8 +456,24 @@ export const AppProvider = ({ children }) => {
       status: 'Open',
       ...projectData
     };
-    setActiveProjectsList(prev => [newProj, ...prev]);
-    showToast('Project posted successfully!', 'success');
+    setActiveProjectsList(prev => {
+      const updated = [newProj, ...prev];
+      saveStoredProjects(updated);
+      return updated;
+    });
+    setClientProfile(prev => {
+      const updated = {
+        ...prev,
+        activeProjects: (prev.activeProjects || 0) + 1
+      };
+      if (currentUserAccount?.role === 'client') {
+        const updatedUser = { ...currentUserAccount, profile: updated };
+        saveStoredActiveUser(updatedUser);
+        const users = getStoredUsers();
+        saveStoredUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+      }
+      return updated;
+    });
     navigateTo('client-my-projects');
   };
 

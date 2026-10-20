@@ -110,8 +110,6 @@ const MainRouter = () => {
 
   const showFooter = role === 'public' && ['landing', 'talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView);
 
-  const { toastMessage } = useApp();
-
   return (
     <div className="app-container">
       <Navbar />
@@ -126,41 +124,6 @@ const MainRouter = () => {
         isOnboarding={isSkillModalOnboarding}
       />
       <ServiceModal />
-
-      {/* Global Toast Notification */}
-      {toastMessage && (
-        <div
-          style={{
-            position: 'fixed',
-            top: '1.25rem',
-            right: '1.25rem',
-            zIndex: 99999,
-            backgroundColor:
-              toastMessage.type === 'error' ? '#DC2626' :
-              toastMessage.type === 'warning' ? '#D97706' :
-              toastMessage.type === 'info' ? '#2563EB' : '#059669',
-            color: '#FFFFFF',
-            padding: '0.85rem 1.35rem',
-            borderRadius: '8px',
-            boxShadow: '0 12px 28px rgba(0,0,0,0.25)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.65rem',
-            fontSize: '0.875rem',
-            fontWeight: 600,
-            maxWidth: '420px',
-            pointerEvents: 'none',
-            animation: 'slideInRight 0.2s ease-out'
-          }}
-        >
-          <span style={{ fontSize: '1.1rem', fontWeight: 800 }}>
-            {toastMessage.type === 'error' ? '✕' :
-             toastMessage.type === 'warning' ? '⚠' :
-             toastMessage.type === 'info' ? 'ℹ' : '✓'}
-          </span>
-          <span>{toastMessage.message}</span>
-        </div>
-      )}
     </div>
   );
 };

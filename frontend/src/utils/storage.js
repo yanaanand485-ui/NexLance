@@ -1,11 +1,13 @@
 import {
   SARAH_FREELANCER,
-  CLIENT_DATA
+  CLIENT_DATA,
+  PROJECTS
 } from '../data/mockData';
 
 // Local Storage Keys
 const USERS_STORAGE_KEY = 'nexlance_registered_users';
 const SESSION_STORAGE_KEY = 'nexlance_active_user';
+const PROJECTS_STORAGE_KEY = 'nexlance_projects_list';
 
 // Default Demo Accounts for testing existing user login (Only Sarah Jenkins for Freelancer)
 export const DEFAULT_USERS = [
@@ -169,5 +171,31 @@ export const saveStoredActiveUser = (user) => {
     }
   } catch (err) {
     console.error('Error saving active session to localStorage:', err);
+  }
+};
+
+export const getStoredProjects = () => {
+  try {
+    const saved = localStorage.getItem(PROJECTS_STORAGE_KEY);
+    if (!saved) {
+      localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(PROJECTS));
+      return PROJECTS;
+    }
+    const parsed = JSON.parse(saved);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      return parsed;
+    }
+    return PROJECTS;
+  } catch (err) {
+    console.error('Error reading projects from localStorage:', err);
+    return PROJECTS;
+  }
+};
+
+export const saveStoredProjects = (projects) => {
+  try {
+    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
+  } catch (err) {
+    console.error('Error saving projects to localStorage:', err);
   }
 };
