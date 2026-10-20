@@ -468,15 +468,22 @@ export const AppProvider = ({ children }) => {
   const completeAssessment = (score, skillName) => {
     setFreelancerProfile(prev => {
       const existing = prev?.verifiedSkills || [];
-      const index = existing.findIndex(s =>
-        (s.name && s.name.toLowerCase().includes(skillName.toLowerCase())) ||
-        (s.id && s.id.toLowerCase() === skillName.toLowerCase())
-      );
+      const normalize = (str) => (str || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const targetNorm = normalize(skillName);
+
+      const index = existing.findIndex(s => {
+        const sNameNorm = normalize(s?.name);
+        const sIdNorm = normalize(s?.id);
+        if (targetNorm.includes('node') && (sNameNorm.includes('node') || sIdNorm.includes('node'))) return true;
+        if (targetNorm.includes('javascript') && (sNameNorm.includes('javascript') || sIdNorm.includes('javascript'))) return true;
+        return sNameNorm === targetNorm || sIdNorm === targetNorm || sNameNorm.includes(targetNorm) || targetNorm.includes(sNameNorm);
+      });
 
       let updatedSkills;
       if (index >= 0) {
         updatedSkills = existing.map((skill, i) => i === index ? {
           ...skill,
+          name: skill.name || skillName,
           score,
           status: 'verified',
           percentile: score >= 90 ? 'Top 5% Global' : 'Top 15% Global',
@@ -497,7 +504,13 @@ export const AppProvider = ({ children }) => {
       }
 
       const currentSkills = prev?.skills || [];
-      const updatedSkillsList = currentSkills.includes(skillName) ? currentSkills : [...currentSkills, skillName];
+      const hasSkill = currentSkills.some(s => {
+        const sNorm = normalize(typeof s === 'string' ? s : (s?.name || ''));
+        if (targetNorm.includes('node') && sNorm.includes('node')) return true;
+        if (targetNorm.includes('javascript') && sNorm.includes('javascript')) return true;
+        return sNorm === targetNorm;
+      });
+      const updatedSkillsList = hasSkill ? currentSkills : [...currentSkills, skillName];
 
       const newCareerScore = (!prev?.careerScore || prev.careerScore === 0) ? Math.round(score * 0.85) : Math.min(100, prev.careerScore + 2);
       const updated = {
@@ -518,8 +531,6 @@ export const AppProvider = ({ children }) => {
       description: `Skill badge is live on your profile.`,
       action: 'view-skills'
     }, 'freelancer');
-
-    showToast(`Skill Verified! Score: ${score}/100`, 'success');
   };
 
   // Helper to persist updated freelancer profile to both active session & registered users storage

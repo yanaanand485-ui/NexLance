@@ -50,11 +50,33 @@ export const FreelancerDashboard = () => {
   // Only skills that have an Assessment Center track
   const ASSESSMENT_CENTER_KEYS = ['react', 'typescript', 'node', 'javascript'];
 
-  const rawSkills = freelancerProfile?.verifiedSkills?.length > 0
-    ? freelancerProfile.verifiedSkills
-    : (freelancerProfile?.skills?.length > 0
-        ? freelancerProfile.skills.map(s => typeof s === 'string' ? { name: s, status: 'pending' } : s)
-        : (isSarah ? sarahSkills : []));
+  const getDashboardSkills = () => {
+    if (isSarah && (!freelancerProfile?.skills || freelancerProfile.skills.length === 0) && (!freelancerProfile?.verifiedSkills || freelancerProfile.verifiedSkills.length === 0)) {
+      return sarahSkills;
+    }
+    const verified = freelancerProfile?.verifiedSkills || [];
+    const baseSkills = freelancerProfile?.skills || [];
+    const combined = [...verified];
+    baseSkills.forEach(skillName => {
+      const sName = typeof skillName === 'string' ? skillName : (skillName?.name || '');
+      const sNorm = sName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const alreadyPresent = combined.some(s => {
+        const itemNorm = (s?.name || s?.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+        if (sNorm.includes('node') && itemNorm.includes('node')) return true;
+        if (sNorm.includes('javascript') && itemNorm.includes('javascript')) return true;
+        return itemNorm === sNorm || itemNorm.includes(sNorm) || sNorm.includes(itemNorm);
+      });
+      if (!alreadyPresent) {
+        combined.push({
+          name: sName,
+          status: 'pending'
+        });
+      }
+    });
+    return combined.length > 0 ? combined : (isSarah ? sarahSkills : []);
+  };
+
+  const rawSkills = getDashboardSkills();
 
   const skillsList = rawSkills.filter(s => {
     const key = (s.name || s.id || '').toLowerCase();

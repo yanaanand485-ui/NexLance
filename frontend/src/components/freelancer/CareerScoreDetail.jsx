@@ -6,37 +6,37 @@ export const CareerScoreDetail = () => {
   const { freelancerProfile } = useApp();
 
   const isSarah = freelancerProfile?.email === 'sarah@nexlance.dev' || freelancerProfile?.id === 'fl-sarah-01';
-  const careerScore = isSarah ? 95 : 0;
+  const careerScore = isSarah ? 95 : (freelancerProfile?.careerScore || 0);
 
   const pillars = [
     {
       name: "Client Satisfaction",
-      score: isSarah ? 97 : 0,
+      score: isSarah ? 97 : (freelancerProfile?.clientSatisfactionRate || (careerScore > 0 ? 95 : 0)),
       description: "Based on verified post-project client ratings and reviews"
     },
     {
       name: "Timely Delivery",
-      score: isSarah ? 98 : 0,
+      score: isSarah ? 98 : (freelancerProfile?.onTimeDeliveryRate || (careerScore > 0 ? 96 : 0)),
       description: "Milestones delivered on or before agreed deadlines"
     },
     {
       name: "Work Quality & Test Coverage",
-      score: isSarah ? 99 : 0,
+      score: isSarah ? 99 : (freelancerProfile?.codeQualityRate || (careerScore > 0 ? Math.round(careerScore * 0.98) : 0)),
       description: "Rigorous code reviews, clean git history, and deployment quality"
     },
     {
       name: "Communication Responsiveness",
-      score: isSarah ? 95 : 0,
+      score: isSarah ? 95 : (freelancerProfile?.communicationRate || (careerScore > 0 ? 94 : 0)),
       description: "Prompt response time during active contract hours"
     },
     {
       name: "Budget Adherence",
-      score: isSarah ? 94 : 0,
+      score: isSarah ? 94 : (freelancerProfile?.budgetAdherenceRate || (careerScore > 0 ? 92 : 0)),
       description: "Delivering fully scoped milestones without unapproved scope bloat"
     },
     {
       name: "Project Completion Rate",
-      score: isSarah ? 100 : 0,
+      score: isSarah ? 100 : (freelancerProfile?.completionRate || (careerScore > 0 ? 98 : 0)),
       description: "Ratio of successfully closed and accepted projects"
     }
   ];
