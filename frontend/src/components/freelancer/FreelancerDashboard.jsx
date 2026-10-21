@@ -47,41 +47,46 @@ export const FreelancerDashboard = () => {
     { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, status: 'verified' }
   ];
 
-  // Only skills that have an Assessment Center track
-  const ASSESSMENT_CENTER_KEYS = ['react', 'typescript', 'node', 'javascript'];
+  // Only the 4 core platform skills
+  const CORE_SKILLS = ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'];
 
-  const getDashboardSkills = () => {
-    if (isSarah && (!freelancerProfile?.skills || freelancerProfile.skills.length === 0) && (!freelancerProfile?.verifiedSkills || freelancerProfile.verifiedSkills.length === 0)) {
-      return sarahSkills;
-    }
-    const verified = freelancerProfile?.verifiedSkills || [];
-    const baseSkills = freelancerProfile?.skills || [];
-    const combined = [...verified];
-    baseSkills.forEach(skillName => {
-      const sName = typeof skillName === 'string' ? skillName : (skillName?.name || '');
-      const sNorm = sName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const alreadyPresent = combined.some(s => {
-        const itemNorm = (s?.name || s?.id || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (sNorm.includes('node') && itemNorm.includes('node')) return true;
-        if (sNorm.includes('javascript') && itemNorm.includes('javascript')) return true;
-        return itemNorm === sNorm || itemNorm.includes(sNorm) || sNorm.includes(itemNorm);
-      });
-      if (!alreadyPresent) {
-        combined.push({
-          name: sName,
-          status: 'pending'
-        });
-      }
-    });
-    return combined.length > 0 ? combined : (isSarah ? sarahSkills : []);
+  const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const isMatch = (str1, str2) => {
+    const a = clean(str1);
+    const b = clean(str2);
+    return a === b || a.includes(b) || b.includes(a);
   };
 
-  const rawSkills = getDashboardSkills();
+  const getDashboardSkills = () => {
+    const verified = freelancerProfile?.verifiedSkills || [];
+    const sourceVerified = (verified.length > 0)
+      ? verified
+      : (isSarah ? sarahSkills : []);
 
-  const skillsList = rawSkills.filter(s => {
-    const key = (s.name || s.id || '').toLowerCase();
-    return ASSESSMENT_CENTER_KEYS.some(k => key.includes(k));
-  });
+    // Active selected skills
+    const activeSkills = (freelancerProfile?.skills && freelancerProfile.skills.length > 0)
+      ? freelancerProfile.skills
+      : (isSarah ? ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'] : []);
+
+    // Filter to only verified skills that have a valid score and are currently selected
+    // "jo hain sirf wo dikhao pending wlai nhi rkhni ja skills hi 4 hai to baki aaye kahan bse hata do"
+    return sourceVerified.filter(item => {
+      // Must be one of the 4 core skills
+      const isCore = CORE_SKILLS.some(c => isMatch(item.name || item.id, c));
+      if (!isCore) return false;
+
+      // Must be verified with a score (no pending items!)
+      if (item.status !== 'verified' || !item.score) return false;
+
+      // Must be in active selected skills list
+      if (activeSkills.length > 0) {
+        return activeSkills.some(s => isMatch(typeof s === 'string' ? s : s?.name, item.name || item.id));
+      }
+      return true;
+    });
+  };
+
+  const skillsList = getDashboardSkills();
 
   const services = freelancerProfile?.services || [];
 
@@ -227,43 +232,40 @@ export const FreelancerDashboard = () => {
           {/* Simple Skills List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
             {skillsList.length > 0 ? (
-              skillsList.map((skill) => {
-                const isVerified = skill.status === 'verified';
-                return (
-                  <div
-                    key={skill.name || skill.id}
+              skillsList.map((skill) => (
+                <div
+                  key={skill.name || skill.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.55rem 0.75rem',
+                    borderRadius: '6px',
+                    backgroundColor: '#F8FAFC',
+                    border: '1px solid #E2E8F0'
+                  }}
+                >
+                  <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A' }}>
+                    {skill.name}
+                  </span>
+                  <span
                     style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      padding: '0.55rem 0.75rem',
-                      borderRadius: '6px',
-                      backgroundColor: '#F8FAFC',
-                      border: '1px solid #E2E8F0'
+                      fontSize: '0.75rem',
+                      fontWeight: 600,
+                      padding: '0.15rem 0.5rem',
+                      borderRadius: '4px',
+                      backgroundColor: '#EFF6FF',
+                      color: '#1E40AF',
+                      border: '1px solid #BFDBFE'
                     }}
                   >
-                    <span style={{ fontSize: '0.875rem', fontWeight: 600, color: '#0F172A' }}>
-                      {skill.name}
-                    </span>
-                    <span
-                      style={{
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        padding: '0.15rem 0.5rem',
-                        borderRadius: '4px',
-                        backgroundColor: isVerified ? '#EFF6FF' : '#FEF3C7',
-                        color: isVerified ? '#1E40AF' : '#D97706',
-                        border: `1px solid ${isVerified ? '#BFDBFE' : '#FDE68A'}`
-                      }}
-                    >
-                      {isVerified && skill.score ? `${skill.score}/100 Verified` : 'Pending'}
-                    </span>
-                  </div>
-                );
-              })
+                    {skill.score}/100 Verified
+                  </span>
+                </div>
+              ))
             ) : (
               <div style={{ fontSize: '0.85rem', color: '#64748B', padding: '0.5rem 0' }}>
-                No skills added yet. Click 'Edit Skills' to add skills.
+                No verified skills yet. Click 'Edit Skills' to configure skills.
               </div>
             )}
           </div>

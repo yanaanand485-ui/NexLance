@@ -37,6 +37,7 @@ export const AppProvider = ({ children }) => {
     const isSarah = raw?.email === 'sarah@nexlance.dev' || raw?.id === 'fl-sarah-01';
     return {
       ...raw,
+      role: isSarah ? 'Full Stack Developer' : (raw?.role || 'Full Stack Developer'),
       services: (raw?.services && raw.services.length > 0)
         ? raw.services
         : (isSarah ? SARAH_FREELANCER.services : (NEW_FREELANCER.services || []))
@@ -584,16 +585,34 @@ export const AppProvider = ({ children }) => {
       const skillsArray = newSkills || prev?.skills || [];
       const existingVerified = prev?.verifiedSkills || [];
 
+      const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const isMatch = (str1, str2) => {
+        const a = clean(str1);
+        const b = clean(str2);
+        return a === b || a.includes(b) || b.includes(a);
+      };
+
+      const isSarah = prev?.email === 'sarah@nexlance.dev' || prev?.id === 'fl-sarah-01';
+      const sarahDefaultVerified = [
+        { id: 'react', name: 'React', score: 95, percentile: 'Top 2% Global', status: 'verified', verifiedDate: 'Dec 2024' },
+        { id: 'typescript', name: 'TypeScript', score: 96, percentile: 'Top 1% Global', status: 'verified', verifiedDate: 'Feb 2025' },
+        { id: 'nodejs', name: 'Node.js', score: 92, percentile: 'Top 5% Global', status: 'verified', verifiedDate: 'Jan 2025' },
+        { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, percentile: 'Top 2% Global', status: 'verified', verifiedDate: 'Jan 2025' }
+      ];
+
       // Map every selected skill to verifiedSkills:
       // If already verified, keep existing score and status.
-      // If newly added, set status: 'pending', score: null so it appears immediately!
+      // If Sarah selected one of her core verified skills, retain the verified score!
       const updatedVerified = skillsArray.map(skillName => {
-        const found = existingVerified.find(s =>
-          (s.name && s.name.toLowerCase() === skillName.toLowerCase()) ||
-          (s.id && s.id.toLowerCase() === skillName.toLowerCase().replace(/[^a-z0-9]/g, '-'))
-        );
-        if (found) {
-          return found;
+        const found = existingVerified.find(s => isMatch(s.name || s.id, skillName))
+          || (isSarah ? sarahDefaultVerified.find(s => isMatch(s.name || s.id, skillName)) : null);
+
+        if (found && found.score) {
+          return {
+            ...found,
+            name: skillName,
+            status: 'verified'
+          };
         }
         return {
           id: skillName.toLowerCase().replace(/[^a-z0-9]/g, '-'),
@@ -605,10 +624,10 @@ export const AppProvider = ({ children }) => {
 
       const updated = {
         ...prev,
-        role: newRole || prev?.role || 'Full-Stack Developer',
+        role: newRole || prev?.role || 'Full Stack Developer',
         skills: skillsArray,
         verifiedSkills: updatedVerified,
-        experienceLevel: newExp || prev?.experienceLevel || 'Mid-Level'
+        experienceLevel: newExp || prev?.experienceLevel || 'Senior / Expert'
       };
       syncStoredUserProfile(updated);
       return updated;

@@ -47,7 +47,7 @@ export const Sidebar = () => {
             {isFreelancer ? freelancerProfile.name : clientProfile.name}
           </h3>
           <p className="sidebar-user-role" style={{ marginBottom: 0 }}>
-            {isFreelancer ? freelancerProfile.role : clientProfile.contactPerson}
+            {isFreelancer ? (freelancerProfile?.role || 'Full Stack Developer') : clientProfile.contactPerson}
           </p>
         </div>
 

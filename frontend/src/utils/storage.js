@@ -80,22 +80,38 @@ export const getStoredUsers = () => {
       const missingDefaults = DEFAULT_USERS.filter(d => !existingKeys.has(`${d.email?.toLowerCase()}_${d.role}`));
       
       // Also ensure standard default accounts have their password and profile refreshed if needed
+      const CORE_ALLOWED_SKILLS = ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'];
+      const isCoreSkill = (name) => {
+        const s = (name || '').toLowerCase();
+        return CORE_ALLOWED_SKILLS.some(c => c.toLowerCase().includes(s.slice(0, 4)) || s.includes(c.toLowerCase().slice(0, 4)));
+      };
+
       const updatedParsed = sanitized.map(user => {
         const defaultMatch = DEFAULT_USERS.find(d => d.email?.toLowerCase() === user.email?.toLowerCase() && d.role === user.role);
         if (defaultMatch) {
           if (user.id === 'fl-sarah-01' || user.email === 'sarah@nexlance.dev') {
+            const rawSkills = user.profile?.skills || SARAH_FREELANCER.skills;
+            const cleanSkills = rawSkills.filter(isCoreSkill);
+
+            const rawVerified = user.profile?.verifiedSkills || SARAH_FREELANCER.verifiedSkills;
+            const cleanVerified = rawVerified
+              .filter(v => isCoreSkill(v.name || v.id))
+              .map(v => {
+                if ((v.name || v.id || '').toLowerCase().includes('node')) {
+                  return { ...v, id: 'nodejs', name: 'Node.js', score: v.score || 92, status: 'verified' };
+                }
+                return v;
+              });
+
             return {
               ...user,
               password: defaultMatch.password,
               profile: {
                 ...SARAH_FREELANCER,
                 ...user.profile,
-                verifiedSkills: (user.profile?.verifiedSkills && user.profile.verifiedSkills.length > 0)
-                  ? user.profile.verifiedSkills
-                  : SARAH_FREELANCER.verifiedSkills,
-                skills: (user.profile?.skills && user.profile.skills.length > 0)
-                  ? user.profile.skills
-                  : SARAH_FREELANCER.skills,
+                role: 'Full Stack Developer',
+                verifiedSkills: cleanVerified.length > 0 ? cleanVerified : SARAH_FREELANCER.verifiedSkills,
+                skills: cleanSkills.length > 0 ? cleanSkills : SARAH_FREELANCER.skills,
                 services: (user.profile?.services && user.profile.services.length > 0)
                   ? user.profile.services
                   : (SARAH_FREELANCER.services || [])
@@ -146,8 +162,32 @@ export const getStoredActiveUser = () => {
       if (parsed.profile) {
         parsed.profile.avatar = "";
         if (parsed.id === 'fl-sarah-01' || parsed.email === 'sarah@nexlance.dev') {
+          parsed.profile.role = 'Full Stack Developer';
+          const CORE_ALLOWED_SKILLS = ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'];
+          const isCoreSkill = (name) => {
+            const s = (name || '').toLowerCase();
+            return CORE_ALLOWED_SKILLS.some(c => c.toLowerCase().includes(s.slice(0, 4)) || s.includes(c.toLowerCase().slice(0, 4)));
+          };
+
+          if (parsed.profile.skills) {
+            parsed.profile.skills = parsed.profile.skills.filter(isCoreSkill);
+          }
+          if (parsed.profile.verifiedSkills) {
+            parsed.profile.verifiedSkills = parsed.profile.verifiedSkills
+              .filter(v => isCoreSkill(v.name || v.id))
+              .map(v => {
+                if ((v.name || v.id || '').toLowerCase().includes('node')) {
+                  return { ...v, id: 'nodejs', name: 'Node.js', score: v.score || 92, status: 'verified' };
+                }
+                return v;
+              });
+          }
+
           if (!parsed.profile.verifiedSkills || parsed.profile.verifiedSkills.length === 0) {
             parsed.profile.verifiedSkills = SARAH_FREELANCER.verifiedSkills;
+          }
+          if (!parsed.profile.skills || parsed.profile.skills.length === 0) {
+            parsed.profile.skills = SARAH_FREELANCER.skills;
           }
           if (!parsed.profile.services || parsed.profile.services.length === 0) {
             parsed.profile.services = SARAH_FREELANCER.services;

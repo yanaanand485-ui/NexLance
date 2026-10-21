@@ -3,7 +3,7 @@
 export const SARAH_FREELANCER = {
   id: "fl-sarah-01",
   name: "Sarah Jenkins",
-  role: "Principal Full-Stack & Cloud Architect",
+  role: "Full Stack Developer",
   avatar: "",
   banner: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&auto=format&fit=crop&q=80",
   location: "New York, NY (Remote)",
@@ -13,7 +13,7 @@ export const SARAH_FREELANCER = {
   available: true,
   availabilityText: "Available for enterprise contracts (25 hrs/week)",
   memberSince: "January 2023",
-  bio: "Lead Software Architect with 8+ years building resilient microservices, high-throughput streaming systems, and responsive React web platforms. 48 completed contracts with 99% code quality rating.",
+  bio: "Lead Full Stack Developer with 8+ years building resilient microservices, high-throughput streaming systems, and responsive React web platforms. 48 completed contracts with 99% code quality rating.",
   careerScore: 95,
   rating: 4.96,
   totalReviews: 45,
@@ -40,7 +40,7 @@ export const SARAH_FREELANCER = {
   verifiedSkills: [
     { id: "react", name: "React", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Dec 2024", retakeDate: "Dec 2025" },
     { id: "typescript", name: "TypeScript", score: 96, percentile: "Top 1% Global", status: "verified", verifiedDate: "Feb 2025", retakeDate: "Feb 2026" },
-    { id: "nodejs", name: "Node.js Microservices", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
+    { id: "nodejs", name: "Node.js", score: 92, percentile: "Top 5% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" },
     { id: "javascript", name: "JavaScript (ES6+)", score: 95, percentile: "Top 2% Global", status: "verified", verifiedDate: "Jan 2025", retakeDate: "Jan 2026" }
   ],
   proofOfWork: [
@@ -48,9 +48,9 @@ export const SARAH_FREELANCER = {
       id: "pow-sarah-1",
       title: "OmniCart Enterprise E-Commerce",
       client: "Meridian Retail Global",
-      role: "Lead Cloud Architect",
+      role: "Lead Full Stack Developer",
       period: "3 months (Completed Jan 2025)",
-      skills: ["React", "Next.js", "TypeScript", "AWS", "GraphQL"],
+      skills: ["React", "TypeScript", "Node.js", "JavaScript (ES6+)"],
       rating: 5.0,
       clientQuote: "Sarah delivered our multi-region enterprise storefront ahead of schedule with 99.99% uptime.",
       satisfaction: 99,
@@ -62,7 +62,7 @@ export const SARAH_FREELANCER = {
         { label: "Conversion Lift", value: "+28.4%" },
         { label: "Test Coverage", value: "98.5%" }
       ],
-      description: "Architected a scalable Next.js 14 App Router platform with AWS Lambda edge SSR, multi-currency checkout, and sub-80ms faceted product search."
+      description: "Architected a scalable full-stack application with modern React frontend, Node.js API services, multi-currency checkout, and sub-80ms faceted product search."
     }
   ],
   services: [

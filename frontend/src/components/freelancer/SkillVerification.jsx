@@ -53,27 +53,37 @@ export const SkillVerification = () => {
     { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, status: 'verified' }
   ];
 
-  // Merge verified and pending skills so unverified skills never disappear
+  // Active selected skills
+  const selectedSkills = (freelancerProfile?.skills && freelancerProfile.skills.length > 0)
+    ? freelancerProfile.skills
+    : (isSarah ? ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'] : (freelancerProfile?.verifiedSkills?.map(v => v.name) || []));
+
+  // Only show verified skills that have a valid score and are currently selected; no pending skills
   const getSkillsList = () => {
     const verified = freelancerProfile?.verifiedSkills || [];
-    const base = freelancerProfile?.skills || [];
-    const combined = [...verified];
+    const sourceVerified = (verified.length > 0)
+      ? verified
+      : (isSarah ? sarahSkills : []);
 
-    base.forEach(name => {
-      const alreadyPresent = combined.some(v => isMatch(v.name || v.id, name));
-      if (!alreadyPresent) {
-        combined.push({ name, status: 'pending', score: null });
-      }
+    return sourceVerified.filter(item => {
+      // Must match one of the 4 core tracks
+      const isCore = TRACKS.some(t => isMatch(item.name || item.id, t.name || t.id));
+      if (!isCore) return false;
+
+      // Must be verified with a score (no pending items!)
+      if (item.status !== 'verified' || !item.score) return false;
+
+      // Must be currently selected
+      return selectedSkills.some(s => isMatch(typeof s === 'string' ? s : s?.name, item.name || item.id));
     });
-
-    return combined.length > 0 ? combined : (isSarah ? sarahSkills : []);
   };
 
   const skillsList = getSkillsList();
 
-  // Filter tracks to only show what the freelancer has added
+  // Filter assessment tracks: ONLY show for skills that are currently selected/clicked!
+  // If user did not click/select JavaScript, JavaScript assessment track is NOT shown!
   const availableTracks = TRACKS.filter(track =>
-    skillsList.some(skill => isMatch(skill.name || skill.id, track.name || track.id))
+    selectedSkills.some(skill => isMatch(typeof skill === 'string' ? skill : skill?.name, track.name || track.id))
   );
 
   const startTest = (track) => {
@@ -146,39 +156,36 @@ export const SkillVerification = () => {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             {skillsList.length > 0 ? (
-              skillsList.map((skill, idx) => {
-                const isVerified = skill.status === 'verified' && skill.score;
-                return (
-                  <div
-                    key={skill.name || idx}
-                    style={{
-                      backgroundColor: '#FFFFFF',
-                      border: '1px solid #E2E8F0',
-                      borderRadius: '8px',
-                      padding: '0.85rem 1.2rem',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between'
-                    }}
-                  >
-                    <div>
-                      <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
-                        {skill.name}
-                      </h3>
-                      <span style={{ fontSize: '0.75rem', color: isVerified ? '#1E40AF' : '#64748B', fontWeight: 600 }}>
-                        {isVerified ? 'Verified' : 'Pending'}
-                      </span>
-                    </div>
-
-                    <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A' }}>
-                      {isVerified ? `${skill.score}/100` : <span style={{ fontSize: '0.8rem', color: '#64748B' }}>Pending</span>}
-                    </div>
+              skillsList.map((skill, idx) => (
+                <div
+                  key={skill.name || idx}
+                  style={{
+                    backgroundColor: '#FFFFFF',
+                    border: '1px solid #E2E8F0',
+                    borderRadius: '8px',
+                    padding: '0.85rem 1.2rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between'
+                  }}
+                >
+                  <div>
+                    <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+                      {skill.name}
+                    </h3>
+                    <span style={{ fontSize: '0.75rem', color: '#1E40AF', fontWeight: 600 }}>
+                      Verified
+                    </span>
                   </div>
-                );
-              })
+
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A' }}>
+                    {skill.score}/100
+                  </div>
+                </div>
+              ))
             ) : (
               <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
-                <p style={{ margin: '0 0 0.8rem', color: '#64748B', fontSize: '0.9rem' }}>No skills added yet.</p>
+                <p style={{ margin: '0 0 0.8rem', color: '#64748B', fontSize: '0.9rem' }}>No verified skills yet.</p>
                 <button type="button" onClick={() => setIsSkillModalOpen(true)} className="btn btn-primary btn-sm">
                   + Add Skills
                 </button>

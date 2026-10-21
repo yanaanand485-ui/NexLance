@@ -10,7 +10,7 @@ const ASSESSMENT_CENTER_SKILLS = [
 ];
 
 const ROLES = [
-  'Full-Stack Developer',
+  'Full Stack Developer',
   'Frontend Engineer',
   'Backend Developer'
 ];
@@ -18,23 +18,36 @@ const ROLES = [
 export const SkillSelectionModal = ({ isOpen, onClose, isOnboarding }) => {
   const { freelancerProfile, updateFreelancerSkills, showToast } = useApp();
 
-  const [selectedRole, setSelectedRole] = useState('Full-Stack Developer');
+  const [selectedRole, setSelectedRole] = useState('Full Stack Developer');
   const [selectedSkills, setSelectedSkills] = useState([]);
 
   useEffect(() => {
     if (isOpen) {
-      setSelectedRole(freelancerProfile?.role || 'Full-Stack Developer');
-      // Only keep skills that are part of the Assessment Center
-      const existing = (freelancerProfile?.skills?.length > 0
+      setSelectedRole(freelancerProfile?.role || 'Full Stack Developer');
+
+      const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const isMatch = (str1, str2) => {
+        const a = clean(str1);
+        const b = clean(str2);
+        return a === b || a.includes(b) || b.includes(a);
+      };
+
+      const currentSkills = (freelancerProfile?.skills && freelancerProfile.skills.length > 0)
         ? freelancerProfile.skills
-        : (freelancerProfile?.verifiedSkills?.map(s => s.name) || [])
-      ).filter(skillName =>
-        ASSESSMENT_CENTER_SKILLS.some(
-          ask => ask.toLowerCase() === skillName.toLowerCase() ||
-                 (ask.startsWith('JavaScript') && skillName.toLowerCase().startsWith('javascript'))
-        )
-      );
-      setSelectedSkills(existing.length > 0 ? existing : ['React']);
+        : (freelancerProfile?.verifiedSkills?.map(s => s.name) || []);
+
+      const isSarah = freelancerProfile?.email === 'sarah@nexlance.dev' || freelancerProfile?.id === 'fl-sarah-01';
+
+      if (currentSkills.length > 0) {
+        const matched = ASSESSMENT_CENTER_SKILLS.filter(track =>
+          currentSkills.some(s => isMatch(typeof s === 'string' ? s : s?.name, track))
+        );
+        setSelectedSkills(matched.length > 0 ? matched : ['React']);
+      } else if (isSarah) {
+        setSelectedSkills([...ASSESSMENT_CENTER_SKILLS]);
+      } else {
+        setSelectedSkills(['React']);
+      }
     }
   }, [isOpen, freelancerProfile]);
 
@@ -60,7 +73,7 @@ export const SkillSelectionModal = ({ isOpen, onClose, isOnboarding }) => {
     updateFreelancerSkills({
       role: selectedRole,
       skills: selectedSkills,
-      experienceLevel: freelancerProfile?.experienceLevel || 'Mid-Level'
+      experienceLevel: freelancerProfile?.experienceLevel || 'Senior / Expert'
     });
     if (onClose) onClose();
   };

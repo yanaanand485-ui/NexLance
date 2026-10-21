@@ -201,7 +201,7 @@ export const AuthModal = () => {
         { label: '💼 Enterprise Client:', email: 'client@nexlance.dev' }
       ]
     : [
-        { label: '🌟 Sarah Jenkins (React Architect · Score 95):', email: 'sarah@nexlance.dev' }
+        { label: '🌟 Sarah Jenkins (Full Stack Developer · Score 95):', email: 'sarah@nexlance.dev' }
       ];
 
   return (
