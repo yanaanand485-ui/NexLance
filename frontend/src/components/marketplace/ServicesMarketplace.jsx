@@ -15,7 +15,6 @@ import {
 } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
-import { BackToDashboardButton } from '../common/BackToDashboardButton';
 
 export const ServicesMarketplace = () => {
   const { role } = useApp();
@@ -57,11 +56,6 @@ export const ServicesMarketplace = () => {
 
   return (
     <main className={role === 'client' ? 'dashboard-main' : ''} style={role === 'client' ? { width: '100%', paddingBottom: '4rem' } : { maxWidth: '1320px', margin: '0 auto', padding: '2rem 1.5rem 5rem', width: '100%' }}>
-      {/* Navigation Header */}
-      <BackToDashboardButton
-        label="Back to Home"
-        fallbackView="landing"
-      />
 
       {/* Hero Header */}
       <div style={{ marginBottom: '2.5rem' }}>

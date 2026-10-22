@@ -150,11 +150,16 @@ export const saveStoredUsers = (users) => {
 
 export const getStoredActiveUser = () => {
   try {
-    const saved = localStorage.getItem(SESSION_STORAGE_KEY);
+    // Clear any stale persistent active user from localStorage so fresh sessions always open public landing page
+    if (localStorage.getItem(SESSION_STORAGE_KEY)) {
+      localStorage.removeItem(SESSION_STORAGE_KEY);
+    }
+
+    const saved = sessionStorage.getItem(SESSION_STORAGE_KEY);
     if (!saved) return null;
     const parsed = JSON.parse(saved);
     if (parsed?.email === 'alex@nexlance.dev' || parsed?.email === 'priya@nexlance.dev') {
-      localStorage.removeItem(SESSION_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
       return null;
     }
     if (parsed) {
@@ -197,20 +202,21 @@ export const getStoredActiveUser = () => {
     }
     return parsed;
   } catch (err) {
-    console.error('Error reading active session from localStorage:', err);
+    console.error('Error reading active session from sessionStorage:', err);
     return null;
   }
 };
 
 export const saveStoredActiveUser = (user) => {
   try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
     if (user) {
-      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
+      sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(SESSION_STORAGE_KEY);
+      sessionStorage.removeItem(SESSION_STORAGE_KEY);
     }
   } catch (err) {
-    console.error('Error saving active session to localStorage:', err);
+    console.error('Error saving active session to sessionStorage:', err);
   }
 };
 

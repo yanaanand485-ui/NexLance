@@ -7,12 +7,9 @@ import { AuthModal } from './components/common/AuthModal';
 import { SkillSelectionModal } from './components/common/SkillSelectionModal';
 // Pages & Views
 import { LandingPage } from './pages/LandingPage';
-import { TalentDiscovery } from './components/marketplace/TalentDiscovery';
 import { ProjectDiscovery } from './components/marketplace/ProjectDiscovery';
 import { ServicesMarketplace } from './components/marketplace/ServicesMarketplace';
-import { FreelancerProfile } from './components/marketplace/FreelancerProfile';
 import { ProjectDetail } from './components/marketplace/ProjectDetail';
-import { ServiceDetail } from './components/marketplace/ServiceDetail';
 
 import { FreelancerDashboard } from './components/freelancer/FreelancerDashboard';
 import { FreelancerServices } from './components/freelancer/FreelancerServices';
@@ -44,9 +41,6 @@ const MainRouter = () => {
     const publicAllowedViews = [
       'landing',
       'services-marketplace',
-      'service-detail',
-      'freelancer-profile',
-      'talent-discovery',
       'project-discovery',
       'project-detail'
     ];
@@ -65,8 +59,6 @@ const MainRouter = () => {
     switch (currentView) {
       case 'landing':
         return <LandingPage />;
-      case 'talent-discovery':
-        return role === 'client' ? renderDashboardView(FindTalent) : <TalentDiscovery />;
       case 'project-discovery':
         return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
       case 'services-marketplace':
@@ -74,13 +66,6 @@ const MainRouter = () => {
           return renderDashboardView(FreelancerDashboard);
         }
         return role === 'client' ? renderDashboardView(ExploreServices) : <ServicesMarketplace />;
-      case 'service-detail':
-        if (role === 'freelancer') {
-          return renderDashboardView(FreelancerDashboard);
-        }
-        return role === 'client' ? renderDashboardView(ExploreServices) : <ServiceDetail />;
-      case 'freelancer-profile':
-        return role === 'client' ? renderDashboardView(FindTalent) : <FreelancerProfile />;
       case 'project-detail':
         return role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />;
 
@@ -97,6 +82,7 @@ const MainRouter = () => {
       case 'client-dashboard':
         return renderDashboardView(ClientDashboard);
       case 'client-find-talent':
+      case 'talent-discovery':
         return renderDashboardView(FindTalent);
       case 'client-my-projects':
         return renderDashboardView(MyProjects);
@@ -108,7 +94,7 @@ const MainRouter = () => {
     }
   };
 
-  const showFooter = role === 'public' && ['landing', 'talent-discovery', 'project-discovery', 'services-marketplace', 'freelancer-profile', 'project-detail', 'service-detail'].includes(currentView);
+  const showFooter = role === 'public' && ['landing', 'project-discovery', 'services-marketplace', 'project-detail'].includes(currentView);
 
   return (
     <div className="app-container">

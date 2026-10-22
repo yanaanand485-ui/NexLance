@@ -1,16 +1,5 @@
 import React from 'react';
-import {
-  TrendingUp,
-  CheckCircle2,
-  FileText,
-  Plus,
-  Star,
-  Edit3,
-  Trophy,
-  ShieldCheck,
-  Clock,
-  Layers
-} from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
 
@@ -31,7 +20,6 @@ export const FreelancerDashboard = () => {
   // Stats: For Sarah, keep exact values static; for other users, start at 0 and update dynamically
   const careerScore = isSarah ? 95 : (freelancerProfile?.careerScore || 0);
   const activeProjects = isSarah ? 4 : (freelancerProfile?.activeProjects || 0);
-  const applications = isSarah ? 12 : (freelancerProfile?.applications || 0);
   const completedProjects = isSarah ? 48 : (freelancerProfile?.completedProjects || 0);
   const isNewUser = !isSarah && careerScore === 0 && completedProjects === 0;
 

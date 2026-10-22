@@ -59,7 +59,7 @@ export const Navbar = () => {
     },
     {
       label: 'Services',
-      active: currentView === 'services-marketplace' || currentView === 'service-detail',
+      active: currentView === 'services-marketplace',
       onClick: () => {
         showToast('Please Get Started first to explore all services.', 'info');
         setAuthMode('signup');

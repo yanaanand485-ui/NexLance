@@ -124,9 +124,7 @@ export const AppProvider = ({ children }) => {
     }
 
     if (payload) {
-      if (targetView === 'freelancer-profile') setSelectedFreelancer(payload);
       if (targetView === 'project-detail') setSelectedProject(payload);
-      if (targetView === 'service-detail') setSelectedService(payload);
     }
 
     if (pushHistory) {
@@ -175,15 +173,9 @@ export const AppProvider = ({ children }) => {
           targetView = getDefaultDashboard(role);
         }
         if (event.state.payload && event.state.payload.id) {
-          if (targetView === 'service-detail') {
-            const found = SERVICES.find(s => s.id === event.state.payload.id);
-            if (found) setSelectedService(found);
-          } else if (targetView === 'project-detail') {
+          if (targetView === 'project-detail') {
             const found = PROJECTS.find(p => p.id === event.state.payload.id);
             if (found) setSelectedProject(found);
-          } else if (targetView === 'freelancer-profile') {
-            const found = FREELANCERS.find(f => f.id === event.state.payload.id);
-            if (found) setSelectedFreelancer(found);
           }
         }
         setCurrentView(targetView);
