@@ -5,10 +5,11 @@ import { FREELANCERS } from '../../data/mockData';
 import { CareerScoreBadge, VerifiedSkillBadge } from './ClientBadge';
 
 export const MyProjects = () => {
-  const { activeProjectsList, addNewProject, showToast } = useApp();
+  const { activeProjectsList, addNewProject, showToast, isProjectsLoading } = useApp();
 
   // Modals state
   const [isPostModalOpen, setIsPostModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [activeProjectApplicants, setActiveProjectApplicants] = useState(null);
 
   // New Project Form State
@@ -25,7 +26,7 @@ export const MyProjects = () => {
   const filteredProjects = activeProjectsList;
 
   // Handle post new project submit
-  const handleCreateProject = (e) => {
+  const handleCreateProject = async (e) => {
     e.preventDefault();
     if (!newProject.title.trim() || !newProject.description.trim()) {
       showToast('Please enter a project title and description.', 'warning');
@@ -37,30 +38,37 @@ export const MyProjects = () => {
       .map(s => s.trim())
       .filter(Boolean);
 
-    addNewProject({
-      title: newProject.title,
-      category: newProject.category,
-      budget: newProject.budget,
-      budgetType: newProject.budgetType,
-      deadline: newProject.deadline,
-      description: newProject.description,
-      requiredSkills: skillsArray.length > 0 ? skillsArray : ['React', 'Web Development'],
-      status: 'Open',
-      applicantsCount: 0
-    });
+    try {
+      setIsSubmitting(true);
+      await addNewProject({
+        title: newProject.title,
+        category: newProject.category,
+        budget: newProject.budget,
+        budgetType: newProject.budgetType,
+        deadline: newProject.deadline,
+        description: newProject.description,
+        requiredSkills: skillsArray.length > 0 ? skillsArray : ['React', 'Web Development'],
+        status: 'Open',
+        applicantsCount: 0
+      });
 
-    // Reset and close modal
-    setNewProject({
-      title: '',
-      category: 'Web Development',
-      budget: '$1,500 – $2,500',
-      budgetType: 'Fixed Price',
-      deadline: '3 weeks',
-      description: '',
-      skills: 'React, TypeScript'
-    });
-    setIsPostModalOpen(false);
-    showToast('Your project has been posted successfully!', 'success');
+      // Reset and close modal
+      setNewProject({
+        title: '',
+        category: 'Web Development',
+        budget: '$1,500 – $2,500',
+        budgetType: 'Fixed Price',
+        deadline: '3 weeks',
+        description: '',
+        skills: 'React, TypeScript'
+      });
+      setIsPostModalOpen(false);
+      showToast('Project posted successfully!', 'success');
+    } catch {
+      showToast('Error saving project to API', 'error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Mock applicants for the modal
@@ -86,15 +94,22 @@ export const MyProjects = () => {
       </div>
 
       {/* 2. Projects Counter */}
-      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600 }}>
-          Showing {filteredProjects.length} Projects
-        </span>
+      <div style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <span style={{ fontSize: '0.9rem', color: '#64748B', fontWeight: 600 }}>
+            Showing {filteredProjects.length} Projects
+          </span>
+        </div>
       </div>
 
       {/* 3. Projects List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        {filteredProjects.length === 0 ? (
+        {isProjectsLoading ? (
+          <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'inline-block', width: '28px', height: '28px', border: '3px solid #E2E8F0', borderTopColor: '#2563EB', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            <p style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: '#64748B' }}>Loading projects...</p>
+          </div>
+        ) : filteredProjects.length === 0 ? (
           <div
             style={{
               backgroundColor: '#FFFFFF',
@@ -125,7 +140,7 @@ export const MyProjects = () => {
               {/* Top row: Title, Status, and Action */}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '0.75rem' }}>
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.35rem', flexWrap: 'wrap' }}>
                     <h2 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
                       {project.title}
                     </h2>
@@ -392,8 +407,9 @@ export const MyProjects = () => {
                   type="submit"
                   className="btn btn-primary"
                   style={{ flex: 1 }}
+                  disabled={isSubmitting}
                 >
-                  Publish Project
+                  {isSubmitting ? 'Publishing via API...' : 'Publish Project'}
                 </button>
               </div>
             </form>

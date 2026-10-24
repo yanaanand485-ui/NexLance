@@ -1,7 +1,6 @@
 import {
   SARAH_FREELANCER,
-  CLIENT_DATA,
-  PROJECTS
+  CLIENT_DATA
 } from '../data/mockData';
 
 // Local Storage Keys
@@ -220,28 +219,13 @@ export const saveStoredActiveUser = (user) => {
   }
 };
 
-export const getStoredProjects = () => {
+// Projects are now fetched and saved dynamically via REST API (src/services/api.js)
+// Clean up any deprecated localStorage project cache
+export const cleanupDeprecatedStorage = () => {
   try {
-    const saved = localStorage.getItem(PROJECTS_STORAGE_KEY);
-    if (!saved) {
-      localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(PROJECTS));
-      return PROJECTS;
-    }
-    const parsed = JSON.parse(saved);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      return parsed;
-    }
-    return PROJECTS;
-  } catch (err) {
-    console.error('Error reading projects from localStorage:', err);
-    return PROJECTS;
+    localStorage.removeItem(PROJECTS_STORAGE_KEY);
+  } catch {
+    // Ignore storage errors
   }
 };
 
-export const saveStoredProjects = (projects) => {
-  try {
-    localStorage.setItem(PROJECTS_STORAGE_KEY, JSON.stringify(projects));
-  } catch (err) {
-    console.error('Error saving projects to localStorage:', err);
-  }
-};

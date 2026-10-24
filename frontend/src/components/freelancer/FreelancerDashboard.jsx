@@ -1,7 +1,8 @@
-import React from 'react';
-import { Plus } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Plus, ArrowUpRight } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
+import { DUMMY_JSON_USERS_URL, transformDummyUser } from '../../services/dummyJsonApi';
 
 export const FreelancerDashboard = () => {
   const {
@@ -11,23 +12,61 @@ export const FreelancerDashboard = () => {
     setIsSkillModalOnboarding,
     openAddServiceModal,
     openEditServiceModal,
-    deleteFreelancerService
+    deleteFreelancerService,
+    showToast
   } = useApp();
 
-  // Check if current user is Sarah Jenkins or a new user
+  const [opportunities, setOpportunities] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch basic client users via .then(), .catch(), .finally() - strictly no async/await
+  useEffect(() => {
+    fetch(DUMMY_JSON_USERS_URL)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        const users = (data.users || []).map(transformDummyUser);
+        // Create simple opportunities from fetched users
+        const opps = users.slice(0, 4).map((u, i) => ({
+          id: `opp-${u.id}`,
+          title: i === 0
+            ? 'Full-Stack React & Node.js Platform'
+            : i === 1
+              ? 'Responsive Web App & Dashboard'
+              : i === 2
+                ? 'API Integration & Frontend Optimization'
+                : 'Modern UI/UX Design System Implementation',
+          clientName: u.name,
+          clientAvatar: u.image,
+          company: u.company,
+          email: u.email,
+          budget: `$${1200 + (u.id * 100)} – $${2000 + (u.id * 150)}`,
+          deadline: `${2 + (u.id % 3)} weeks`,
+          skills: u.topSkills ? u.topSkills.map(s => s.name) : ['React', 'JavaScript']
+        }));
+        setOpportunities(opps);
+      })
+      .catch((err) => {
+        console.error('Error loading opportunities:', err);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, []);
+
   const isSarah = freelancerProfile?.email === 'sarah@nexlance.dev' || freelancerProfile?.id === 'fl-sarah-01';
 
-  // Stats: For Sarah, keep exact values static; for other users, start at 0 and update dynamically
   const careerScore = isSarah ? 95 : (freelancerProfile?.careerScore || 0);
   const activeProjects = isSarah ? 4 : (freelancerProfile?.activeProjects || 0);
   const completedProjects = isSarah ? 48 : (freelancerProfile?.completedProjects || 0);
   const isNewUser = !isSarah && careerScore === 0 && completedProjects === 0;
 
-  // Percentage metrics: 0% for beginners, increases with performance/career score/projects
   const clientSatisfaction = isSarah ? 97 : (freelancerProfile?.clientSatisfaction || (completedProjects > 0 ? 100 : 0));
   const onTimeDelivery = isSarah ? 98 : (freelancerProfile?.onTimeDelivery || (completedProjects > 0 ? 100 : 0));
   const codeQuality = isSarah ? 99 : (freelancerProfile?.codeQualityRate || freelancerProfile?.codeQuality || (careerScore > 0 ? Math.round(careerScore * 0.98) : 0));
-  
+
   const sarahSkills = [
     { id: 'react', name: 'React', score: 95, status: 'verified' },
     { id: 'typescript', name: 'TypeScript', score: 96, status: 'verified' },
@@ -35,7 +74,6 @@ export const FreelancerDashboard = () => {
     { id: 'javascript', name: 'JavaScript (ES6+)', score: 95, status: 'verified' }
   ];
 
-  // Only the 4 core platform skills
   const CORE_SKILLS = ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'];
 
   const clean = s => (s || '').toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -51,22 +89,14 @@ export const FreelancerDashboard = () => {
       ? verified
       : (isSarah ? sarahSkills : []);
 
-    // Active selected skills
     const activeSkills = (freelancerProfile?.skills && freelancerProfile.skills.length > 0)
       ? freelancerProfile.skills
       : (isSarah ? ['React', 'TypeScript', 'Node.js', 'JavaScript (ES6+)'] : []);
 
-    // Filter to only verified skills that have a valid score and are currently selected
-    // "jo hain sirf wo dikhao pending wlai nhi rkhni ja skills hi 4 hai to baki aaye kahan bse hata do"
     return sourceVerified.filter(item => {
-      // Must be one of the 4 core skills
       const isCore = CORE_SKILLS.some(c => isMatch(item.name || item.id, c));
       if (!isCore) return false;
-
-      // Must be verified with a score (no pending items!)
       if (item.status !== 'verified' || !item.score) return false;
-
-      // Must be in active selected skills list
       if (activeSkills.length > 0) {
         return activeSkills.some(s => isMatch(typeof s === 'string' ? s : s?.name, item.name || item.id));
       }
@@ -75,25 +105,33 @@ export const FreelancerDashboard = () => {
   };
 
   const skillsList = getDashboardSkills();
-
   const services = freelancerProfile?.services || [];
+
+  const isMeridian = freelancerProfile?.email?.toLowerCase().includes('meridian') ||
+    freelancerProfile?.name?.toLowerCase().includes('meridian');
+
+  const greeting = isMeridian ? 'Welcome, Meridian' : 'Welcome';
+
+  const handleApplyOpportunity = (opp) => {
+    showToast(`Proposal submitted for "${opp.title}" to ${opp.clientName}!`, 'success');
+  };
 
   return (
     <div className="dashboard-main" style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 2.5rem 4rem' }}>
       {/* Header Greeting */}
       <div className="dashboard-header" style={{ marginBottom: '2.5rem' }}>
         <h1 className="dashboard-title" style={{ fontSize: '2.2rem', fontWeight: 800, color: '#0F172A', marginBottom: '0.5rem' }}>
-          Welcome, {freelancerProfile.name}
+          {greeting}
         </h1>
-        <p className="dashboard-subtitle" style={{ fontSize: '1rem', color: '#64748B', lineHeight: 1.5 }}>
+        <p className="dashboard-subtitle" style={{ fontSize: '1rem', color: '#64748B', lineHeight: 1.5, margin: 0 }}>
           {!isNewUser
             ? 'Here is your professional overview. Your career data is tracking ahead of industry averages this week.'
             : 'Welcome to NexLance! Complete skill assessments and take on your first project to build your career score.'}
         </p>
       </div>
 
-      {/* 3 Stat Summary Cards with Generous Spacing */}
-      <div className="stats-summary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.75rem', marginBottom: '2.75rem' }}>
+      {/* 3 Stat Summary Cards */}
+      <div className="stats-summary-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.75rem', marginBottom: '2.75rem' }}>
         {/* Stat 1: Career Score */}
         <div className="stat-card" style={{ padding: '1.75rem', minHeight: '150px', borderRadius: '12px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
           <div className="stat-card-label" style={{ marginBottom: '0.85rem' }}>
@@ -147,8 +185,8 @@ export const FreelancerDashboard = () => {
         </div>
       </div>
 
-      {/* Middle Row: Performance Metrics & Verified Skills Card with Spacious Layout */}
-      <div className="performance-grid" style={{ display: 'grid', gridTemplateColumns: '1.35fr 1.05fr', gap: '2rem' }}>
+      {/* Middle Row: Performance Metrics & Verified Skills Card */}
+      <div className="performance-grid" style={{ display: 'grid', gridTemplateColumns: '1.35fr 1.05fr', gap: '2rem', marginBottom: '2.75rem' }}>
         {/* Left: Performance Metrics Breakdown */}
         <div className="performance-card" style={{ padding: '1.75rem', borderRadius: '12px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
@@ -192,7 +230,7 @@ export const FreelancerDashboard = () => {
           </div>
         </div>
 
-        {/* Right: Verified Skills Card - Simple */}
+        {/* Right: Verified Skills Card */}
         <div className="verified-skills-card" style={{ padding: '1.75rem', borderRadius: '12px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
             <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0F172A' }}>Verified Skills</h3>
@@ -217,7 +255,6 @@ export const FreelancerDashboard = () => {
             ) : null}
           </div>
 
-          {/* Simple Skills List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
             {skillsList.length > 0 ? (
               skillsList.map((skill) => (
@@ -260,7 +297,109 @@ export const FreelancerDashboard = () => {
         </div>
       </div>
 
-      {/* Simple Services Section */}
+      {/* Client Inquiries & Opportunities Section */}
+      <div style={{
+        backgroundColor: '#FFFFFF',
+        borderRadius: '12px',
+        border: '1px solid #E2E8F0',
+        padding: '1.75rem',
+        marginBottom: '2.5rem'
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+          <div>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
+              Recent Client Inquiries
+            </h3>
+            <p style={{ fontSize: '0.825rem', color: '#64748B', margin: '4px 0 0 0' }}>
+              Project proposals and direct inquiries from verified clients.
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigateTo('project-discovery')}
+            className="btn btn-secondary btn-sm"
+          >
+            Find Projects
+          </button>
+        </div>
+
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '1.5rem', color: '#64748B', fontSize: '0.85rem' }}>
+            Loading inquiries...
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
+            {opportunities.map((opp) => (
+              <div
+                key={opp.id}
+                style={{
+                  backgroundColor: '#F8FAFC',
+                  border: '1px solid #E2E8F0',
+                  borderRadius: '10px',
+                  padding: '1.25rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'space-between',
+                  gap: '1rem'
+                }}
+              >
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#059669' }}>
+                      {opp.deadline}
+                    </span>
+                  </div>
+
+                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.5rem 0' }}>
+                    {opp.title}
+                  </h4>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    <img
+                      src={opp.clientAvatar || 'https://dummyjson.com/icon/default/128'}
+                      alt={opp.clientName}
+                      style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = 'https://dummyjson.com/icon/default/128';
+                      }}
+                    />
+                    <div style={{ fontSize: '0.8rem', color: '#475569' }}>
+                      <strong>{opp.clientName}</strong> {opp.company ? `• ${opp.company}` : ''}
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                    {(opp.skills || []).map((sk) => (
+                      <span key={sk} style={{ fontSize: '0.7rem', padding: '1px 6px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '4px', color: '#475569' }}>
+                        {sk}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem' }}>
+                  <div>
+                    <div style={{ fontSize: '0.72rem', color: '#64748B' }}>Budget</div>
+                    <strong style={{ fontSize: '0.95rem', color: '#0F172A' }}>{opp.budget}</strong>
+                  </div>
+
+                  <button
+                    onClick={() => handleApplyOpportunity(opp)}
+                    className="btn btn-primary btn-sm"
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
+                  >
+                    <span>Submit Proposal</span>
+                    <ArrowUpRight size={13} />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Services Section */}
       <div style={{ marginTop: '2.5rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -370,4 +509,3 @@ export const FreelancerDashboard = () => {
     </div>
   );
 };
-

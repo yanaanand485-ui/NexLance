@@ -4,6 +4,7 @@ import { useApp } from '../../context/AppContext';
 export const ProjectDiscovery = () => {
   const {
     activeProjectsList,
+    isProjectsLoading,
     navigateTo,
     setSelectedProject,
     role,
@@ -36,9 +37,11 @@ export const ProjectDiscovery = () => {
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem', marginBottom: '1.5rem' }}>
         <div>
-          <h1 style={{ fontSize: '1.85rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>
-            Find Projects
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <h1 style={{ fontSize: '1.85rem', fontWeight: 700, color: '#0F172A', marginBottom: '0.35rem' }}>
+              Find Projects
+            </h1>
+          </div>
           <p style={{ fontSize: '0.95rem', color: '#64748B' }}>
             Browse available client projects matching your skills.
           </p>
@@ -145,51 +148,77 @@ export const ProjectDiscovery = () => {
 
       {/* Simple Projects List */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {filteredProjects.map((proj) => (
-          <div
-            key={proj.id}
-            style={{
-              backgroundColor: '#FFFFFF',
-              border: '1px solid #E2E8F0',
-              borderRadius: '8px',
-              padding: '1.25rem',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
-            }}
-          >
-            <h3
-              onClick={() => {
-                setSelectedProject(proj);
-                navigateTo('project-detail');
-              }}
-              style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0F172A', cursor: 'pointer', marginBottom: '0.4rem' }}
-            >
-              {proj.title}
-            </h3>
-
-            <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.5, marginBottom: '0.75rem' }}>
-              {proj.description}
-            </p>
-
-            <div style={{ fontSize: '0.85rem', color: '#334155', marginBottom: '0.4rem' }}>
-              <strong>Skills:</strong> {proj.requiredSkills.join(', ')}
-            </div>
-
-            <div style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem' }}>
-              <strong>Budget:</strong> {proj.budget} &bull; <strong>Timeline:</strong> {proj.deadline}
-            </div>
-
-            <button
-              type="button"
-              onClick={() => {
-                setSelectedProject(proj);
-                navigateTo('project-detail');
-              }}
-              className="btn btn-primary btn-sm"
-            >
-              View Project
-            </button>
+        {isProjectsLoading ? (
+          <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+            <div style={{ display: 'inline-block', width: '28px', height: '28px', border: '3px solid #E2E8F0', borderTopColor: '#2563EB', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+            <p style={{ marginTop: '0.75rem', fontSize: '0.9rem', color: '#64748B' }}>Fetching live projects from API...</p>
           </div>
-        ))}
+        ) : filteredProjects.length === 0 ? (
+          <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#FFFFFF', borderRadius: '8px', border: '1px solid #E2E8F0' }}>
+            <p style={{ color: '#64748B' }}>No projects match your current filters.</p>
+          </div>
+        ) : (
+          filteredProjects.map((proj) => (
+            <div
+              key={proj.id}
+              style={{
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #E2E8F0',
+                borderRadius: '8px',
+                padding: '1.25rem',
+                boxShadow: '0 1px 3px rgba(0,0,0,0.03)'
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.4rem', flexWrap: 'wrap' }}>
+                <h3
+                  onClick={() => {
+                    setSelectedProject(proj);
+                    navigateTo('project-detail');
+                  }}
+                  style={{ fontSize: '1.15rem', fontWeight: 700, color: '#0F172A', cursor: 'pointer', margin: 0 }}
+                >
+                  {proj.title}
+                </h3>
+                {proj.badge && (
+                  <span style={{
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    padding: '0.15rem 0.5rem',
+                    borderRadius: '4px',
+                    backgroundColor: proj.badge.includes('API') ? '#EFF6FF' : '#F1F5F9',
+                    color: proj.badge.includes('API') ? '#2563EB' : '#475569',
+                    border: proj.badge.includes('API') ? '1px solid #BFDBFE' : '1px solid #E2E8F0'
+                  }}>
+                    {proj.badge}
+                  </span>
+                )}
+              </div>
+
+              <p style={{ fontSize: '0.9rem', color: '#475569', lineHeight: 1.5, marginBottom: '0.75rem' }}>
+                {proj.description}
+              </p>
+
+              <div style={{ fontSize: '0.85rem', color: '#334155', marginBottom: '0.4rem' }}>
+                <strong>Skills:</strong> {(proj.requiredSkills || []).join(', ')}
+              </div>
+
+              <div style={{ fontSize: '0.85rem', color: '#64748B', marginBottom: '1rem' }}>
+                <strong>Budget:</strong> {proj.budget} &bull; <strong>Timeline:</strong> {proj.deadline}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedProject(proj);
+                  navigateTo('project-detail');
+                }}
+                className="btn btn-primary btn-sm"
+              >
+                View Project
+              </button>
+            </div>
+          ))
+        )}
       </div>
       </>
       )}

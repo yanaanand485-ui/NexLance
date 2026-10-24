@@ -8,19 +8,24 @@ export const ClientDashboard = () => {
     activeProjectsList
   } = useApp();
 
-  // Recent projects
   const recentProjects = activeProjectsList.slice(0, 5);
+
+  const isMeridian = clientProfile?.name?.toLowerCase().includes('meridian') ||
+    clientProfile?.contactPerson?.toLowerCase().includes('meridian') ||
+    clientProfile?.email?.toLowerCase().includes('meridian');
+
+  const greeting = isMeridian ? 'Welcome, Meridian' : 'Welcome back';
 
   return (
     <div className="dashboard-main">
-      {/* 1. Header with greeting and primary action */}
+      {/* 1. Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
         <div>
           <h1 className="dashboard-title">
-            Welcome back, {clientProfile.contactPerson || 'Client'}
+            {greeting}
           </h1>
           <p className="dashboard-subtitle">
-            Manage your projects, review applicants, and hire verified talent for {clientProfile.name}.
+            Manage your projects, review applicants, and hire verified talent.
           </p>
         </div>
 
@@ -74,7 +79,7 @@ export const ClientDashboard = () => {
             {clientProfile.applicationsReceived || 48}
           </div>
           <div style={{ fontSize: '0.75rem', color: '#059669', fontWeight: 600 }}>
-            Verified candidate applicants
+            Candidate applicants
           </div>
         </div>
 
@@ -91,7 +96,7 @@ export const ClientDashboard = () => {
         </div>
       </div>
 
-      {/* 3. Client Navigation Hub (Quick Cards) */}
+      {/* 3. Client Navigation Hub */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem', marginBottom: '2.5rem' }}>
         <div
           onClick={() => navigateTo('client-find-talent')}
@@ -133,15 +138,15 @@ export const ClientDashboard = () => {
         </div>
       </div>
 
-      {/* 4. Recent Projects Section */}
+      {/* 4. My Projects Section */}
       <div style={{ backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '14px', padding: '1.5rem', marginBottom: '2.5rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.5rem' }}>
           <div>
-            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A' }}>
-              My Recent Projects
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 800, color: '#0F172A', margin: 0 }}>
+              My Projects
             </h3>
-            <p style={{ fontSize: '0.825rem', color: '#64748B', margin: 0 }}>
-              Recent project listings and ongoing contracts
+            <p style={{ fontSize: '0.825rem', color: '#64748B', margin: '4px 0 0 0' }}>
+              Active projects and contracts
             </p>
           </div>
           <button
@@ -174,7 +179,7 @@ export const ClientDashboard = () => {
                     {project.title}
                   </h4>
                 </div>
-                <div style={{ fontSize: '0.8rem', color: '#64748B', display: 'flex', gap: '1rem' }}>
+                <div style={{ fontSize: '0.8rem', color: '#64748B', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
                   <span>Budget: {project.budget}</span>
                   <span>Deadline: {project.deadline}</span>
                   <span>Applicants: {project.applicantsCount || 0}</span>

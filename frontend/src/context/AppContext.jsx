@@ -13,9 +13,9 @@ import {
   saveStoredUsers,
   getStoredActiveUser,
   saveStoredActiveUser,
-  getStoredProjects,
-  saveStoredProjects
+  cleanupDeprecatedStorage
 } from '../utils/storage';
+import { api } from '../services/api';
 
 const AppContext = createContext(null);
 
@@ -59,9 +59,43 @@ export const AppProvider = ({ children }) => {
   const [comparisonList, setComparisonList] = useState([FREELANCERS[0], FREELANCERS[1], FREELANCERS[2]]);
   const [shortlistedFreelancers, setShortlistedFreelancers] = useState(["fl-alex-01", "fl-priya-02"]);
 
-  // 5. Projects & Proposals State
+  // 5. Projects & Proposals State (Fetched from REST API & Live Public Feed)
   const [appliedProjectIds, setAppliedProjectIds] = useState([]);
-  const [activeProjectsList, setActiveProjectsList] = useState(() => getStoredProjects());
+  const [activeProjectsList, setActiveProjectsList] = useState(PROJECTS);
+  const [isProjectsLoading, setIsProjectsLoading] = useState(true);
+  const [apiStatus, setApiStatus] = useState({ connected: false, message: 'Connecting to API...' });
+
+  // Fetch initial project data from REST API and Live Public API
+  useEffect(() => {
+    cleanupDeprecatedStorage();
+    let isMounted = true;
+
+    const fetchProjectsData = async () => {
+      try {
+        setIsProjectsLoading(true);
+        const data = await api.getProjects();
+        if (isMounted) {
+          setActiveProjectsList(data);
+          setApiStatus({ connected: true, message: 'API Live: Connected' });
+        }
+      } catch (err) {
+        console.error('Error loading projects from API:', err);
+        if (isMounted) {
+          setApiStatus({ connected: false, message: 'API Offline: Using Cached Data' });
+        }
+      } finally {
+        if (isMounted) {
+          setIsProjectsLoading(false);
+        }
+      }
+    };
+
+    fetchProjectsData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Notification no-op helper (Notification feature removed)
   const addNotification = () => {};
@@ -431,10 +465,9 @@ export const AppProvider = ({ children }) => {
     showToast('Proposal submitted successfully!', 'success');
   };
 
-  const addNewProject = (projectData) => {
-    const newProj = {
+  const addNewProject = async (projectData) => {
+    const projectPayload = {
       id: `proj-${Date.now()}`,
-      badge: 'Newly Posted',
       client: {
         name: clientProfile.name || 'Client',
         avatar: clientProfile.avatar || '',
@@ -449,11 +482,12 @@ export const AppProvider = ({ children }) => {
       status: 'Open',
       ...projectData
     };
-    setActiveProjectsList(prev => {
-      const updated = [newProj, ...prev];
-      saveStoredProjects(updated);
-      return updated;
-    });
+
+    // Save project through the REST API POST endpoint
+    const createdProject = await api.createProject(projectPayload);
+
+    setActiveProjectsList(prev => [createdProject, ...prev]);
+
     setClientProfile(prev => {
       const updated = {
         ...prev,
@@ -744,6 +778,8 @@ export const AppProvider = ({ children }) => {
     appliedProjectIds,
     submitProposal,
     activeProjectsList,
+    isProjectsLoading,
+    apiStatus,
     addNewProject,
     addNotification,
     isAuthModalOpen,
