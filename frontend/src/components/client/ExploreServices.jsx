@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { Search, CheckCircle2, X } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { SERVICES } from '../../data/mockData';
 
 const categories = [
@@ -26,7 +25,6 @@ const styles = {
 };
 
 export const ExploreServices = () => {
-  const { showToast } = useApp();
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('all');
   const [active, setActive] = useState(null);
@@ -39,7 +37,6 @@ export const ExploreServices = () => {
   const close = () => setActive(null);
 
   const order = () => {
-    showToast(`Order placed for "${active.title}"! Milestone escrow created.`, 'success');
     close();
   };
 

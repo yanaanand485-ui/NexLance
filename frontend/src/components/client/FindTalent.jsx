@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Search, X, Mail, Phone, Building } from 'lucide-react';
-import { useApp } from '../../context/AppContext';
 import { VerifiedSkillBadge, CareerScoreBadge } from './ClientBadge';
 import { DUMMY_JSON_USERS_URL, transformDummyUser } from '../../services/dummyJsonApi';
 
@@ -20,8 +19,6 @@ const styles = {
 };
 
 export const FindTalent = () => {
-  const { showToast } = useApp();
-
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -72,7 +69,6 @@ export const FindTalent = () => {
 
   const contact = () => {
     if (!active) return;
-    showToast(`Direct message sent to ${active.name}!`, 'success');
     setActive(null);
   };
 
