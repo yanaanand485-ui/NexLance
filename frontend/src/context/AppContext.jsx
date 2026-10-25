@@ -98,7 +98,7 @@ export const AppProvider = ({ children }) => {
   }, []);
 
   // Notification no-op helper (Notification feature removed)
-  const addNotification = () => {};
+  const addNotification = () => { };
 
   // 7. Modals State
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -259,7 +259,11 @@ export const AppProvider = ({ children }) => {
 
     const users = getStoredUsers();
     if (users.some(u => u.email.toLowerCase() === cleanEmail && u.role === userRole)) {
-      return { success: false, message: `An account with this email (${cleanEmail}) already exists. Please log in.` };
+      return {
+        success: false,
+        reason: 'ALREADY_EXISTS',
+        message: `An account with this email (${cleanEmail}) already exists. Please log in.`
+      };
     }
 
     const avatarUrl = "";

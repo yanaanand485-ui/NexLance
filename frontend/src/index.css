@@ -125,6 +125,8 @@ button {
 input, textarea, select {
   font-family: inherit;
   font-size: 0.95rem;
+  color: var(--slate-900);
+  background-color: #ffffff;
 }
 
 /* =========================================================

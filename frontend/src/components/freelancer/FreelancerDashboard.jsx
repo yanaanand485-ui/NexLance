@@ -65,10 +65,7 @@ export const FreelancerDashboard = () => {
   const skillsList = getDashboardSkills();
   const services = freelancerProfile?.services || [];
 
-  const isMeridian = freelancerProfile?.email?.toLowerCase().includes('meridian') ||
-    freelancerProfile?.name?.toLowerCase().includes('meridian');
-
-  const greeting = isMeridian ? 'Welcome, Meridian' : 'Welcome';
+  const greeting = 'Welcome';
 
 
   return (

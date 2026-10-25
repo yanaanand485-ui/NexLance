@@ -18,30 +18,65 @@ const formatNameFromEmail = (rawEmail) => {
     .join(' ');
 };
 
-// Beginner-friendly reusable Input Field with icon support
-const InputField = ({ label, labelRight, icon: Icon, rightElement, ...props }) => (
-  <div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
-      <label style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155' }}>{label}</label>
-      {labelRight}
+// Beginner-friendly reusable Input Field with icon and focus support
+const InputField = ({ id, label, labelRight, icon: Icon, rightElement, ...props }) => {
+  const [isFocused, setIsFocused] = useState(false);
+  const inputId = id || (label ? `auth-${label.toLowerCase().replace(/[^a-z0-9]/g, '-')}` : undefined);
+
+  return (
+    <div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.25rem' }}>
+        <label
+          htmlFor={inputId}
+          style={{ fontSize: '0.8rem', fontWeight: 600, color: '#334155', cursor: 'pointer' }}
+        >
+          {label}
+        </label>
+        {labelRight}
+      </div>
+      <div style={{ position: 'relative' }}>
+        {Icon && (
+          <Icon
+            size={16}
+            color={isFocused ? '#2563EB' : '#94A3B8'}
+            style={{
+              position: 'absolute',
+              left: '12px',
+              top: '12px',
+              pointerEvents: 'none',
+              transition: 'color 0.15s ease'
+            }}
+          />
+        )}
+        <input
+          id={inputId}
+          onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus && props.onFocus(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur && props.onBlur(e);
+          }}
+          style={{
+            width: '100%',
+            padding: rightElement ? '0.65rem 2.5rem 0.65rem 2.4rem' : '0.65rem 1rem 0.65rem 2.4rem',
+            borderRadius: '8px',
+            border: isFocused ? '1.5px solid #2563EB' : '1px solid #CBD5E1',
+            boxShadow: isFocused ? '0 0 0 3px rgba(37, 99, 235, 0.12)' : 'none',
+            fontSize: '0.875rem',
+            outline: 'none',
+            backgroundColor: '#FFFFFF',
+            color: '#0F172A',
+            transition: 'border-color 0.15s ease, box-shadow 0.15s ease'
+          }}
+          {...props}
+        />
+        {rightElement}
+      </div>
     </div>
-    <div style={{ position: 'relative' }}>
-      {Icon && <Icon size={16} color="#94A3B8" style={{ position: 'absolute', left: '12px', top: '12px' }} />}
-      <input
-        style={{
-          width: '100%',
-          padding: rightElement ? '0.65rem 2.5rem 0.65rem 2.4rem' : '0.65rem 1rem 0.65rem 2.4rem',
-          borderRadius: '8px',
-          border: '1px solid #CBD5E1',
-          fontSize: '0.875rem',
-          outline: 'none'
-        }}
-        {...props}
-      />
-      {rightElement}
-    </div>
-  </div>
-);
+  );
+};
 
 export const AuthModal = () => {
   const {
@@ -56,10 +91,10 @@ export const AuthModal = () => {
     currentUserAccount
   } = useApp();
 
-  // Form State
-  const [email, setEmail] = useState(() => currentUserAccount?.email || '');
+  // Form State - clean and ready for user input
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [fullName, setFullName] = useState(() => currentUserAccount?.name || '');
+  const [fullName, setFullName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -88,6 +123,19 @@ export const AuthModal = () => {
     setTransferNotice('');
   };
 
+  // Reset or initialize alerts when modal opens / closes
+  useEffect(() => {
+    if (isAuthModalOpen) {
+      if (!pendingSignupTransfer) {
+        resetAlerts();
+      }
+    } else {
+      setPassword('');
+      resetAlerts();
+      setPendingSignupTransfer(false);
+    }
+  }, [isAuthModalOpen]);
+
   // Effect 1: Auto-transfer credentials to Sign Up if account doesn't exist
   useEffect(() => {
     if (pendingSignupTransfer) {
@@ -103,17 +151,13 @@ export const AuthModal = () => {
     }
   }, [pendingSignupTransfer, email, fullName, setAuthMode]);
 
-  // Effect 2: Suggest name when switching to Sign Up with email already entered
-  useEffect(() => {
-    if (authMode === 'signup' && email.trim() && !fullName.trim()) {
-      const suggested = formatNameFromEmail(email);
-      if (suggested) setFullName(suggested);
-    }
-  }, [authMode, email, fullName]);
-
   const handleSwitchMode = (mode) => {
     setAuthMode(mode);
     resetAlerts();
+    if (mode === 'signup' && email.trim() && !fullName.trim()) {
+      const suggested = formatNameFromEmail(email);
+      if (suggested) setFullName(suggested);
+    }
   };
 
   const handleSwitchRole = (role) => {
@@ -124,6 +168,9 @@ export const AuthModal = () => {
   const handleClose = () => {
     setIsAuthModalOpen(false);
     setPassword('');
+    setEmail('');
+    setFullName('');
+    setCompanyName('');
     resetAlerts();
     setPendingSignupTransfer(false);
   };
@@ -132,6 +179,7 @@ export const AuthModal = () => {
     setEmail(demoEmail);
     setPassword(demoPassword);
     setAuthRoleChoice(demoRole);
+    setFullName(demoEmail.includes('meridian') ? 'Sarah Jenkins' : (demoEmail.includes('client') ? 'Enterprise Client' : 'Sarah Jenkins'));
     resetAlerts();
   };
 
@@ -405,6 +453,9 @@ export const AuthModal = () => {
           {/* Full Name (Sign Up only) */}
           {authMode === 'signup' && (
             <InputField
+              id="auth-fullName"
+              name="fullName"
+              autoComplete="name"
               label={isClient ? 'Contact Person / Full Name *' : 'Full Name *'}
               icon={User}
               type="text"
@@ -418,6 +469,9 @@ export const AuthModal = () => {
           {/* Company Name (Sign Up & Client only) */}
           {authMode === 'signup' && isClient && (
             <InputField
+              id="auth-companyName"
+              name="companyName"
+              autoComplete="organization"
               label="Company / Organization Name"
               icon={Building2}
               type="text"
@@ -429,6 +483,9 @@ export const AuthModal = () => {
 
           {/* Email Address */}
           <InputField
+            id="auth-email"
+            name="email"
+            autoComplete="email"
             label={isClient ? 'Business Email Address *' : 'Email Address *'}
             icon={Mail}
             type="email"
@@ -441,6 +498,9 @@ export const AuthModal = () => {
           {/* Password with Requirements */}
           <div>
             <InputField
+              id="auth-password"
+              name="password"
+              autoComplete={authMode === 'signup' ? 'new-password' : 'current-password'}
               label="Password *"
               labelRight={
                 authMode === 'login' && (

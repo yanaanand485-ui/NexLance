@@ -10,11 +10,7 @@ export const ClientDashboard = () => {
 
   const recentProjects = activeProjectsList.slice(0, 5);
 
-  const isMeridian = clientProfile?.name?.toLowerCase().includes('meridian') ||
-    clientProfile?.contactPerson?.toLowerCase().includes('meridian') ||
-    clientProfile?.email?.toLowerCase().includes('meridian');
-
-  const greeting = isMeridian ? 'Welcome, Meridian' : 'Welcome back';
+  const greeting = 'Welcome';
 
   return (
     <div className="dashboard-main">
