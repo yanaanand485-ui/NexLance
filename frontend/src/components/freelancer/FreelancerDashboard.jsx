@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, ArrowUpRight } from 'lucide-react';
+import React from 'react';
+import { Plus } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { CareerScoreBadge } from '../common/CareerScoreBadge';
-import { DUMMY_JSON_USERS_URL, transformDummyUser } from '../../services/dummyJsonApi';
 
 export const FreelancerDashboard = () => {
   const {
@@ -12,49 +11,8 @@ export const FreelancerDashboard = () => {
     setIsSkillModalOnboarding,
     openAddServiceModal,
     openEditServiceModal,
-    deleteFreelancerService,
-    showToast
+    deleteFreelancerService
   } = useApp();
-
-  const [opportunities, setOpportunities] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch basic client users via .then(), .catch(), .finally() - strictly no async/await
-  useEffect(() => {
-    fetch(DUMMY_JSON_USERS_URL)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        const users = (data.users || []).map(transformDummyUser);
-        // Create simple opportunities from fetched users
-        const opps = users.slice(0, 4).map((u, i) => ({
-          id: `opp-${u.id}`,
-          title: i === 0
-            ? 'Full-Stack React & Node.js Platform'
-            : i === 1
-              ? 'Responsive Web App & Dashboard'
-              : i === 2
-                ? 'API Integration & Frontend Optimization'
-                : 'Modern UI/UX Design System Implementation',
-          clientName: u.name,
-          clientAvatar: u.image,
-          company: u.company,
-          email: u.email,
-          budget: `$${1200 + (u.id * 100)} – $${2000 + (u.id * 150)}`,
-          deadline: `${2 + (u.id % 3)} weeks`,
-          skills: u.topSkills ? u.topSkills.map(s => s.name) : ['React', 'JavaScript']
-        }));
-        setOpportunities(opps);
-      })
-      .catch((err) => {
-        console.error('Error loading opportunities:', err);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
-  }, []);
 
   const isSarah = freelancerProfile?.email === 'sarah@nexlance.dev' || freelancerProfile?.id === 'fl-sarah-01';
 
@@ -112,9 +70,6 @@ export const FreelancerDashboard = () => {
 
   const greeting = isMeridian ? 'Welcome, Meridian' : 'Welcome';
 
-  const handleApplyOpportunity = (opp) => {
-    showToast(`Proposal submitted for "${opp.title}" to ${opp.clientName}!`, 'success');
-  };
 
   return (
     <div className="dashboard-main" style={{ maxWidth: '1240px', margin: '0 auto', padding: '2.5rem 2.5rem 4rem' }}>
@@ -297,107 +252,6 @@ export const FreelancerDashboard = () => {
         </div>
       </div>
 
-      {/* Client Inquiries & Opportunities Section */}
-      <div style={{
-        backgroundColor: '#FFFFFF',
-        borderRadius: '12px',
-        border: '1px solid #E2E8F0',
-        padding: '1.75rem',
-        marginBottom: '2.5rem'
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div>
-            <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#0F172A', margin: 0 }}>
-              Recent Client Inquiries
-            </h3>
-            <p style={{ fontSize: '0.825rem', color: '#64748B', margin: '4px 0 0 0' }}>
-              Project proposals and direct inquiries from verified clients.
-            </p>
-          </div>
-
-          <button
-            onClick={() => navigateTo('project-discovery')}
-            className="btn btn-secondary btn-sm"
-          >
-            Find Projects
-          </button>
-        </div>
-
-        {loading ? (
-          <div style={{ textAlign: 'center', padding: '1.5rem', color: '#64748B', fontSize: '0.85rem' }}>
-            Loading inquiries...
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1rem' }}>
-            {opportunities.map((opp) => (
-              <div
-                key={opp.id}
-                style={{
-                  backgroundColor: '#F8FAFC',
-                  border: '1px solid #E2E8F0',
-                  borderRadius: '10px',
-                  padding: '1.25rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '1rem'
-                }}
-              >
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#059669' }}>
-                      {opp.deadline}
-                    </span>
-                  </div>
-
-                  <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', margin: '0 0 0.5rem 0' }}>
-                    {opp.title}
-                  </h4>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginBottom: '0.75rem' }}>
-                    <img
-                      src={opp.clientAvatar || 'https://dummyjson.com/icon/default/128'}
-                      alt={opp.clientName}
-                      style={{ width: 28, height: 28, borderRadius: '50%', objectFit: 'cover' }}
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = 'https://dummyjson.com/icon/default/128';
-                      }}
-                    />
-                    <div style={{ fontSize: '0.8rem', color: '#475569' }}>
-                      <strong>{opp.clientName}</strong> {opp.company ? `• ${opp.company}` : ''}
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                    {(opp.skills || []).map((sk) => (
-                      <span key={sk} style={{ fontSize: '0.7rem', padding: '1px 6px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0', borderRadius: '4px', color: '#475569' }}>
-                        {sk}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid #E2E8F0', paddingTop: '0.75rem' }}>
-                  <div>
-                    <div style={{ fontSize: '0.72rem', color: '#64748B' }}>Budget</div>
-                    <strong style={{ fontSize: '0.95rem', color: '#0F172A' }}>{opp.budget}</strong>
-                  </div>
-
-                  <button
-                    onClick={() => handleApplyOpportunity(opp)}
-                    className="btn btn-primary btn-sm"
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem' }}
-                  >
-                    <span>Submit Proposal</span>
-                    <ArrowUpRight size={13} />
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
 
       {/* Services Section */}
       <div style={{ marginTop: '2.5rem' }}>
