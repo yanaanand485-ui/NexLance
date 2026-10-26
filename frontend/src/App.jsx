@@ -1,4 +1,5 @@
 import React from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider, useApp } from './context/AppContext';
 import { Navbar } from './components/common/Navbar';
 import { Footer } from './components/common/Footer';
@@ -25,7 +26,8 @@ import { ExploreServices } from './components/client/ExploreServices';
 import './styles/components.css';
 
 const MainRouter = () => {
-  const { currentView, role, isSkillModalOpen, setIsSkillModalOpen, isSkillModalOnboarding } = useApp();
+  const { role, isSkillModalOpen, setIsSkillModalOpen, isSkillModalOnboarding } = useApp();
+  const location = useLocation();
 
   // Dashboard Layout Wrapper
   const renderDashboardView = (Component) => (
@@ -35,67 +37,78 @@ const MainRouter = () => {
     </div>
   );
 
-  const renderContent = () => {
-    // Public-accessible views before login
-    const publicAllowedViews = [
-      'landing',
-      'project-discovery',
-      'project-detail'
-    ];
-
-    if (role === 'public' && !publicAllowedViews.includes(currentView)) {
-      return <LandingPage />;
-    }
-
-    // Authenticated users (freelancer / client) cannot view landing page; route to dashboard
-    if (role !== 'public' && currentView === 'landing') {
-      return role === 'freelancer'
-        ? renderDashboardView(FreelancerDashboard)
-        : renderDashboardView(ClientDashboard);
-    }
-
-    switch (currentView) {
-      case 'landing':
-        return <LandingPage />;
-      case 'project-discovery':
-        return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
-      case 'services-marketplace':
-        return role === 'client' ? renderDashboardView(ExploreServices) : <LandingPage />;
-      case 'project-detail':
-        return role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />;
-
-      // Freelancer Views
-      case 'freelancer-dashboard':
-        return renderDashboardView(FreelancerDashboard);
-      case 'freelancer-services':
-        return renderDashboardView(FreelancerServices);
-      case 'skill-verification':
-        return renderDashboardView(SkillVerification);
-      case 'career-score':
-        return renderDashboardView(CareerScoreDetail);
-      // Client Views (Dashboard, Find Talent, My Projects, Explore Services)
-      case 'client-dashboard':
-        return renderDashboardView(ClientDashboard);
-      case 'client-find-talent':
-      case 'talent-discovery':
-        return renderDashboardView(FindTalent);
-      case 'client-my-projects':
-        return renderDashboardView(MyProjects);
-      case 'client-explore-services':
-        return renderDashboardView(ExploreServices);
-
-      default:
-        return <LandingPage />;
-    }
-  };
-
-  const showFooter = role === 'public' && ['landing', 'project-discovery', 'project-detail'].includes(currentView);
+  const showFooter =
+    role === 'public' &&
+    ['/', '/projects', '/projects/detail'].includes(location.pathname);
 
   return (
     <div className="app-container">
       <Navbar />
       <div style={{ flex: 1 }}>
-        {renderContent()}
+        <Routes>
+          {/* Public / Landing Route */}
+          <Route
+            path="/"
+            element={
+              role === 'freelancer' ? (
+                <Navigate to="/freelancer/dashboard" replace />
+              ) : role === 'client' ? (
+                <Navigate to="/client/dashboard" replace />
+              ) : (
+                <LandingPage />
+              )
+            }
+          />
+
+          {/* Project Discovery & Details */}
+          <Route
+            path="/projects"
+            element={role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />}
+          />
+          <Route
+            path="/projects/detail"
+            element={role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />}
+          />
+
+          {/* Freelancer Routes */}
+          <Route
+            path="/freelancer/dashboard"
+            element={role === 'freelancer' ? renderDashboardView(FreelancerDashboard) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/freelancer/services"
+            element={role === 'freelancer' ? renderDashboardView(FreelancerServices) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/freelancer/skills"
+            element={role === 'freelancer' ? renderDashboardView(SkillVerification) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/freelancer/career-score"
+            element={role === 'freelancer' ? renderDashboardView(CareerScoreDetail) : <Navigate to="/" replace />}
+          />
+
+          {/* Client Routes */}
+          <Route
+            path="/client/dashboard"
+            element={role === 'client' ? renderDashboardView(ClientDashboard) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/client/talent"
+            element={role === 'client' ? renderDashboardView(FindTalent) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/client/projects"
+            element={role === 'client' ? renderDashboardView(MyProjects) : <Navigate to="/" replace />}
+          />
+          <Route
+            path="/client/services"
+            element={role === 'client' ? renderDashboardView(ExploreServices) : <Navigate to="/" replace />}
+          />
+
+          {/* Fallback route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </div>
       {showFooter && <Footer />}
       <AuthModal />

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   FREELANCERS,
   PROJECTS,
@@ -17,13 +18,48 @@ import {
 } from '../utils/storage';
 import { api } from '../services/api';
 
+export const VIEW_TO_PATH = {
+  'landing': '/',
+  'project-discovery': '/projects',
+  'project-detail': '/projects/detail',
+  'freelancer-dashboard': '/freelancer/dashboard',
+  'freelancer-services': '/freelancer/services',
+  'skill-verification': '/freelancer/skills',
+  'career-score': '/freelancer/career-score',
+  'client-dashboard': '/client/dashboard',
+  'client-find-talent': '/client/talent',
+  'talent-discovery': '/client/talent',
+  'client-my-projects': '/client/projects',
+  'client-explore-services': '/client/services',
+  'services-marketplace': '/client/services'
+};
+
+export const PATH_TO_VIEW = {
+  '/': 'landing',
+  '/projects': 'project-discovery',
+  '/projects/detail': 'project-detail',
+  '/freelancer/dashboard': 'freelancer-dashboard',
+  '/freelancer/services': 'freelancer-services',
+  '/freelancer/skills': 'skill-verification',
+  '/freelancer/career-score': 'career-score',
+  '/client/dashboard': 'client-dashboard',
+  '/client/talent': 'client-find-talent',
+  '/client/projects': 'client-my-projects',
+  '/client/services': 'client-explore-services'
+};
+
 const AppContext = createContext(null);
 
 export const AppProvider = ({ children }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // 1. Core User & Session State
   const [currentUserAccount, setCurrentUserAccount] = useState(() => getStoredActiveUser());
   const [role, setRole] = useState(() => currentUserAccount?.role || 'public');
   const [currentView, setCurrentView] = useState(() => {
+    const pathView = PATH_TO_VIEW[window.location.pathname];
+    if (pathView) return pathView;
     if (currentUserAccount?.role === 'freelancer') return 'freelancer-dashboard';
     if (currentUserAccount?.role === 'client') return 'client-dashboard';
     return 'landing';
@@ -130,7 +166,7 @@ export const AppProvider = ({ children }) => {
     return () => clearTimeout(timer);
   }, [toastMessage]);
 
-  // 10. Browser History & Navigation Synchronization
+  // 10. Browser History & Navigation Synchronization via react-router-dom
   const getDefaultDashboard = (userRole = role) => {
     if (userRole === 'freelancer') return 'freelancer-dashboard';
     if (userRole === 'client') return 'client-dashboard';
@@ -138,17 +174,19 @@ export const AppProvider = ({ children }) => {
   };
 
   const [viewHistory, setViewHistory] = useState(() => {
-    const initial = currentUserAccount?.role === 'freelancer'
-      ? 'freelancer-dashboard'
-      : currentUserAccount?.role === 'client'
-        ? 'client-dashboard'
-        : 'landing';
+    const initial = PATH_TO_VIEW[window.location.pathname] || (
+      currentUserAccount?.role === 'freelancer'
+        ? 'freelancer-dashboard'
+        : currentUserAccount?.role === 'client'
+          ? 'client-dashboard'
+          : 'landing'
+    );
     return [initial];
   });
 
-  // Navigate to any view with browser history integration
+  // Navigate to any view with react-router-dom integration
   const navigateTo = (view, payload = null, options = {}) => {
-    const { pushHistory = true, replace = false } = options;
+    const { replace = false } = options;
 
     let targetView = view;
     // Logged-in freelancers & clients must stay in their authenticated workspace/dashboard views
@@ -161,70 +199,53 @@ export const AppProvider = ({ children }) => {
       if (targetView === 'project-detail') setSelectedProject(payload);
     }
 
-    if (pushHistory) {
-      const stateObj = { view: targetView, payload: payload ? { id: payload.id } : null };
-      if (replace) {
-        window.history.replaceState(stateObj, '', `#${targetView}`);
-      } else {
-        window.history.pushState(stateObj, '', `#${targetView}`);
-      }
-    }
-
+    const targetPath = VIEW_TO_PATH[targetView] || '/';
     setViewHistory(prev => [...prev, targetView]);
     setCurrentView(targetView);
+
+    navigate(targetPath, { replace, state: payload ? { id: payload.id } : null });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Smart in-app back navigation function
   const goBack = (fallbackView = null) => {
-    // If browser has history, use standard history back to maintain natural flow
-    if (window.history.state && window.history.length > 1 && viewHistory.length > 1) {
-      window.history.back();
+    if (window.history.length > 1) {
+      navigate(-1);
     } else {
       let targetFallback = fallbackView || getDefaultDashboard();
       if (role !== 'public' && targetFallback === 'landing') {
         targetFallback = getDefaultDashboard(role);
       }
-      navigateTo(targetFallback, null, { pushHistory: true });
+      navigateTo(targetFallback);
     }
   };
 
   // Direct return to the user's dashboard (or landing for public)
   const goToDashboard = () => {
-    navigateTo(getDefaultDashboard(), null, { pushHistory: true });
+    navigateTo(getDefaultDashboard());
   };
 
-  // Setup initial history state and listen for browser Back/Forward (popstate)
+  // Sync URL changes from browser address bar or back/forward buttons with currentView
   useEffect(() => {
-    const initialView = currentView;
-    // Replace initial state with current view so browser knows root
-    window.history.replaceState({ view: initialView, payload: null }, '', `#${initialView}`);
-
-    const handlePopState = (event) => {
-      if (event.state && event.state.view) {
-        let targetView = event.state.view;
-        if (role !== 'public' && targetView === 'landing') {
-          targetView = getDefaultDashboard(role);
-        }
-        if (event.state.payload && event.state.payload.id) {
-          if (targetView === 'project-detail') {
-            const found = PROJECTS.find(p => p.id === event.state.payload.id);
-            if (found) setSelectedProject(found);
-          }
-        }
-        setCurrentView(targetView);
-        setViewHistory(prev => (prev.length > 1 ? prev.slice(0, -1) : [targetView]));
-      } else {
-        // Fallback: If user hits back to the empty initial state, stay on dashboard rather than exiting
-        const fallback = getDefaultDashboard();
-        setCurrentView(fallback);
-        window.history.replaceState({ view: fallback, payload: null }, '', `#${fallback}`);
+    const targetView = PATH_TO_VIEW[location.pathname];
+    if (targetView) {
+      if (role !== 'public' && targetView === 'landing') {
+        const fallback = getDefaultDashboard(role);
+        navigate(VIEW_TO_PATH[fallback] || '/', { replace: true });
+        return;
       }
-    };
-
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [role]);
+      const publicViews = ['landing', 'project-discovery', 'project-detail'];
+      if (role === 'public' && !publicViews.includes(targetView)) {
+        navigate('/', { replace: true });
+        return;
+      }
+      if (targetView === 'project-detail' && location.state?.id) {
+        const found = PROJECTS.find(p => p.id === location.state.id);
+        if (found) setSelectedProject(found);
+      }
+      setCurrentView(targetView);
+    }
+  }, [location.pathname, role, location.state]);
 
   const handleFindTalent = () => {
     if (role === 'client') {
@@ -401,10 +422,10 @@ export const AppProvider = ({ children }) => {
         if (demoUser.profile) setFreelancerProfile(demoUser.profile);
         setIsSkillModalOpen(false);
         setIsSkillModalOnboarding(false);
-        setCurrentView('freelancer-dashboard');
+        navigateTo('freelancer-dashboard');
       } else {
         if (demoUser.profile) setClientProfile(demoUser.profile);
-        setCurrentView('client-dashboard');
+        navigateTo('client-dashboard');
       }
     }
   };
@@ -418,7 +439,7 @@ export const AppProvider = ({ children }) => {
     setRole('public');
     setCurrentView('landing');
     setViewHistory(['landing']);
-    window.history.replaceState({ view: 'landing', payload: null }, '', '#landing');
+    navigate('/', { replace: true });
     showToast('Logged out successfully. Returned to public site.', 'info');
   };
 
