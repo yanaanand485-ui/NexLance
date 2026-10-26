@@ -8,7 +8,6 @@ import { SkillSelectionModal } from './components/common/SkillSelectionModal';
 // Pages & Views
 import { LandingPage } from './pages/LandingPage';
 import { ProjectDiscovery } from './components/marketplace/ProjectDiscovery';
-import { ServicesMarketplace } from './components/marketplace/ServicesMarketplace';
 import { ProjectDetail } from './components/marketplace/ProjectDetail';
 
 import { FreelancerDashboard } from './components/freelancer/FreelancerDashboard';
@@ -40,7 +39,6 @@ const MainRouter = () => {
     // Public-accessible views before login
     const publicAllowedViews = [
       'landing',
-      'services-marketplace',
       'project-discovery',
       'project-detail'
     ];
@@ -62,10 +60,7 @@ const MainRouter = () => {
       case 'project-discovery':
         return role === 'freelancer' ? renderDashboardView(ProjectDiscovery) : <ProjectDiscovery />;
       case 'services-marketplace':
-        if (role === 'freelancer') {
-          return renderDashboardView(FreelancerDashboard);
-        }
-        return role === 'client' ? renderDashboardView(ExploreServices) : <ServicesMarketplace />;
+        return role === 'client' ? renderDashboardView(ExploreServices) : <LandingPage />;
       case 'project-detail':
         return role === 'freelancer' ? renderDashboardView(ProjectDetail) : <ProjectDetail />;
 
@@ -94,7 +89,7 @@ const MainRouter = () => {
     }
   };
 
-  const showFooter = role === 'public' && ['landing', 'project-discovery', 'services-marketplace', 'project-detail'].includes(currentView);
+  const showFooter = role === 'public' && ['landing', 'project-discovery', 'project-detail'].includes(currentView);
 
   return (
     <div className="app-container">

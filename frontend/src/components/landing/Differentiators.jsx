@@ -6,11 +6,13 @@ export const Differentiators = () => {
   const { role, navigateTo, showToast, setIsAuthModalOpen, setAuthMode } = useApp();
 
   const handleCardClick = (action) => {
-    if (role === 'public' && action === 'services-marketplace') {
-      showToast('Please Get Started first to explore all services.', 'info');
-      setAuthMode('signup');
-      setIsAuthModalOpen(true);
-      return;
+    if (role === 'public') {
+      if (action === 'comparison') {
+        showToast('Sign in to view candidate comparison.', 'info');
+        setAuthMode('signup');
+        setIsAuthModalOpen(true);
+        return;
+      }
     }
     navigateTo(action);
   };
@@ -33,12 +35,12 @@ export const Differentiators = () => {
       badge: '91/100 Avg Top Tier'
     },
     {
-      id: 'services-marketplace',
-      title: 'Services Catalog',
+      id: 'proof-of-work',
+      title: 'Proof of Work',
       icon: <Layers size={22} color="#1E40AF" />,
-      description: 'Fixed-price services with transparent deliverables, upfront pricing, and guaranteed delivery timelines.',
-      action: 'services-marketplace',
-      badge: 'Fixed-Price & Scope'
+      description: 'Verified past projects, live deliverable metrics, and transparent client reviews backed by real code.',
+      action: 'project-discovery',
+      badge: 'Verified Work'
     },
     {
       id: 'smart-match',

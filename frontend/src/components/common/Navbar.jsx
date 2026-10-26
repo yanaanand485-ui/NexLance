@@ -58,15 +58,6 @@ export const Navbar = () => {
       onClick: handleFindWork
     },
     {
-      label: 'Services',
-      active: currentView === 'services-marketplace',
-      onClick: () => {
-        showToast('Please Get Started first to explore all services.', 'info');
-        setAuthMode('signup');
-        setIsAuthModalOpen(true);
-      }
-    },
-    {
       label: 'How It Works',
       active: currentView === 'landing',
       onClick: () => {
